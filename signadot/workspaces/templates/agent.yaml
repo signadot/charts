@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
+  labels:
+    istio-injection: enabled
   name: signadot
 ---
 apiVersion: v1
@@ -352,6 +354,18 @@ rules:
   - list
   - watch
 - apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - signadot.com
   resources:
   - signadotroutes
@@ -593,7 +607,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: signadot/workspaces-operator:latest
+        image: signadot/workspaces-operator:v0.6.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -671,7 +685,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.5.4-7fabc2b
+        image: signadot/workspaces-agent:v0.6.0
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
