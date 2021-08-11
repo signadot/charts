@@ -2,12 +2,6 @@
 
 This chart installs the in-cluster components for Signadot Workspaces.
 
-## Prerequisites
-
-Please [install cert-manager](https://cert-manager.io/docs/installation/kubernetes/)
-first if it's not already installed in the cluster.
-This chart relies on cert-manager to generate the certificate for its admission webhook.
-
 ## Installation
 
 ```sh

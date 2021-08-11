@@ -86,6 +86,7 @@ spec:
                   required:
                   - containerPort
                   type: object
+                minItems: 1
                 type: array
               workloadID:
                 description: WorkloadID is the unique ID of the original workload
@@ -210,10 +211,184 @@ spec:
                       - name
                       type: object
                     type: array
+                  overlays:
+                    description: "Overlays define custom objects to clone into the
+                      workspace, creating a workspace state that consists of these
+                      custom objects layered on top of the live, baseline state. \n
+                      This can be used, for example, to create cloned Deployments
+                      based on manifest changes that have been committed on a git
+                      branch. \n If an overlay defines an object that already exists
+                      in the live, baseline state, the overlay's version of the object
+                      will be used as the starting point for cloning and patching
+                      instead of the baseline object. \n If an overlay defines an
+                      object that doesn't exist in the baseline state, that object
+                      will be cloned into the workspace and patched as if it had been
+                      found in the baseline state. \n If more than one overlay defines
+                      the same object, the precedence is determined by the order in
+                      which overlays are listed in this field. Each overlay takes
+                      precedence over any overlays that came before it in the list
+                      order."
+                    items:
+                      description: "Overlay defines a set of objects to clone into
+                        the workspace. \n In the future, there may be multiple alternative
+                        subfields to define overlays in different ways. Each overlay
+                        entry should only set one of these subfields."
+                      properties:
+                        git:
+                          description: Git specifies how to extract objects from Kubernetes
+                            YAML manifests in a git repository.
+                          properties:
+                            baseBranch:
+                              description: "BaseBranch is the branch to compare against,
+                                usually \"main\" or \"master\". \n Objects will only
+                                be added to the overlay if they have been changed
+                                in some commit along the path from the target commit
+                                back to the point at which its branch diverged from
+                                the base branch. Changes made on the base branch after
+                                that point will not trigger objects to be cloned into
+                                the workspace since those changes are presumed to
+                                be orthogonal to the PR. \n Note that manifest extraction
+                                will always use the signadot.yaml config from the
+                                target commit regardless of which commit is being
+                                scanned. This ensures an apples-to-apples comparison
+                                and allows config changes to apply retroactively to
+                                old commits."
+                              type: string
+                            branch:
+                              description: "Branch is the git branch from which to
+                                pull objects. \n For now, this is only used to add
+                                human-readable annotations for debuggability. The
+                                commit hash is the real source of truth for what will
+                                be checked out."
+                              type: string
+                            commit:
+                              description: "Commit is the target git commit hash to
+                                checkout and scan for changed objects. \n This is
+                                the real source of truth for what to checkout, instead
+                                of just checking out the head of the specified branch
+                                at a point in time. Specifying a commit hash makes
+                                the overlay deterministic and also serves as a way
+                                to tell the operator when a new commit has been pushed
+                                to the branch. \n Objects found in manifests at this
+                                commit will only be cloned if they've changed since
+                                the point at which this commit's branch diverged from
+                                the specified base branch."
+                              type: string
+                            repo:
+                              description: "Repo is the git repository URL. Currently
+                                only SSH is supported. \n This repository must have
+                                a signadot.yaml file at the repository root, describing
+                                where to find Kubernetes manifests and how to expand
+                                any templates if necessary. \n Example: github.com:signadot/hotrod.git"
+                              type: string
+                            sshKeySecret:
+                              description: "SSHKeySecret specifies a value within
+                                a given Kubernetes Secret object to use as the SSH
+                                private key when cloning the git repository. \n Note
+                                that this Secret must be in the signadot-operator
+                                namespace, not in the SignadotWorkspace's namespace,
+                                since it's used by a background Job that the operator
+                                spawns there. \n This private key should have been
+                                granted read access to the repository, such as by
+                                adding the corresponding public key as a GitHub Deploy
+                                Key."
+                              properties:
+                                key:
+                                  description: The key of the secret to select from.  Must
+                                    be a valid secret key.
+                                  type: string
+                                name:
+                                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                                    TODO: Add other useful fields. apiVersion, kind,
+                                    uid?'
+                                  type: string
+                                optional:
+                                  description: Specify whether the Secret or its key
+                                    must be defined
+                                  type: boolean
+                              required:
+                              - key
+                              type: object
+                          required:
+                          - baseBranch
+                          - branch
+                          - commit
+                          - repo
+                          - sshKeySecret
+                          type: object
+                      type: object
+                    type: array
+                  patches:
+                    description: "Patches to apply when cloning workloads (e.g. Deployments)
+                      for this workspace. \n Each patch describes which object it
+                      applies to. If a matching object is found, a clone of that object
+                      will be created for this workspace and the patch will be applied
+                      to the clone. \n If multiple patches and/or image replacement
+                      rules match a given object, only one clone of that object will
+                      be created, and then all matching patches and image replacements
+                      will be applied on top of one another to the clone. Patches
+                      will be applied first, in the order listed here, and then image
+                      replacements will be applied afterward. \n Each patch can be
+                      defined in any one of the formats supported by `kubectl patch`.
+                      See: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
+                      \n Only one of the following fields should be set for each patch
+                      in the list: \n   strategic - Define the patch in Kubernetes
+                      strategic merge patch format.   merge - Define the patch in
+                      JSON Merge Patch format (RFC 7386).   json - Define the patch
+                      in JSON Patch format (RFC 6902)."
+                    items:
+                      description: Patch describes a set of changes to apply to a
+                        given object.
+                      properties:
+                        json:
+                          description: JSON specifies the patch in JSON Patch format
+                            (RFC 6902).
+                          items:
+                            type: object
+                          type: array
+                          x-kubernetes-preserve-unknown-fields: true
+                        merge:
+                          description: Merge specifies the patch in JSON Merge Patch
+                            format (RFC 7396).
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                        strategic:
+                          description: "Strategic specifies the patch in Kubernetes
+                            strategic merge patch format. \n See: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/"
+                          type: object
+                          x-kubernetes-preserve-unknown-fields: true
+                        target:
+                          description: Target specifies what object this patch applies
+                            to.
+                          properties:
+                            apiVersion:
+                              description: APIVersion specifies the API Version (e.g.
+                                "apps/v1") of the object to patch.
+                              type: string
+                            kind:
+                              description: Kind specifies the Kind (e.g. "Deployment")
+                                of the object to patch.
+                              type: string
+                            name:
+                              description: Name specifies the name of the object to
+                                patch.
+                              type: string
+                          required:
+                          - apiVersion
+                          - kind
+                          - name
+                          type: object
+                      required:
+                      - target
+                      type: object
+                    type: array
                 type: object
               id:
                 description: ID should be a unique identifier for the workspace. It
                   can be up to 63 alphanumeric characters.
+                maxLength: 63
+                minLength: 1
+                pattern: '[A-Za-z0-9]*'
                 type: string
             required:
             - id
@@ -221,6 +396,31 @@ spec:
           status:
             description: SignadotWorkspaceStatus defines the observed state of SignadotWorkspace
             properties:
+              conditions:
+                description: 'Conditions is a list of conditions that matches the
+                  conventions expected by kubectl, allowing our CRDs to work with:
+                  kubectl wait --for=condition=...'
+                items:
+                  description: 'StatusCondition is a condition struct that matches
+                    the conventions expected by kubectl, allowing our CRDs to work
+                    with: kubectl wait --for=condition=...'
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
               customizedDeployments:
                 description: CustomizedDeployments is the number of Deployments that
                   have been cloned and customized.
@@ -228,6 +428,16 @@ spec:
                 type: integer
               observedGeneration:
                 format: int64
+                type: integer
+              overlays:
+                description: Overlays is the total number of overlays defined for
+                  this workspace.
+                format: int32
+                type: integer
+              readyOverlays:
+                description: ReadyOverlays is the number of overlays whose objects
+                  have been generated or extract successfully.
+                format: int32
                 type: integer
             type: object
         type: object
@@ -299,6 +509,30 @@ rules:
   - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  name: signadot-manager-role
+  namespace: signadot-operator
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resourceNames:
+  - webhook-server-cert
+  resources:
+  - secrets
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: signadot-agent
@@ -324,6 +558,18 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
   - services
   verbs:
   - create
@@ -333,6 +579,16 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resourceNames:
+  - signadot-mutating-webhook-configuration
+  resources:
+  - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - patch
+  - update
 - apiGroups:
   - apps
   resources:
@@ -352,6 +608,19 @@ rules:
   verbs:
   - get
   - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
   - watch
 - apiGroups:
   - networking.istio.io
@@ -469,6 +738,20 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: signadot-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: signadot-controller-manager
+  namespace: signadot-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: signadot-manager-rolebinding
+  namespace: signadot-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: signadot-manager-role
 subjects:
 - kind: ServiceAccount
   name: signadot-controller-manager
@@ -607,7 +890,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: signadot/workspaces-operator:v0.6.0
+        image: signadot/workspaces-operator:v0.6.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -635,10 +918,6 @@ spec:
             memory: 128Mi
         securityContext:
           allowPrivilegeEscalation: false
-        volumeMounts:
-        - mountPath: /tmp/k8s-webhook-server/serving-certs
-          name: cert
-          readOnly: true
       - args:
         - --secure-listen-address=0.0.0.0:8443
         - --upstream=http://127.0.0.1:8080/
@@ -653,11 +932,6 @@ spec:
         runAsNonRoot: true
       serviceAccountName: signadot-controller-manager
       terminationGracePeriodSeconds: 10
-      volumes:
-      - name: cert
-        secret:
-          defaultMode: 420
-          secretName: webhook-server-cert
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -685,7 +959,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.6.0
+        image: signadot/workspaces-agent:v0.6.2
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
@@ -715,33 +989,10 @@ spec:
         - containerPort: 8080
       serviceAccountName: routeserver
 ---
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: signadot-serving-cert
-  namespace: signadot-operator
-spec:
-  dnsNames:
-  - signadot-webhook-service.signadot-operator.svc
-  - signadot-webhook-service.signadot-operator.svc.cluster.local
-  issuerRef:
-    kind: Issuer
-    name: signadot-selfsigned-issuer
-  secretName: webhook-server-cert
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: signadot-selfsigned-issuer
-  namespace: signadot-operator
-spec:
-  selfSigned: {}
----
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
-  annotations:
-    cert-manager.io/inject-ca-from: signadot-operator/signadot-serving-cert
+  creationTimestamp: null
   name: signadot-mutating-webhook-configuration
 webhooks:
 - admissionReviewVersions:
