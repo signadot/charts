@@ -384,11 +384,13 @@ spec:
                     type: array
                 type: object
               id:
-                description: ID should be a unique identifier for the workspace. It
-                  can be up to 63 alphanumeric characters.
-                maxLength: 63
+                description: "ID should be a unique identifier for the workspace.
+                  \n It can be up to 32 characters, consisting of lowercase alphanumeric
+                  characters or '-', but it must both start and end with an alphanumeric
+                  character."
+                maxLength: 32
                 minLength: 1
-                pattern: '[A-Za-z0-9]*'
+                pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
                 type: string
             required:
             - id
@@ -890,7 +892,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: signadot/workspaces-operator:v0.6.2
+        image: signadot/workspaces-operator:v0.6.3
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -959,7 +961,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.6.2
+        image: signadot/workspaces-agent:v0.6.3
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
