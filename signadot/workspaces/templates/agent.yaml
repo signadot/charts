@@ -892,7 +892,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: signadot/workspaces-operator:v0.6.3
+        image: signadot/workspaces-operator:v0.6.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -953,15 +953,16 @@ spec:
       containers:
       - args:
         - --agent-token=$(AGENT_TOKEN)
-        - --tunnel-addr=preview.signadot.com:2222
+        - --tunnel-addr=tunnel.signadot.com:2222
         - --tunnel-ca=/app/tunnel-server.crt
+        - --tunnel-tls-server-name-override=preview.signadot.com
         env:
         - name: AGENT_TOKEN
           valueFrom:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.6.3
+        image: signadot/workspaces-agent:v0.6.4
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
