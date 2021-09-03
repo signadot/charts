@@ -344,9 +344,16 @@ spec:
                           description: JSON specifies the patch in JSON Patch format
                             (RFC 6902).
                           items:
+                            description: "RawExtension is a wrapper around runtime.RawExtension.
+                              \n It exists so we can add the PreserveUnknownFields
+                              directive on the items in a []RawExtension list, rather
+                              than to the list itself. Adding PreserveUnknownFields
+                              to the list itself works in the latest patch releases
+                              of k8s v1.18+, but the fix was never backported to v1.17
+                              or older: \n https://github.com/kubernetes/kubernetes/pull/94888"
                             type: object
+                            x-kubernetes-preserve-unknown-fields: true
                           type: array
-                          x-kubernetes-preserve-unknown-fields: true
                         merge:
                           description: Merge specifies the patch in JSON Merge Patch
                             format (RFC 7396).
@@ -892,7 +899,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: signadot/workspaces-operator:v0.6.4
+        image: signadot/workspaces-operator:v0.6.5
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -962,7 +969,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.6.4
+        image: signadot/workspaces-agent:v0.6.5
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
