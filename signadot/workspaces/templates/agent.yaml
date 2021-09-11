@@ -899,7 +899,10 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: signadot/workspaces-operator:v0.6.5
+        env:
+        - name: REPO_OVERLAY_IMAGE
+          value: signadot/workspaces-repo-overlay:v0.6.6
+        image: signadot/workspaces-operator:v0.6.6
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -969,7 +972,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.6.5
+        image: signadot/workspaces-agent:v0.6.6
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
@@ -992,7 +995,7 @@ spec:
         app: routeserver
     spec:
       containers:
-      - image: signadot/workspaces-routeserver
+      - image: signadot/workspaces-routeserver:v0.6.6
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
