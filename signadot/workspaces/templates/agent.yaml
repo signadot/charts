@@ -155,7 +155,7 @@ spec:
     shortNames:
     - sdw
     singular: signadotworkspace
-  scope: Namespaced
+  scope: Cluster
   versions:
   - name: v1
     schema:
@@ -180,6 +180,10 @@ spec:
           spec:
             description: SignadotWorkspaceSpec defines the desired state of SignadotWorkspace
             properties:
+              clusterName:
+                description: ClusterName should be the name of the cluster this workspace
+                  lives in.
+                type: string
               customization:
                 description: Customization describes the ways in which live workloads
                   running in the cluster should be customized for this workspace.
@@ -196,6 +200,10 @@ spec:
                         name:
                           description: "Name specifies which image name in live workloads
                             will be replaced. \n Example: us.gcr.io/my-staging-registry/widget"
+                          type: string
+                        namespace:
+                          description: Namespace optionally specifies which namespace
+                            will be searched.
                           type: string
                         newName:
                           description: "NewName provides a replacement for the image
@@ -286,12 +294,11 @@ spec:
                                 a given Kubernetes Secret object to use as the SSH
                                 private key when cloning the git repository. \n Note
                                 that this Secret must be in the signadot-operator
-                                namespace, not in the SignadotWorkspace's namespace,
-                                since it's used by a background Job that the operator
-                                spawns there. \n This private key should have been
-                                granted read access to the repository, such as by
-                                adding the corresponding public key as a GitHub Deploy
-                                Key."
+                                namespace since it's used by a background Job that
+                                the operator spawns there. \n This private key should
+                                have been granted read access to the repository, such
+                                as by adding the corresponding public key as a GitHub
+                                Deploy Key."
                               properties:
                                 key:
                                   description: The key of the secret to select from.  Must
@@ -316,6 +323,10 @@ spec:
                           - repo
                           - sshKeySecret
                           type: object
+                        namespace:
+                          description: Namespace can optionally be set to filter extracted
+                            objects by namespace.
+                          type: string
                       type: object
                     type: array
                   patches:
@@ -380,6 +391,10 @@ spec:
                               description: Name specifies the name of the object to
                                 patch.
                               type: string
+                            namespace:
+                              description: Namespace optionally specifies which namespace
+                                will be searched.
+                              type: string
                           required:
                           - apiVersion
                           - kind
@@ -388,6 +403,21 @@ spec:
                       required:
                       - target
                       type: object
+                    type: array
+                  preservedLabels:
+                    description: "PreservedLabels is a list of RE2 regular expressions
+                      to check against label keys on the original baseline Pod template.
+                      The expression can match any substring within the key, so use
+                      anchors if you want to require a full match. \n Normally, all
+                      baseline labels are stripped from the cloned Pod template to
+                      ensure it can't match any existing Services. Labels from the
+                      baseline Pod that match any of these regular expressions will
+                      be preserved on the cloned Pod instead. \n If preserving these
+                      labels would cause the cloned Pods to match a basline Service,
+                      the workspace controller will pause and report an error to avoid
+                      interference."
+                    items:
+                      type: string
                     type: array
                 type: object
               id:
@@ -398,6 +428,15 @@ spec:
                 maxLength: 32
                 minLength: 1
                 pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+                type: string
+              name:
+                description: "Name should be a unique value in the organization that
+                  easily allows any user to identify what the workspace is being used
+                  for when reading it. \n It can be up to 30 characters, consisting
+                  of alphanumeric characters or '-', but it must both start and end
+                  with an alphanumeric character."
+                maxLength: 30
+                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
                 type: string
             required:
             - id
@@ -550,6 +589,7 @@ rules:
   - signadot.com
   resources:
   - signadotworkspaces
+  - signadotroutes
   verbs:
   - get
   - list
@@ -557,6 +597,25 @@ rules:
   - create
   - update
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -890,6 +949,9 @@ spec:
   template:
     metadata:
       labels:
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key }}: {{ $val | quote }}
+        {{- end }}
         control-plane: controller-manager
     spec:
       containers:
@@ -901,8 +963,8 @@ spec:
         - /manager
         env:
         - name: REPO_OVERLAY_IMAGE
-          value: signadot/workspaces-repo-overlay:v0.6.6
-        image: signadot/workspaces-operator:v0.6.6
+          value: signadot/workspaces-repo-overlay:v0.7.0
+        image: signadot/workspaces-operator:v0.7.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -930,6 +992,9 @@ spec:
             memory: 128Mi
         securityContext:
           allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /etc/podinfo
+          name: podinfo
       - args:
         - --secure-listen-address=0.0.0.0:8443
         - --upstream=http://127.0.0.1:8080/
@@ -944,6 +1009,13 @@ spec:
         runAsNonRoot: true
       serviceAccountName: signadot-controller-manager
       terminationGracePeriodSeconds: 10
+      volumes:
+      - downwardAPI:
+          items:
+          - fieldRef:
+              fieldPath: metadata.labels
+            path: labels
+        name: podinfo
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -958,21 +1030,23 @@ spec:
   template:
     metadata:
       labels:
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key }}: {{ $val | quote }}
+        {{- end }}
         app: signadot-agent
     spec:
       containers:
       - args:
         - --agent-token=$(AGENT_TOKEN)
+        - --api-url=https://api.signadot.com
         - --tunnel-addr=tunnel.signadot.com:2222
-        - --tunnel-ca=/app/tunnel-server.crt
-        - --tunnel-tls-server-name-override=preview.signadot.com
         env:
         - name: AGENT_TOKEN
           valueFrom:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.6.6
+        image: signadot/workspaces-agent:v0.7.0
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
@@ -992,10 +1066,13 @@ spec:
   template:
     metadata:
       labels:
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key }}: {{ $val | quote }}
+        {{- end }}
         app: routeserver
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.6.6
+      - image: signadot/workspaces-routeserver:v0.7.0
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
