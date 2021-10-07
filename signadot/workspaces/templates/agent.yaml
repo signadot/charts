@@ -601,6 +601,7 @@ rules:
   - ""
   resources:
   - pods
+  - pods/log
   - services
   - configmaps
   verbs:
@@ -963,8 +964,8 @@ spec:
         - /manager
         env:
         - name: REPO_OVERLAY_IMAGE
-          value: signadot/workspaces-repo-overlay:v0.7.0
-        image: signadot/workspaces-operator:v0.7.0
+          value: signadot/workspaces-repo-overlay:v0.7.1
+        image: signadot/workspaces-operator:v0.7.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -1039,14 +1040,14 @@ spec:
       - args:
         - --agent-token=$(AGENT_TOKEN)
         - --api-url=https://api.signadot.com
-        - --tunnel-addr=tunnel.signadot.com:2222
+        - --tunnel-addr=tunnel.signadot.com:443
         env:
         - name: AGENT_TOKEN
           valueFrom:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.7.0
+        image: signadot/workspaces-agent:v0.7.1
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
@@ -1072,7 +1073,7 @@ spec:
         app: routeserver
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.7.0
+      - image: signadot/workspaces-routeserver:v0.7.1
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
