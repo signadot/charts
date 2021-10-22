@@ -338,10 +338,10 @@ spec:
                       rules match a given object, only one clone of that object will
                       be created, and then all matching patches and image replacements
                       will be applied on top of one another to the clone. Patches
-                      will be applied first, in the order listed here, and then image
-                      replacements will be applied afterward. \n Each patch can be
-                      defined in any one of the formats supported by `kubectl patch`.
-                      See: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
+                      will be applied last, in the order listed here, so they take
+                      precedence over image replacements. \n Each patch can be defined
+                      in any one of the formats supported by `kubectl patch`. See:
+                      https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
                       \n Only one of the following fields should be set for each patch
                       in the list: \n   strategic - Define the patch in Kubernetes
                       strategic merge patch format.   merge - Define the patch in
@@ -964,8 +964,8 @@ spec:
         - /manager
         env:
         - name: REPO_OVERLAY_IMAGE
-          value: signadot/workspaces-repo-overlay:v0.7.3
-        image: signadot/workspaces-operator:v0.7.3
+          value: signadot/workspaces-repo-overlay:v0.7.4
+        image: signadot/workspaces-operator:v0.7.4
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -1047,7 +1047,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.7.3
+        image: signadot/workspaces-agent:v0.7.4
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
@@ -1073,7 +1073,7 @@ spec:
         app: routeserver
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.7.3
+      - image: signadot/workspaces-routeserver:v0.7.4
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
