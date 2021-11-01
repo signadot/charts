@@ -413,7 +413,7 @@ spec:
                       ensure it can't match any existing Services. Labels from the
                       baseline Pod that match any of these regular expressions will
                       be preserved on the cloned Pod instead. \n If preserving these
-                      labels would cause the cloned Pods to match a basline Service,
+                      labels would cause the cloned Pods to match a baseline Service,
                       the workspace controller will pause and report an error to avoid
                       interference."
                     items:
@@ -604,6 +604,7 @@ rules:
   - pods/log
   - services
   - configmaps
+  - namespaces
   verbs:
   - get
   - list
@@ -964,8 +965,8 @@ spec:
         - /manager
         env:
         - name: REPO_OVERLAY_IMAGE
-          value: signadot/workspaces-repo-overlay:v0.7.4
-        image: signadot/workspaces-operator:v0.7.4
+          value: signadot/workspaces-repo-overlay:v0.7.5
+        image: signadot/workspaces-operator:v0.7.5
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -1047,7 +1048,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.7.4
+        image: signadot/workspaces-agent:v0.7.5
         imagePullPolicy: IfNotPresent
         name: agent
         ports:
@@ -1073,7 +1074,7 @@ spec:
         app: routeserver
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.7.4
+      - image: signadot/workspaces-routeserver:v0.7.5
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
