@@ -688,6 +688,18 @@ rules:
   - list
   - watch
 - apiGroups:
+  - ""
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - delete
+- apiGroups:
   - apps
   resources:
   - deployments
@@ -1194,8 +1206,8 @@ spec:
         - /manager
         env:
         - name: REPO_OVERLAY_IMAGE
-          value: signadot/workspaces-repo-overlay:v0.7.7
-        image: signadot/workspaces-operator:v0.7.7
+          value: signadot/workspaces-repo-overlay:v0.7.8
+        image: signadot/workspaces-operator:v0.7.8
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -1295,7 +1307,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.7.7
+        image: signadot/workspaces-agent:v0.7.8
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -1347,7 +1359,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.7.7
+      - image: signadot/workspaces-routeserver:v0.7.8
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
