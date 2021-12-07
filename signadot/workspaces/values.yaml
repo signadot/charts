@@ -1,3 +1,9 @@
-# Add these labels to all Pods deployed by this chart.
-#podLabels:
-#  example: value
+# # Add these labels to all Pods deployed by this chart.
+# podLabels:
+#   examplePodLabel: PLvalue
+# # Add these labels to all objects deployed by this chart.
+# commonLabels:
+#   exampleCommonLabel: exampleCommonLabelValue
+# # Add these annotations to all objects deployed by this chart.
+# commonAnnotations:
+#   exampleCommonAnnotation: exampleCommonAnnotationValue
