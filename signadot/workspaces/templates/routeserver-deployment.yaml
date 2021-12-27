@@ -1,0 +1,44 @@
+# This file is generated. Do not edit.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: routeserver
+  namespace: signadot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: routeserver
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $val := .Values.commonAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+      labels:
+        app: routeserver
+        {{- range $key, $val := .Values.commonLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+    spec:
+      containers:
+      - image: signadot/workspaces-routeserver:v0.7.12
+        imagePullPolicy: IfNotPresent
+        name: routeserver
+        ports:
+        - containerPort: 8080
+      serviceAccountName: routeserver

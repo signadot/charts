@@ -1,0 +1,26 @@
+# This file is generated. Do not edit.
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+    {{- range $key, $val := .Values.serviceAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+    {{- range $key, $val := .Values.serviceLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadot-webhook-service
+  namespace: signadot
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+  selector:
+    control-plane: controller-manager
