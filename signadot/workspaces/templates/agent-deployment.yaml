@@ -47,7 +47,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.7.12
+        image: signadot/workspaces-agent:v0.7.13
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
