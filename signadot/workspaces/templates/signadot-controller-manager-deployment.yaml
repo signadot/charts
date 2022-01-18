@@ -45,8 +45,8 @@ spec:
         - /manager
         env:
         - name: REPO_OVERLAY_IMAGE
-          value: signadot/workspaces-repo-overlay:v0.7.13
-        image: signadot/workspaces-operator:v0.7.13
+          value: signadot/workspaces-repo-overlay:v0.7.14
+        image: signadot/workspaces-operator:v0.7.14
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
