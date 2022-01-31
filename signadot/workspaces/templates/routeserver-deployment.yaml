@@ -36,7 +36,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.7.14
+      - image: signadot/workspaces-routeserver:v0.7.15
         imagePullPolicy: IfNotPresent
         name: routeserver
         ports:
