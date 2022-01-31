@@ -67,6 +67,18 @@ rules:
   - list
   - watch
 - apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - batch
   resources:
   - jobs
