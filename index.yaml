@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   workspaces:
   - apiVersion: v2
+    appVersion: 0.7.15
+    created: "2022-01-31T20:58:10.84178705Z"
+    description: In-cluster components for Signadot Workspaces
+    digest: dfe5fcf6f32d0d190de204e4c13ae747850110a085732ad5f2e2a018502aa3c6
+    name: workspaces
+    type: application
+    urls:
+    - https://github.com/signadot/charts/releases/download/workspaces-0.3.15/workspaces-0.3.15.tgz
+    version: 0.3.15
+  - apiVersion: v2
     appVersion: 0.7.14
     created: "2022-01-18T20:50:50.56610251Z"
     description: In-cluster components for Signadot Workspaces
@@ -211,4 +221,4 @@ entries:
     urls:
     - https://github.com/signadot/charts/releases/download/workspaces-0.1.0/workspaces-0.1.0.tgz
     version: 0.1.0
-generated: "2022-01-18T20:50:50.566434012Z"
+generated: "2022-01-31T20:58:10.842082751Z"
