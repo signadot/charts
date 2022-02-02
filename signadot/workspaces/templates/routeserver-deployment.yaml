@@ -36,8 +36,8 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: signadot/workspaces-routeserver:v0.7.15
-        imagePullPolicy: IfNotPresent
+      - image: {{ with .Values.routeServer }}{{ .image | default "signadot/workspaces-routeserver:v0.7.15" | quote }}{{ else }}signadot/workspaces-routeserver:v0.7.15{{ end }}
+        imagePullPolicy: {{ with .Values.routeServer }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
         name: routeserver
         ports:
         - containerPort: 8080
