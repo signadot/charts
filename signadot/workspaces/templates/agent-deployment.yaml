@@ -47,8 +47,8 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: signadot/workspaces-agent:v0.7.15
-        imagePullPolicy: IfNotPresent
+        image: {{ with .Values.agent }}{{ .image | default "signadot/workspaces-agent:v0.7.15" | quote }}{{ else }}signadot/workspaces-agent:v0.7.15{{ end }}
+        imagePullPolicy: {{ with .Values.agent }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
         livenessProbe:
           httpGet:
             path: /nullz
