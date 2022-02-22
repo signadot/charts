@@ -1,0 +1,65 @@
+# This file is generated. Do not edit.
+{{ if not .Values.disableAgent }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: agent
+  namespace: signadot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signadot-agent
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $val := .Values.commonAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+      labels:
+        app: signadot-agent
+        sidecar.istio.io/inject: "true"
+        {{- range $key, $val := .Values.commonLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+    spec:
+      containers:
+      - args:
+        - --agent-token=$(AGENT_TOKEN)
+        - --api-url=https://api.signadot.com
+        - --tunnel-addr=tunnel.signadot.com:443
+        env:
+        - name: AGENT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: token
+              name: cluster-agent
+        image: {{ with .Values.agent }}{{ .image | default "signadot/agent:v0.8.0" | quote }}{{ else }}signadot/agent:v0.8.0{{ end }}
+        imagePullPolicy: {{ with .Values.agent }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
+        livenessProbe:
+          httpGet:
+            path: /nullz
+            port: 8088
+        name: agent
+        ports:
+        - containerPort: 8088
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8088
+      serviceAccountName: agent
+{{ end }}

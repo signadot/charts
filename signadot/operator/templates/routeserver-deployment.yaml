@@ -1,0 +1,44 @@
+# This file is generated. Do not edit.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: routeserver
+  namespace: signadot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: routeserver
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $val := .Values.commonAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+      labels:
+        app: routeserver
+        {{- range $key, $val := .Values.commonLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+    spec:
+      containers:
+      - image: {{ with .Values.routeServer }}{{ .image | default "signadot/route-server:v0.8.0" | quote }}{{ else }}signadot/route-server:v0.8.0{{ end }}
+        imagePullPolicy: {{ with .Values.routeServer }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
+        name: routeserver
+        ports:
+        - containerPort: 8080
+      serviceAccountName: routeserver

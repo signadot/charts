@@ -1,0 +1,153 @@
+# This file is generated. Do not edit.
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadotresources.signadot.com
+spec:
+  group: signadot.com
+  names:
+    kind: SignadotResource
+    listKind: SignadotResourceList
+    plural: signadotresources
+    shortNames:
+    - sdre
+    singular: signadotresource
+  scope: Cluster
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: SignadotResourceSpec is the type of the specification of
+              a resource that a provisioner can allocate to a sandbox.
+            properties:
+              name:
+                description: "Name is the name of the resource as referred to by the
+                  requestor. \n The name must start with a letter and contain only
+                  alphanumeric characters so that it can be a template variable name."
+                maxLength: 20
+                minLength: 1
+                pattern: ^[A-Za-z][A-Za-z0-9]*$
+                type: string
+              outputDestinations:
+                description: OutputDestinations tells us where the information provided
+                  by a provisioner, i.e. its output, should be copied in order for
+                  the associated Sandbox to make use of the provisioned resource.
+                items:
+                  properties:
+                    name:
+                      description: Name is the Kubernetes Name of the object which
+                        will contain the output.
+                      type: string
+                    namespace:
+                      description: Namespace is the namespace of the object into which
+                        the provisioner output is to be stored.
+                      type: string
+                  required:
+                  - name
+                  - namespace
+                  type: object
+                type: array
+              outputKind:
+                description: OutputKind is the kind of object (ConfigMap or Secret)
+                  in which the provisioner's output should be stored. The default
+                  is "Secret".
+                enum:
+                - Secret
+                - ConfigMap
+                type: string
+              params:
+                additionalProperties:
+                  type: string
+                description: Params is a map of unstructured key-value pairs which
+                  will be provided to the Provisioner.
+                type: object
+              provisionerName:
+                description: ProvisionerName is the name of the provisioner which
+                  will provision and finalize/clean-up the resource.
+                type: string
+              sandboxID:
+                description: SandboxID is the ID of the sandbox for which this Resource
+                  spec is to be provisioned.
+                type: string
+            required:
+            - name
+            - outputDestinations
+            - provisionerName
+            - sandboxID
+            type: object
+          status:
+            properties:
+              conditions:
+                description: 'Conditions is a list of conditions that matches the
+                  conventions expected by kubectl, allowing our CRDs to work with:
+                  kubectl wait --for=condition=...'
+                items:
+                  description: "StatusCondition is a condition struct that matches
+                    the conventions expected by kubectl, allowing our CRDs to work
+                    with: kubectl wait --for=condition=... \n StatusConditions must
+                    follow the following discipline in reconciliation: The operator
+                    MUST always populate all the condition types in a SignadotSandboxStatus
+                    struct, irrespective of whether the condition is known or not
+                    (see corev1.ConditionUnknown) so that access via a k8s client
+                    can determine whether the capability is supported in the operator."
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                format: int64
+                type: integer
+              outputsWritten:
+                description: OutputsWritten indicates the number of output destinations
+                  to which the controller has written the output of the provisioner
+                  for the resource.
+                format: int32
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
