@@ -1,0 +1,21 @@
+# This file is generated. Do not edit.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadot-proxy-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: signadot-proxy-role
+subjects:
+- kind: ServiceAccount
+  name: signadot-controller-manager
+  namespace: signadot

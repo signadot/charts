@@ -1,0 +1,33 @@
+# This file is generated. Do not edit.
+apiVersion: v1
+data:
+  controller_manager_config.yaml: |
+    apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
+    kind: ControllerManagerConfig
+    health:
+      healthProbeBindAddress: :8081
+    metrics:
+      bindAddress: 127.0.0.1:8080
+    webhook:
+      port: 9443
+    leaderElection:
+      leaderElect: true
+      resourceName: 42470b05.signadot.com
+kind: ConfigMap
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+    {{- range $key, $val := .Values.configMapAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+    {{- range $key, $val := .Values.configMapLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadot-manager-config
+  namespace: signadot
