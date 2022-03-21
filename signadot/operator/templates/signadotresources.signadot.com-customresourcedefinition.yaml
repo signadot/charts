@@ -86,7 +86,7 @@ spec:
                 type: object
               provisionerName:
                 description: ProvisionerName is the name of the provisioner which
-                  will provision and finalize/clean-up the resource.
+                  will provision and deprovision the resource.
                 type: string
               sandboxID:
                 description: SandboxID is the ID of the sandbox for which this Resource

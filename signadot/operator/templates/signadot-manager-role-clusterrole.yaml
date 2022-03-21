@@ -106,6 +106,32 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
+  - signadotprovisioners
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotprovisioners/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotprovisioners/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
   - signadotresources
   verbs:
   - create
