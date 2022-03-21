@@ -265,6 +265,14 @@ spec:
                           - kind
                           - name
                           type: object
+                        template:
+                          description: "Template specifies whether to treat the patch
+                            content as a template. If enabled, variable substitution
+                            will be performed, allowing patches to refer to information
+                            that will only become available after the operator processes
+                            a sandbox spec, such as the names of SignadotResource
+                            provisioner output objects. \n Default: false"
+                          type: boolean
                       required:
                       - target
                       type: object
@@ -333,7 +341,7 @@ spec:
                       type: object
                     provisionerName:
                       description: ProvisionerName is the name of the provisioner
-                        which will provision and finalize/clean-up the resource.
+                        which will provision and deprovision the resource.
                       type: string
                   required:
                   - name
