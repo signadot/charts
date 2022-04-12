@@ -1,5 +1,4 @@
 # This file is generated. Do not edit.
-{{ if not .Values.disableAgent }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -11,49 +10,54 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-agent
+  name: signadot-manager-namespaced
 rules:
 - apiGroups:
-  - signadot.com
+  - ""
   resources:
-  - signadotsandboxes
-  - signadotroutes
-  - signadotresources
-  - signadotresourceplugins
+  - configmaps
+  - secrets
   verbs:
-  - get
-  - list
-  - watch
   - create
-  - update
-  - delete
 - apiGroups:
   - ""
   resources:
   - pods
-  - pods/log
-  - services
-  - namespaces
   verbs:
+  - create
+  - delete
   - get
   - list
+  - patch
+  - update
   - watch
 - apiGroups:
   - ""
-  - events.k8s.io
   resources:
-  - events
+  - services
   verbs:
+  - create
+  - delete
   - get
   - list
-  - watch
-  - create
+  - patch
   - update
-  - delete
+  - watch
 - apiGroups:
   - apps
   resources:
   - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
   - replicasets
   verbs:
   - get
@@ -64,7 +68,22 @@ rules:
   resources:
   - rollouts
   verbs:
+  - create
+  - delete
   - get
   - list
+  - patch
+  - update
   - watch
-{{ end }}
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - virtualservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

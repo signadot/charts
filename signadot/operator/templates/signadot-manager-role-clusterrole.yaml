@@ -13,30 +13,6 @@ metadata:
   name: signadot-manager-role
 rules:
 - apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
   - admissionregistration.k8s.io
   resourceNames:
   - signadot-mutating-webhook-configuration
@@ -47,54 +23,9 @@ rules:
   - patch
   - update
 - apiGroups:
-  - apps
+  - signadot.com
   resources:
-  - deployments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - replicasets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - argoproj.io
-  resources:
-  - rollouts
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - create
-  - delete
-  - deletecollection
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - networking.istio.io
-  resources:
-  - virtualservices
+  - signadotresourceplugins
   verbs:
   - create
   - delete
@@ -106,25 +37,13 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
-  - signadotprovisioners
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - signadot.com
-  resources:
-  - signadotprovisioners/finalizers
+  - signadotresourceplugins/finalizers
   verbs:
   - update
 - apiGroups:
   - signadot.com
   resources:
-  - signadotprovisioners/status
+  - signadotresourceplugins/status
   verbs:
   - get
   - patch
