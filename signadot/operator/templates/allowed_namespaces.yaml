@@ -1,0 +1,18 @@
+# Bind the ClusterRole containing namespaced permissions to the
+# controller-manager's ServiceAccount only in the specified namespaces.
+{{ range $namespace := .Values.allowedNamespaces }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: signadot-manager-namespaced
+  namespace: {{ $namespace | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: signadot-manager-namespaced
+subjects:
+- kind: ServiceAccount
+  name: signadot-controller-manager
+  namespace: signadot
+{{ end }}

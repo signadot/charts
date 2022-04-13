@@ -44,13 +44,13 @@ spec:
         command:
         - /manager
         env:
-        - name: REPO_OVERLAY_IMAGE_PULL_POLICY
-          value: {{ with .Values.repoOverlay }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
-        - name: REPO_OVERLAY_IMAGE
-          value: {{ with .Values.repoOverlay }}{{ .image | default "signadot/repo-overlay:v0.8.1" | quote }}{{ else }}signadot/repo-overlay:v0.8.1{{ end }}
+        - name: ALLOWED_NAMESPACES
+          value: {{ range $i, $val := .Values.allowedNamespaces }}{{ if gt $i 0 }},{{ end }}{{ $val }}{{ else }}""{{ end }}
         - name: ROUTE_SIDECAR_IMAGE
-          value: {{ with .Values.routeSidecar }}{{ .image | default "signadot/route-sidecar:v0.8.1" | quote }}{{ else }}signadot/route-sidecar:v0.8.1{{ end }}
-        image: {{ with .Values.operator }}{{ .image | default "signadot/operator:v0.8.1" | quote }}{{ else }}signadot/operator:v0.8.1{{ end }}
+          value: {{ with .Values.routeSidecar }}{{ .image | default "signadot/route-sidecar:v0.9.0" | quote }}{{ else }}signadot/route-sidecar:v0.9.0{{ end }}
+        - name: EXECPOD_SIDECAR_IMAGE
+          value: {{ with .Values.execpodSidecar }}{{ .image | default "signadot/execpod-sidecar:v0.9.0" | quote }}{{ else }}signadot/execpod-sidecar:v0.9.0{{ end }}
+        image: {{ with .Values.operator }}{{ .image | default "signadot/operator:v0.9.0" | quote }}{{ else }}signadot/operator:v0.9.0{{ end }}
         imagePullPolicy: {{ with .Values.operator }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
         livenessProbe:
           httpGet:

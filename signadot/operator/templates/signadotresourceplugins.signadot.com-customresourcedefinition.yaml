@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.4.1
+    controller-gen.kubebuilder.io/version: v0.6.2
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
@@ -11,16 +11,16 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadotprovisioners.signadot.com
+  name: signadotresourceplugins.signadot.com
 spec:
   group: signadot.com
   names:
-    kind: SignadotProvisioner
-    listKind: SignadotProvisionerList
-    plural: signadotprovisioners
+    kind: SignadotResourcePlugin
+    listKind: SignadotResourcePluginList
+    plural: signadotresourceplugins
     shortNames:
-    - sdpv
-    singular: signadotprovisioner
+    - sdrp
+    singular: signadotresourceplugin
   scope: Cluster
   versions:
   - name: v1
@@ -41,6 +41,11 @@ spec:
             type: object
           spec:
             properties:
+              description:
+                description: Description provides space for describing this provisioner
+                  which should be used to specify the expected inputs and the provided
+                  outputs.
+                type: string
               execPod:
                 description: ExecPod represents how a pods for provisioning and deprovisioning
                   will be executed.
@@ -52,6 +57,23 @@ spec:
                     properties:
                       metadata:
                         description: 'Standard object''s metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata'
+                        properties:
+                          annotations:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          finalizers:
+                            items:
+                              type: string
+                            type: array
+                          labels:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          name:
+                            type: string
+                          namespace:
+                            type: string
                         type: object
                       spec:
                         description: 'Specification of the desired behavior of the
@@ -5463,6 +5485,23 @@ spec:
                                             that will be copied into the PVC when
                                             creating it. No other fields are allowed
                                             and will be rejected during validation.
+                                          properties:
+                                            annotations:
+                                              additionalProperties:
+                                                type: string
+                                              type: object
+                                            finalizers:
+                                              items:
+                                                type: string
+                                              type: array
+                                            labels:
+                                              additionalProperties:
+                                                type: string
+                                              type: object
+                                            name:
+                                              type: string
+                                            namespace:
+                                              type: string
                                           type: object
                                         spec:
                                           description: The specification for the PersistentVolumeClaim.
@@ -6608,7 +6647,7 @@ spec:
                 - template
                 type: object
               type:
-                description: Type represents the type of the provisioner.
+                description: Type represents the type of the plugin.
                 enum:
                 - ExecPod
                 type: string

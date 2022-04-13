@@ -1,0 +1,23 @@
+# This file is generated. Do not edit.
+{{ if not .Values.allowedNamespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadot-manager-namespaced
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: signadot-manager-namespaced
+subjects:
+- kind: ServiceAccount
+  name: signadot-controller-manager
+  namespace: signadot
+{{ end }}

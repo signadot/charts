@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.4.1
+    controller-gen.kubebuilder.io/version: v0.6.2
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
@@ -85,115 +85,6 @@ spec:
                       - name
                       type: object
                     type: array
-                  overlays:
-                    description: "Overlays define custom objects to clone into the
-                      sandbox, creating a sandbox state that consists of these custom
-                      objects layered on top of the live, baseline state. \n This
-                      can be used, for example, to create cloned Deployments based
-                      on manifest changes that have been committed on a git branch.
-                      \n If an overlay defines an object that already exists in the
-                      live, baseline state, the overlay's version of the object will
-                      be used as the starting point for cloning and patching instead
-                      of the baseline object. \n If an overlay defines an object that
-                      doesn't exist in the baseline state, that object will be cloned
-                      into the sandbox and patched as if it had been found in the
-                      baseline state. \n If more than one overlay defines the same
-                      object, the precedence is determined by the order in which overlays
-                      are listed in this field. Each overlay takes precedence over
-                      any overlays that came before it in the list order."
-                    items:
-                      description: "Overlay defines a set of objects to clone into
-                        the sandbox. \n In the future, there may be multiple alternative
-                        subfields to define overlays in different ways. Each overlay
-                        entry should only set one of these subfields."
-                      properties:
-                        git:
-                          description: Git specifies how to extract objects from Kubernetes
-                            YAML manifests in a git repository.
-                          properties:
-                            baseBranch:
-                              description: "BaseBranch is the branch to compare against,
-                                usually \"main\" or \"master\". \n Objects will only
-                                be added to the overlay if they have been changed
-                                in some commit along the path from the target commit
-                                back to the point at which its branch diverged from
-                                the base branch. Changes made on the base branch after
-                                that point will not trigger objects to be cloned into
-                                the sandbox since those changes are presumed to be
-                                orthogonal to the PR. \n Note that manifest extraction
-                                will always use the signadot.yaml config from the
-                                target commit regardless of which commit is being
-                                scanned. This ensures an apples-to-apples comparison
-                                and allows config changes to apply retroactively to
-                                old commits."
-                              type: string
-                            branch:
-                              description: "Branch is the git branch from which to
-                                pull objects. \n For now, this is only used to add
-                                human-readable annotations for debuggability. The
-                                commit hash is the real source of truth for what will
-                                be checked out."
-                              type: string
-                            commit:
-                              description: "Commit is the target git commit hash to
-                                checkout and scan for changed objects. \n This is
-                                the real source of truth for what to checkout, instead
-                                of just checking out the head of the specified branch
-                                at a point in time. Specifying a commit hash makes
-                                the overlay deterministic and also serves as a way
-                                to tell the operator when a new commit has been pushed
-                                to the branch. \n Objects found in manifests at this
-                                commit will only be cloned if they've changed since
-                                the point at which this commit's branch diverged from
-                                the specified base branch."
-                              type: string
-                            repo:
-                              description: "Repo is the git repository URL. Currently
-                                only SSH is supported. \n This repository must have
-                                a signadot.yaml file at the repository root, describing
-                                where to find Kubernetes manifests and how to expand
-                                any templates if necessary. \n Example: github.com:signadot/hotrod.git"
-                              type: string
-                            sshKeySecret:
-                              description: "SSHKeySecret specifies a value within
-                                a given Kubernetes Secret object to use as the SSH
-                                private key when cloning the git repository. \n Note
-                                that this Secret must be in the 'signadot' namespace
-                                since it's used by a background Job that the operator
-                                spawns there. \n This private key should have been
-                                granted read access to the repository, such as by
-                                adding the corresponding public key as a GitHub Deploy
-                                Key."
-                              properties:
-                                key:
-                                  description: The key of the secret to select from.  Must
-                                    be a valid secret key.
-                                  type: string
-                                name:
-                                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
-                                    TODO: Add other useful fields. apiVersion, kind,
-                                    uid?'
-                                  type: string
-                                optional:
-                                  description: Specify whether the Secret or its key
-                                    must be defined
-                                  type: boolean
-                              required:
-                              - key
-                              type: object
-                          required:
-                          - baseBranch
-                          - branch
-                          - commit
-                          - repo
-                          - sshKeySecret
-                          type: object
-                        namespace:
-                          description: Namespace can optionally be set to filter extracted
-                            objects by namespace.
-                          type: string
-                      type: object
-                    type: array
                   patches:
                     description: "Patches to apply when cloning workloads (e.g. Deployments)
                       for this sandbox. \n Each patch describes which object it applies
@@ -271,7 +162,7 @@ spec:
                             will be performed, allowing patches to refer to information
                             that will only become available after the operator processes
                             a sandbox spec, such as the names of SignadotResource
-                            provisioner output objects. \n Default: false"
+                            plugin output objects. \n Default: false"
                           type: boolean
                       required:
                       - target
@@ -326,9 +217,10 @@ spec:
                       pattern: ^[A-Za-z][A-Za-z0-9]*$
                       type: string
                     outputKind:
+                      default: Secret
                       description: OutputKind is the kind of object (ConfigMap or
-                        Secret) in which the provisioner's output should be stored.
-                        The default is "Secret".
+                        Secret) in which the plugin provisioner's output should be
+                        stored. The default is "Secret".
                       enum:
                       - Secret
                       - ConfigMap
@@ -339,13 +231,13 @@ spec:
                       description: Params is a map of unstructured key-value pairs
                         which will be provided to the Provisioner.
                       type: object
-                    provisionerName:
-                      description: ProvisionerName is the name of the provisioner
-                        which will provision and deprovision the resource.
+                    pluginName:
+                      description: PluginName is the name of the plugin which will
+                        provision and deprovision the resource.
                       type: string
                   required:
                   - name
-                  - provisionerName
+                  - pluginName
                   type: object
                 type: array
             required:
@@ -392,24 +284,14 @@ spec:
               observedGeneration:
                 format: int64
                 type: integer
-              overlays:
-                description: Overlays is the total number of overlays defined for
-                  this sandbox.
-                format: int32
-                type: integer
               readyDeployments:
                 description: ReadyDeployments is the number of cloned Deployments
                   that have been customized and are Complete.
                 format: int32
                 type: integer
-              readyOverlays:
-                description: ReadyOverlays is the number of overlays whose objects
-                  have been generated or extract successfully.
-                format: int32
-                type: integer
               readyResources:
                 description: ReadyResources is the number of resources which have
-                  been provided by a Provisioner.
+                  been provided by a Plugin.
                 format: int32
                 type: integer
               resources:

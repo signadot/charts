@@ -9,3 +9,12 @@
 # # Add these annotations to all objects deployed by this chart.
 # commonAnnotations:
 #   exampleCommonAnnotation: exampleCommonAnnotationValue
+
+# By default, this chart will install the operator in
+# cluster-wide mode, where it watches all namespaces.
+#
+# Uncomment the following to configure the operator to
+# only watch specific namespaces.
+#
+# allowedNamespaces:
+# - example
