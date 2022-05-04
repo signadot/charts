@@ -47,10 +47,10 @@ spec:
         - name: ALLOWED_NAMESPACES
           value: {{ range $i, $val := .Values.allowedNamespaces }}{{ if gt $i 0 }},{{ end }}{{ $val }}{{ else }}""{{ end }}
         - name: ROUTE_SIDECAR_IMAGE
-          value: {{ with .Values.routeSidecar }}{{ .image | default "signadot/route-sidecar:v0.9.2" | quote }}{{ else }}signadot/route-sidecar:v0.9.2{{ end }}
+          value: {{ with .Values.routeSidecar }}{{ .image | default "signadot/route-sidecar:v0.9.3" | quote }}{{ else }}signadot/route-sidecar:v0.9.3{{ end }}
         - name: EXECPOD_SIDECAR_IMAGE
-          value: {{ with .Values.execpodSidecar }}{{ .image | default "signadot/execpod-sidecar:v0.9.2" | quote }}{{ else }}signadot/execpod-sidecar:v0.9.2{{ end }}
-        image: {{ with .Values.operator }}{{ .image | default "signadot/operator:v0.9.2" | quote }}{{ else }}signadot/operator:v0.9.2{{ end }}
+          value: {{ with .Values.execpodSidecar }}{{ .image | default "signadot/execpod-sidecar:v0.9.3" | quote }}{{ else }}signadot/execpod-sidecar:v0.9.3{{ end }}
+        image: {{ with .Values.operator }}{{ .image | default "signadot/operator:v0.9.3" | quote }}{{ else }}signadot/operator:v0.9.3{{ end }}
         imagePullPolicy: {{ with .Values.operator }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
         livenessProbe:
           httpGet:
@@ -71,11 +71,11 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: 100m
-            memory: 128Mi
+            cpu: {{ with .Values.operator }}{{ .cpu | default "100m" | quote }}{{ else }}100m{{ end }}
+            memory: {{ with .Values.operator }}{{ .memory | default "512Mi" | quote }}{{ else }}512Mi{{ end }}
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: {{ with .Values.operator }}{{ .cpu | default "100m" | quote }}{{ else }}100m{{ end }}
+            memory: {{ with .Values.operator }}{{ .memory | default "512Mi" | quote }}{{ else }}512Mi{{ end }}
         securityContext:
           allowPrivilegeEscalation: false
         volumeMounts:
