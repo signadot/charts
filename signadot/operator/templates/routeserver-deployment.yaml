@@ -36,7 +36,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values.routeServer }}{{ .image | default "signadot/route-server:v0.9.3" | quote }}{{ else }}signadot/route-server:v0.9.3{{ end }}
+      - image: {{ with .Values.routeServer }}{{ .image | default "signadot/route-server:v0.9.4" | quote }}{{ else }}signadot/route-server:v0.9.4{{ end }}
         imagePullPolicy: {{ with .Values.routeServer }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
         name: routeserver
         ports:
