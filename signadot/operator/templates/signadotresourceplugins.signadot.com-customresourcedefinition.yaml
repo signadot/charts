@@ -50,6 +50,13 @@ spec:
                 description: ExecPod represents how a pods for provisioning and deprovisioning
                   will be executed.
                 properties:
+                  imageSpecVersion:
+                    description: ImageSpecVersion indicates which version of the plugin
+                      image specification is expected of the plugin image.  If it
+                      is empty, we assume the initial unversioned ImageSpecVersion.
+                      Only major and minor version may be specified.
+                    pattern: ^v[0-9]+\.[0-9]+$
+                    type: string
                   template:
                     description: Template is the associated corev1.PodTemplateSpec,
                       which is generally used to create distinct pods for provisioning
