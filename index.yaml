@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   operator:
   - apiVersion: v2
+    appVersion: 0.10.1
+    created: "2022-11-02T21:59:52.747840643Z"
+    description: In-cluster components for Signadot
+    digest: 232c4416e8c9c686261dcf9adc86696276e7d5f7ce6cb0ec58673761f9ea9ba9
+    name: operator
+    type: application
+    urls:
+    - https://github.com/signadot/charts/releases/download/operator-0.10.1/operator-0.10.1.tgz
+    version: 0.10.1
+  - apiVersion: v2
     appVersion: 0.10.0
     created: "2022-09-15T16:09:47.762872455Z"
     description: In-cluster components for Signadot
@@ -372,4 +382,4 @@ entries:
     urls:
     - https://github.com/signadot/charts/releases/download/workspaces-0.1.0/workspaces-0.1.0.tgz
     version: 0.1.0
-generated: "2022-09-15T16:09:47.763078562Z"
+generated: "2022-11-02T21:59:52.748117146Z"
