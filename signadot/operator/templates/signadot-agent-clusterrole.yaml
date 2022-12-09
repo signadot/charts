@@ -20,6 +20,7 @@ rules:
   - signadotroutes
   - signadotresources
   - signadotresourceplugins
+  - signadotroutegroups
   verbs:
   - get
   - list
