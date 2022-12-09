@@ -48,7 +48,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: {{ with .Values.agent }}{{ .image | default "signadot/agent:v0.10.1" | quote }}{{ else }}signadot/agent:v0.10.1{{ end }}
+        image: {{ with .Values.agent }}{{ .image | default "signadot/agent:v0.11.0" | quote }}{{ else }}signadot/agent:v0.11.0{{ end }}
         imagePullPolicy: {{ with .Values.agent }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
         livenessProbe:
           httpGet:

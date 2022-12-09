@@ -77,6 +77,32 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
+  - signadotroutegroups
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotroutegroups/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotroutegroups/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
   - signadotroutes
   verbs:
   - create
