@@ -10,13 +10,13 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: routeserver
+  name: io-context-server
   namespace: signadot
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: routeserver
+      app: io-context-server
   template:
     metadata:
       annotations:
@@ -27,7 +27,7 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
       labels:
-        app: routeserver
+        app: io-context-server
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -36,9 +36,13 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values.routeServer }}{{ .image | default "signadot/route-server:v0.12.0" | quote }}{{ else }}signadot/route-server:v0.12.0{{ end }}
-        imagePullPolicy: {{ with .Values.routeServer }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
-        name: routeserver
+      - command:
+        - /app/io-context-server
+        - -tls=secretns=signadot
+        - -port=8443
+        image: {{ with .Values.ioContextServer }}{{ .image | default "signadot/io-context-server:v0.12.0" | quote }}{{ else }}signadot/io-context-server:v0.12.0{{ end }}
+        imagePullPolicy: {{ with .Values.ioContextServer }}{{ .imagePullPolicy | default "IfNotPresent" | quote }}{{ else }}IfNotPresent{{ end }}
+        name: io-context-server
         ports:
-        - containerPort: 8080
-      serviceAccountName: routeserver
+        - containerPort: 8443
+      serviceAccountName: io-context-server

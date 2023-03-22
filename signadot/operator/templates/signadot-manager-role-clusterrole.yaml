@@ -25,6 +25,58 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
+  - resources
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - resources/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - resources/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotobjectlifecyclemethods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotobjectlifecyclemethods/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotobjectlifecyclemethods/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
   - signadotresourceplugins
   verbs:
   - create
