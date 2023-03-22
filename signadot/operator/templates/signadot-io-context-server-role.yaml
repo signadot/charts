@@ -10,7 +10,7 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-manager-role
+  name: signadot-io-context-server
   namespace: signadot
 rules:
 - apiGroups:
@@ -18,24 +18,8 @@ rules:
   resources:
   - secrets
   verbs:
+  - get
+  - list
+  - watch
   - create
-- apiGroups:
-  - ""
-  resourceNames:
-  - io-context-tls
-  resources:
-  - secrets
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resourceNames:
-  - webhook-server-cert
-  resources:
-  - secrets
-  verbs:
-  - get
-  - patch
-  - update
+  - delete

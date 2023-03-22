@@ -1,6 +1,6 @@
 # This file is generated. Do not edit.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: RoleBinding
 metadata:
   annotations:
     {{- range $key, $val := .Values.commonAnnotations }}
@@ -10,32 +10,13 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-manager-role
+  name: signadot-io-context-server
   namespace: signadot
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - create
-- apiGroups:
-  - ""
-  resourceNames:
-  - io-context-tls
-  resources:
-  - secrets
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resourceNames:
-  - webhook-server-cert
-  resources:
-  - secrets
-  verbs:
-  - get
-  - patch
-  - update
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: signadot-io-context-server
+subjects:
+- kind: ServiceAccount
+  name: io-context-server
+  namespace: signadot
