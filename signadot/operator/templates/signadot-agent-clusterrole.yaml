@@ -19,6 +19,8 @@ rules:
   - signadotsandboxes
   - signadotroutes
   - signadotresources
+  - resources
+  - signadotobjectlifecyclemethods
   - signadotresourceplugins
   - signadotroutegroups
   verbs:
