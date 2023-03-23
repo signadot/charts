@@ -79,7 +79,7 @@ kubectl delete ns signadot
 | `ioContextServer.image`           | IO Context Server image override               | `""`             |
 | `ioContextServer.imagePullPolicy` | IO Context Server image pull policy            | `IfNotPresent`   |
 | `kubeRBACProxy.image`             | Kube-rbac-proxy image override                 | `""`             |
-| `kubeRBACProxy.imagePullPolicy`   | Kube-rbac-prox image pull policy               | `IfNotPresent`   |
+| `kubeRBACProxy.imagePullPolicy`   | Kube-rbac-proxy image pull policy              | `IfNotPresent`   |
 | `routeInit.image`                 | Route Init container image override            | `""`             |
 | `routeInit.imagePullPolicy`       | Route Init container image pull policy         | `IfNotPresent`   |
 | `routeInit.imagePullSecret`       | Route Init container image pull secret         | `""`             |
