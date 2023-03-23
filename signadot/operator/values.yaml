@@ -1,20 +1,79 @@
-# # Add these labels to all Pods deployed by this chart.
-# podLabels:
-#   examplePodLabel: PLvalue
-
-# # Add these labels to all objects deployed by this chart.
+# Add these labels to all objects deployed by this chart.
 # commonLabels:
 #   exampleCommonLabel: exampleCommonLabelValue
 
-# # Add these annotations to all objects deployed by this chart.
+# Add these annotations to all objects deployed by this chart.
 # commonAnnotations:
 #   exampleCommonAnnotation: exampleCommonAnnotationValue
 
+# Add these labels to all Pods deployed by this chart.
+# podLabels:
+#   examplePodLabel: examplePodLabelValue
+
+# Add these annotations to all Pods deployed by this chart.
+# podAnnotations:
+#   examplePodLAnnotation: examplePodLAnnotationValue
+
+# Add these labels to all Services deployed by this chart.
+# serviceLabels:
+#   exampleServiceLabel: exampleServiceLabelValue
+
+# Add these annotations to all Services deployed by this chart.
+# serviceAnnotations:
+#   exampleServiceLAnnotation: exampleServiceLAnnotationValue
+
 # By default, this chart will install the operator in
 # cluster-wide mode, where it watches all namespaces.
-#
+
 # Uncomment the following to configure the operator to
 # only watch specific namespaces.
-#
 # allowedNamespaces:
-# - example
+# - ns1
+# - ns2
+
+# Image customization parameters:
+#
+# operator:
+#   image: my-private-registry/signadot/operator:latest
+#   imagePullPolicy: Always
+ 
+# agent:
+#   image: my-private-registry/signadot/agent:latest
+#   imagePullPolicy: Always
+
+# routeServer:
+#   image: my-private-registry/signadot/route-server:latest
+#   imagePullPolicy: Always
+
+# ioContextServer:
+#   image: my-private-registry/signadot/io-context-server:latest
+#   imagePullPolicy: Always
+
+# kubeRBACProxy:
+#   image: my-private-registry/gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+#   imagePullPolicy: Always
+
+# routeInit:
+#   image: my-private-registry/signadot/sd-init-networking:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-routeInit
+
+# routeSidecar:
+#   image: my-private-registry/signadot/route-sidecar:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-routeSidecar
+
+# ioInit:
+#   image: my-private-registry/signadot/io-init:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-ioInit
+
+# ioSidecar:
+#   image: my-private-registry/signadot/io-sidecar:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-ioSidecar
+
+# execpodSidecar:  # for legacy resource plugins
+#   image: my-private-registry/signadot/execpod-sidecar:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-execpodSidecar
