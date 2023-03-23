@@ -57,18 +57,18 @@ kubectl delete ns signadot
 
 ### Common parameters
 
-| Name                 | Description                                               | Value  |
-| -------------------- | --------------------------------------------------------- | ------ |
-| `commonLabels`       | Labels to add to all deployed objects                     | `{}`   |
-| `commonAnnotations`  | Annotations to add to all deployed objects                | `{}`   |
-| `podLabels`          | Labels to add to all deployed `Pod` objects               | `{}`   |
-| `podAnnotations`     | Annotations to add to all deployed `Pod` objects          | `{}`   |
-| `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`   |
-| `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`   |
+| Name                 | Description                                               | Default  |
+| -------------------- | --------------------------------------------------------- | -------- |
+| `commonLabels`       | Labels to add to all deployed objects                     | `{}`     |
+| `commonAnnotations`  | Annotations to add to all deployed objects                | `{}`     |
+| `podLabels`          | Labels to add to all deployed `Pod` objects               | `{}`     |
+| `podAnnotations`     | Annotations to add to all deployed `Pod` objects          | `{}`     |
+| `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`     |
+| `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
 
 ### Image customization parameters
 
-| Name                              | Description                                    | Value            |
+| Name                              | Description                                    | Default          |
 | --------------------------------- | ---------------------------------------------- | ---------------- |
 | `operator.image`                  | Operator image override                        | `""`             |
 | `operator.imagePullPolicy`        | Operator image pull policy                     | `IfNotPresent`   |
