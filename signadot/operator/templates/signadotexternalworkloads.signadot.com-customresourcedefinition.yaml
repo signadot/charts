@@ -1,0 +1,228 @@
+# This file is generated. Do not edit.
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.2
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadotexternalworkloads.signadot.com
+spec:
+  group: signadot.com
+  names:
+    kind: SignadotExternalWorkload
+    listKind: SignadotExternalWorkloadList
+    plural: signadotexternalworkloads
+    shortNames:
+    - sdxw
+    singular: signadotexternalworkload
+  scope: Namespaced
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              baseline:
+                description: Baseline specifies the target workload to which this
+                  external workload applies.
+                properties:
+                  apiVersion:
+                    description: APIVersion specifies the API Version (e.g. "apps/v1")
+                      of the object to patch.
+                    type: string
+                  kind:
+                    description: Kind specifies the Kind (e.g. "Deployment") of the
+                      object to patch.
+                    type: string
+                  name:
+                    description: Name specifies the name of the object to patch.
+                    type: string
+                  namespace:
+                    description: Namespace optionally specifies which namespace will
+                      be searched.
+                    type: string
+                required:
+                - apiVersion
+                - kind
+                - name
+                type: object
+              name:
+                description: 'Name of the external workload, this is an arbitrary
+                  string defined by the user (eg: "apiserver" or "playground-api")'
+                maxLength: 30
+                pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
+                type: string
+              routingKey:
+                description: RoutingKey is a unique short key that can be provided
+                  to context propagation mechanisms.
+                type: string
+              tunnel:
+                description: Tunnel defines that this external workload will be accessed
+                  via a reverse tunnel, in Tunnel Proxy.
+                properties:
+                  baselineToLocals:
+                    description: List of ports to be forwarded to the workstation
+                    items:
+                      properties:
+                        baselinePort:
+                          description: Baseline container port
+                          format: int32
+                          type: integer
+                        localAddress:
+                          description: TCP Address to which it is to be routed, for
+                            example "localhost:8080"
+                          type: string
+                      required:
+                      - baselinePort
+                      - localAddress
+                      type: object
+                    type: array
+                required:
+                - baselineToLocals
+                type: object
+              workloadID:
+                description: WorkloadID is the UID of the underlying workload.
+                type: string
+            required:
+            - baseline
+            - name
+            - routingKey
+            - workloadID
+            type: object
+          status:
+            description: ResourceStatus defines status of a Resource
+            properties:
+              conditions:
+                description: 'Conditions is a list of conditions that matches the
+                  conventions expected by kubectl, allowing our CRDs to work with:
+                  kubectl wait --for=condition=...'
+                items:
+                  description: "StatusCondition is a condition struct that matches
+                    the conventions expected by kubectl, allowing our CRDs to work
+                    with: kubectl wait --for=condition=... \n StatusConditions must
+                    follow the following discipline in reconciliation: The operator
+                    MUST always populate all the condition types in a SignadotSandboxStatus
+                    struct, irrespective of whether the condition is known or not
+                    (see corev1.ConditionUnknown) so that access via a k8s client
+                    can determine whether the capability is supported in the operator."
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedGeneration:
+                description: ObservedGeneration provides the Generation of the last
+                  Resource seen by the controller.
+                format: int64
+                type: integer
+              tunnel:
+                description: Tunnel exposes the status of the tunnel behind this external
+                  workload
+                properties:
+                  health:
+                    description: Is there an active tunnel to the workstation?
+                    properties:
+                      connected:
+                        description: Is there an active reverse tunnel to the workstation?
+                        type: boolean
+                      lastCheckTime:
+                        description: Last time we performed a health check
+                        format: date-time
+                        type: string
+                      lastConnectedTime:
+                        description: Last time we got a successful health check
+                        format: date-time
+                        type: string
+                    required:
+                    - connected
+                    type: object
+                  info:
+                    description: Reference to reverse tunnel exposing the workload
+                    properties:
+                      controlPort:
+                        description: This is the control port for this tunnel, used
+                          for health check control
+                        format: int32
+                        type: integer
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: Tunnel labels (information about the connected
+                          client)
+                        type: object
+                      tunnelProxyPodIP:
+                        description: Tunnel proxy pod ip
+                        type: string
+                      tunnelProxyPodName:
+                        description: Tunnel proxy pod name
+                        type: string
+                      workloadPorts:
+                        description: This is a map from the workload source port as
+                          a string to the port in which it is exposed in the Tunnel
+                          proxy.
+                        items:
+                          description: Baseline port mapping to proxy port
+                          properties:
+                            baseline:
+                              description: An exposed port on the baseline
+                              format: int32
+                              type: integer
+                            proxy:
+                              description: The corresponding proxy port
+                              format: int32
+                              type: integer
+                          required:
+                          - baseline
+                          - proxy
+                          type: object
+                        type: array
+                    required:
+                    - controlPort
+                    - tunnelProxyPodIP
+                    - tunnelProxyPodName
+                    - workloadPorts
+                    type: object
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

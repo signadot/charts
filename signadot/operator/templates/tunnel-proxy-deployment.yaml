@@ -1,0 +1,124 @@
+# This file is generated. Do not edit.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: tunnel-proxy
+  namespace: signadot
+spec:
+{{- if and .Values .Values.tunnel .Values.tunnel.proxy .Values.tunnel.proxy.replicas }}
+  replicas: {{ .Values.tunnel.proxy.replicas }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: tunnel-proxy
+{{- if and .Values .Values.tunnel .Values.tunnel.proxy .Values.tunnel.proxy.strategy }}
+  strategy:
+{{ toYaml .Values.tunnel.proxy.strategy | indent 10 }}
+{{- end }}
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $val := .Values.commonAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+      labels:
+        app: tunnel-proxy
+        {{- range $key, $val := .Values.commonLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+    spec:
+      containers:
+      - env:
+        - name: DISABLE_SSH_TUNNEL
+          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ .disableSSH  | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+        - name: DISABLE_XAP_TUNNEL
+          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ .disableXAP  | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ .image  | quote}}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ .imagePullPolicy  | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        name: tunnel-proxy
+        ports:
+        - containerPort: 1080
+        - containerPort: 5000
+        - containerPort: 2222
+        - containerPort: 7777
+        - containerPort: 8001
+{{- if and .Values .Values.tunnel .Values.tunnel.proxy .Values.tunnel.proxy.resources }}
+        resources:
+{{ toYaml .Values.tunnel.proxy.resources | indent 10 }}
+{{- end }}
+      - args:
+        - -c
+        - /etc/config.yaml
+        command:
+        - envoy
+        image: envoyproxy/envoy:v1.26.1
+        name: auditor
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsUser: 1011
+        volumeMounts:
+        - mountPath: /etc/config.yaml
+          name: tunnel-auditor-config
+          subPath: config.yaml
+        - mountPath: /etc/lua/inbound-rules.lua
+          name: tunnel-auditor-config
+          subPath: inbound-rules.lua
+        - mountPath: /etc/lua/outbound-rules.lua
+          name: tunnel-auditor-config
+          subPath: outbound-rules.lua
+        - mountPath: /var/log
+          name: varlog
+        - mountPath: /usr/local/share/lua
+          name: luarocks
+      initContainers:
+      - env:
+        - name: LUA_ROCKS
+          value: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ .luaRocks }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: INBOUND_AUDITOR_PORT
+          value: "10000"
+        - name: OUTBOUND_AUDITOR_PORT
+          value: "10001"
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ .image  | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+        name: auditor-init
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/log
+          name: varlog
+        - mountPath: /usr/local/share/lua
+          name: luarocks
+      serviceAccountName: tunnel-proxy
+      volumes:
+      - configMap:
+          name: tunnel-auditor-config
+        name: tunnel-auditor-config
+      - emptyDir: {}
+        name: varlog
+      - emptyDir: {}
+        name: luarocks

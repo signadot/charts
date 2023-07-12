@@ -77,3 +77,75 @@
 #   image: my-private-registry/signadot/execpod-sidecar:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-execpodSidecar
+
+tunnel:
+  api:
+    replicas: 1
+    image: my-private-registry/signadot/tunnel-api:latest
+    imagePullPolicy: Always
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "100m"
+        memory: "512Mi"
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+  proxy:
+    replicas: 1
+    image: my-private-registry/signadot/tunnel-proxy:latest
+    imagePullPolicy: Always
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "512Mi"
+      limits:
+        cpu: "200m"
+        memory: "1Gi"
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+  auditor:
+    init:
+      image: my-private-registry/signadot/tunnel-auditor-init:latest
+      imagePullPolicy: Always
+    # luaRocks is an optional, space-separated list of Lua packages (called rocks)
+    # to install in the Envoy auditor Lua environment.
+    # These packages' modules can then be required from inboundRulesLuaScript and
+    # outputRulesLuaScript.
+    # See luarocks.org for available packages.
+    luaRocks: "date"
+    inboundRulesLuaScript: |
+      function envoy_on_request(request_handle)
+        -- sample code (read one custom header and print it)
+        local auditKey = request_handle:headers():get("inbound-audit-key")
+        if auditKey ~= nil and auditKey ~= '' then
+          request_handle:logInfo(auditKey)
+        end
+      end
+    outboundRulesLuaScript: |
+      function envoy_on_request(request_handle)
+        -- sample code (read one custom header and print it)
+        local auditKey = request_handle:headers():get("outbound-audit-key")
+        if auditKey ~= nil and auditKey ~= '' then
+          request_handle:logInfo(auditKey)
+        end
+      end
+  config:
+    cidrs: |
+      outboundIPs:
+      - name: foo
+        cidr: 10.80.0.0/12
+        exclude: true
+      version: 1
+    externalDNS:
+      server: http://10.20.10.2:8083
+      syncInterval: 60
+    disableSSH: false
+    disableXAP: false

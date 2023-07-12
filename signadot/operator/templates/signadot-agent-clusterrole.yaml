@@ -16,8 +16,10 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
+  - resources
   - signadotsandboxes
   - signadotroutes
+  - signadotexternalworkloads
   - signadotresources
   - resources
   - signadotobjectlifecyclemethods
