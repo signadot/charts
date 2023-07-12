@@ -43,8 +43,12 @@ spec:
     spec:
       containers:
       - args:
-        - --external-dns-server={{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ .server }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
-        - --external-dns-resync-interval={{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ .syncInterval }}{{- else -}}"30"{{- end }}{{- else -}}"30"{{- end }}{{- else -}}"30"{{- end }}{{- else -}}"30"{{- end }}
+{{- if and .Values .Values.tunnel .Values.tunnel.config .Values.tunnel.config.externalDNS .Values.tunnel.config.externalDNS.server }}
+        - --external-dns-server={{ .Values.tunnel.config.externalDNS.server }}
+{{- end }}
+{{- if and .Values .Values.tunnel .Values.tunnel.config .Values.tunnel.config.externalDNS .Values.tunnel.config.externalDNS.syncInterval }}
+        - --external-dns-resync-interval={{ .Values.tunnel.config.externalDNS.syncInterval }}
+{{- end }}
         image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ .image  | quote}}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ .imagePullPolicy  | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-api
