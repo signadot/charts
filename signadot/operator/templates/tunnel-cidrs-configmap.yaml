@@ -1,7 +1,7 @@
 # This file is generated. Do not edit.
 apiVersion: v1
 data:
-  cidr.yaml: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ .cidrs  | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+  cidr.yaml: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .cidrs }}{{ . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
 kind: ConfigMap
 metadata:
   annotations:

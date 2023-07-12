@@ -42,8 +42,8 @@ spec:
         - --upstream=http://127.0.0.1:8080/
         - --logtostderr=true
         - --v=10
-        image: {{ with .Values }}{{ with .kubeRBACProxy }}{{ .image  | quote}}{{- else -}}gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0{{- end }}{{- else -}}gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .kubeRBACProxy }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+        image: {{ with .Values }}{{ with .kubeRBACProxy }}{{ with .image }}{{ . | quote}}{{- else -}}gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0{{- end }}{{- else -}}gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0{{- end }}{{- else -}}gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .kubeRBACProxy }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
@@ -58,37 +58,37 @@ spec:
         - name: ALLOWED_NAMESPACES
           value: {{ range $i, $val := .Values.allowedNamespaces }}{{ if gt $i 0 }},{{ end }}{{ $val }}{{ else }}""{{ end }}
         - name: SIDECAR_INIT_IMAGE_PULL_POLICY
-          value: {{ with .Values }}{{ with .routeInit }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+          value: {{ with .Values }}{{ with .routeInit }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: SIDECAR_INIT_IMAGE_PULL_SECRET
-          value: {{ with .Values }}{{ with .routeInit }}{{ .imagePullSecret }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+          value: {{ with .Values }}{{ with .routeInit }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: ROUTE_SIDECAR_IMAGE_PULL_POLICY
-          value: {{ with .Values }}{{ with .routeSidecar }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: ROUTE_SIDECAR_IMAGE_PULL_SECRET
-          value: {{ with .Values }}{{ with .routeSidecar }}{{ .imagePullSecret }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: IO_INIT_IMAGE_PULL_POLICY
-          value: {{ with .Values }}{{ with .ioInit }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+          value: {{ with .Values }}{{ with .ioInit }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: IO_INIT_IMAGE_PULL_SECRET
-          value: {{ with .Values }}{{ with .ioInit }}{{ .imagePullSecret }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+          value: {{ with .Values }}{{ with .ioInit }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: IO_SIDECAR_IMAGE_PULL_POLICY
-          value: {{ with .Values }}{{ with .ioSidecar }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: IO_SIDECAR_IMAGE_PULL_SECRET
-          value: {{ with .Values }}{{ with .ioSidecar }}{{ .imagePullSecret }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: EXECPOD_SIDECAR_IMAGE_PULL_POLICY
-          value: {{ with .Values }}{{ with .execpodSidecar }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+          value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: EXECPOD_SIDECAR_IMAGE_PULL_SECRET
-          value: {{ with .Values }}{{ with .execpodSidecar }}{{ .imagePullSecret }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+          value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: SIDECAR_INIT_IMAGE
-          value: {{ with .Values }}{{ with .routeInit }}{{ .image  | quote}}{{- else -}}signadot/sd-init-networking:latest{{- end }}{{- else -}}signadot/sd-init-networking:latest{{- end }}
+          value: {{ with .Values }}{{ with .routeInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/sd-init-networking:latest{{- end }}{{- else -}}signadot/sd-init-networking:latest{{- end }}{{- else -}}signadot/sd-init-networking:latest{{- end }}
         - name: ROUTE_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .routeSidecar }}{{ .image  | quote}}{{- else -}}signadot/route-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar:v0.13.0-xrc.1{{- end }}
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar:v0.13.0-xrc.1{{- end }}
         - name: EXECPOD_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .execpodSidecar }}{{ .image  | quote}}{{- else -}}signadot/execpod-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/execpod-sidecar:v0.13.0-xrc.1{{- end }}
+          value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/execpod-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/execpod-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/execpod-sidecar:v0.13.0-xrc.1{{- end }}
         - name: IO_INIT_IMAGE
-          value: {{ with .Values }}{{ with .ioInit }}{{ .image  | quote}}{{- else -}}signadot/io-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/io-init:v0.13.0-xrc.1{{- end }}
+          value: {{ with .Values }}{{ with .ioInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/io-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/io-init:v0.13.0-xrc.1{{- end }}
         - name: IO_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .ioSidecar }}{{ .image  | quote}}{{- else -}}signadot/io-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/io-sidecar:v0.13.0-xrc.1{{- end }}
-        image: {{ with .Values }}{{ with .operator }}{{ .image  | quote}}{{- else -}}signadot/operator:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/operator:v0.13.0-xrc.1{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .operator }}{{ .imagePullPolicy  | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/io-sidecar:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/io-sidecar:v0.13.0-xrc.1{{- end }}
+        image: {{ with .Values }}{{ with .operator }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/operator:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/operator:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/operator:v0.13.0-xrc.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .operator }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -108,11 +108,11 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: {{ with .Values }}{{ with .operator }}{{ .cpu  | quote}}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}
-            memory: {{ with .Values }}{{ with .operator }}{{ .memory  | quote}}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}
+            cpu: {{ with .Values }}{{ with .operator }}{{ with .cpu }}{{ . | quote}}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}
+            memory: {{ with .Values }}{{ with .operator }}{{ with .memory }}{{ . | quote}}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}
           requests:
-            cpu: {{ with .Values }}{{ with .operator }}{{ .cpu  | quote}}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}
-            memory: {{ with .Values }}{{ with .operator }}{{ .memory  | quote}}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}
+            cpu: {{ with .Values }}{{ with .operator }}{{ with .cpu }}{{ . | quote}}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}
+            memory: {{ with .Values }}{{ with .operator }}{{ with .memory }}{{ . | quote}}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}
         securityContext:
           allowPrivilegeEscalation: false
         volumeMounts:

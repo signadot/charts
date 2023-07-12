@@ -49,8 +49,8 @@ spec:
 {{- if and .Values .Values.tunnel .Values.tunnel.config .Values.tunnel.config.externalDNS .Values.tunnel.config.externalDNS.syncInterval }}
         - --external-dns-resync-interval={{ .Values.tunnel.config.externalDNS.syncInterval }}
 {{- end }}
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ .image  | quote}}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ .imagePullPolicy  | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.0-xrc.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-api
         ports:
         - containerPort: 9070

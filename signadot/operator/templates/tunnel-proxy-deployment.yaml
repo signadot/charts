@@ -44,9 +44,9 @@ spec:
       containers:
       - env:
         - name: DISABLE_SSH_TUNNEL
-          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ .disableSSH  | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableSSH }}{{ . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
         - name: DISABLE_XAP_TUNNEL
-          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ .disableXAP  | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableXAP }}{{ . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -55,8 +55,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ .image  | quote}}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ .imagePullPolicy  | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.0-xrc.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-proxy
         ports:
         - containerPort: 1080
@@ -95,13 +95,13 @@ spec:
       initContainers:
       - env:
         - name: LUA_ROCKS
-          value: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ .luaRocks }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+          value: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .luaRocks }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: INBOUND_AUDITOR_PORT
           value: "10000"
         - name: OUTBOUND_AUDITOR_PORT
           value: "10001"
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ .image  | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ .imagePullPolicy }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.0-xrc.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor-init
         securityContext:
           capabilities:
