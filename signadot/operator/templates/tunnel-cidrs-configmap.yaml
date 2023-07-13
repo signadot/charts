@@ -1,0 +1,22 @@
+# This file is generated. Do not edit.
+apiVersion: v1
+data:
+  cidr.yaml: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .cidrs }}{{ . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+kind: ConfigMap
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+    {{- range $key, $val := .Values.configMapAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+    {{- range $key, $val := .Values.configMapLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: tunnel-cidrs
+  namespace: signadot

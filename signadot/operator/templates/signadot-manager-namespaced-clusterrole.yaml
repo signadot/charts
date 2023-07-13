@@ -79,6 +79,7 @@ rules:
   - networking.istio.io
   resources:
   - virtualservices
+  - serviceentries
   verbs:
   - create
   - delete

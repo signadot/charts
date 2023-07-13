@@ -51,6 +51,32 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
+  - signadotexternalworkloads
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotexternalworkloads/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - signadotexternalworkloads/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
   - signadotobjectlifecyclemethods
   verbs:
   - create
