@@ -13,16 +13,14 @@ metadata:
   name: tunnel-proxy
   namespace: signadot
 spec:
-{{- if and .Values .Values.tunnel .Values.tunnel.proxy .Values.tunnel.proxy.replicas }}
-  replicas: {{ .Values.tunnel.proxy.replicas }}
-{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .replicas }}  replicas: {{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
       app: tunnel-proxy
-{{- if and .Values .Values.tunnel .Values.tunnel.proxy .Values.tunnel.proxy.strategy }}
-  strategy:
-{{ toYaml .Values.tunnel.proxy.strategy | indent 10 }}
-{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .strategy }}  strategy:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   template:
     metadata:
       annotations:
@@ -64,10 +62,9 @@ spec:
         - containerPort: 2222
         - containerPort: 7777
         - containerPort: 8001
-{{- if and .Values .Values.tunnel .Values.tunnel.proxy .Values.tunnel.proxy.resources }}
-        resources:
-{{ toYaml .Values.tunnel.proxy.resources | indent 10 }}
-{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .resources }}        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       - args:
         - -c
         - /etc/config.yaml
