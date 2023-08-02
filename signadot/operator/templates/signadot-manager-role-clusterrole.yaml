@@ -6,6 +6,7 @@ metadata:
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+  creationTimestamp: null
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}

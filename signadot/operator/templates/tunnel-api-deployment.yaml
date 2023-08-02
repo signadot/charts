@@ -13,16 +13,14 @@ metadata:
   name: tunnel-api
   namespace: signadot
 spec:
-{{- if and .Values .Values.tunnel .Values.tunnel.api .Values.tunnel.api.replicas }}
-  replicas: {{ .Values.tunnel.api.replicas }}
-{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .replicas }}  replicas: {{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
       app: tunnel-api
-{{- if and .Values .Values.tunnel .Values.tunnel.api .Values.tunnel.api.strategy }}
-  strategy:
-{{ toYaml .Values.tunnel.api.strategy | indent 10 }}
-{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .strategy }}  strategy:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   template:
     metadata:
       annotations:
@@ -43,19 +41,16 @@ spec:
     spec:
       containers:
       - args:
-{{- if and .Values .Values.tunnel .Values.tunnel.config .Values.tunnel.config.externalDNS .Values.tunnel.config.externalDNS.server }}
-        - --external-dns-server={{ .Values.tunnel.config.externalDNS.server }}
-{{- end }}
-{{- if and .Values .Values.tunnel .Values.tunnel.config .Values.tunnel.config.externalDNS .Values.tunnel.config.externalDNS.syncInterval }}
-        - --external-dns-resync-interval={{ .Values.tunnel.config.externalDNS.syncInterval }}
-{{- end }}
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.13.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.1{{- end }}{{- else -}}signadot/tunnel-api:v0.13.1{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ with .server }}        - --external-dns-server={{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ with .syncInterval }}        - --external-dns-resync-interval={{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.13.2{{- end }}{{- else -}}signadot/tunnel-api:v0.13.2{{- end }}{{- else -}}signadot/tunnel-api:v0.13.2{{- end }}{{- else -}}signadot/tunnel-api:v0.13.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-api
         ports:
         - containerPort: 9070
-{{- if and .Values .Values.tunnel .Values.tunnel.api .Values.tunnel.api.resources }}
-        resources:
-{{ toYaml .Values.tunnel.api.resources | indent 10 }}
-{{- end }}
+{{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .resources }}        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: tunnel-api
