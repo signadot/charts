@@ -36,7 +36,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v0.13.2{{- end }}{{- else -}}signadot/route-server:v0.13.2{{- end }}{{- else -}}signadot/route-server:v0.13.2{{- end }}
+      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v0.13.3{{- end }}{{- else -}}signadot/route-server:v0.13.3{{- end }}{{- else -}}signadot/route-server:v0.13.3{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .routeServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: routeserver
         ports:
