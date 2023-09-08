@@ -68,39 +68,41 @@ kubectl delete ns signadot
 
 ### Image customization parameters
 
-| Name                                  | Description                                 | Default        |
-| ------------------------------------- | ------------------------------------------- | -------------- |
-| `operator.image`                      | Operator image override                     | `""`           |
-| `operator.imagePullPolicy`            | Operator image pull policy                  | `IfNotPresent` |
-| `agent.image`                         | Agent image override                        | `""`           |
-| `agent.imagePullPolicy`               | Agent image pull policy                     | `IfNotPresent` |
-| `routeServer.image`                   | Route Server image override                 | `""`           |
-| `routeServer.imagePullPolicy`         | Route Server image pull policy              | `IfNotPresent` |
-| `ioContextServer.image`               | IO Context Server image override            | `""`           |
-| `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy         | `IfNotPresent` |
-| `kubeRBACProxy.image`                 | Kube-rbac-proxy image override              | `""`           |
-| `kubeRBACProxy.imagePullPolicy`       | Kube-rbac-proxy image pull policy           | `IfNotPresent` |
-| `routeInit.image`                     | Route Init container image override         | `""`           |
-| `routeInit.imagePullPolicy`           | Route Init container image pull policy      | `IfNotPresent` |
-| `routeInit.imagePullSecret`           | Route Init container image pull secret      | `""`           |
-| `routeSidecar.image`                  | Route Sidecar container image override      | `""`           |
-| `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy   | `IfNotPresent` |
-| `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret   | `""`           |
-| `ioInit.image`                        | IO Init container image override            | `""`           |
-| `ioInit.imagePullPolicy`              | IO Init container image pull policy         | `IfNotPresent` |
-| `ioInit.imagePullSecret`              | IO Init container image pull secret         | `""`           |
-| `ioSidecar.image`                     | IO Sidecar container image override         | `""`           |
-| `ioSidecar.imagePullPolicy`           | IO Sidecar container image pull policy      | `IfNotPresent` |
-| `ioSidecar.imagePullSecret`           | IO Sidecar container image pull secret      | `""`           |
-| `execpodSidecar.image`                | ExecPod Sidecar container image override    | `""`           |
-| `execpodSidecar.imagePullPolicy`      | ExecPod Sidecar container image pull policy | `IfNotPresent` |
-| `execpodSidecar.imagePullSecret`      | ExecPod Sidecar container image pull secret | `""`           |
-| `tunnel.api.image`                    | Tunnel API image override                   | `""`           |
-| `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                | `IfNotPresent` |
-| `tunnel.proxy.image`                  | Tunnel Proxy image override                 | `""`           |
-| `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy              | `IfNotPresent` |
-| `tunnel.auditor.init.image`           | Tunnel Auditor init image override          | `""`           |
-| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor init image pull policy       | `IfNotPresent` |
+| Name                                  | Description                                             | Default        |
+| ------------------------------------- | ------------------------------------------------------- | -------------- |
+| `operator.image`                      | Operator image override                                 | `""`           |
+| `operator.imagePullPolicy`            | Operator image pull policy                              | `IfNotPresent` |
+| `agent.image`                         | Agent image override                                    | `""`           |
+| `agent.imagePullPolicy`               | Agent image pull policy                                 | `IfNotPresent` |
+| `routeServer.image`                   | Route Server image override                             | `""`           |
+| `routeServer.imagePullPolicy`         | Route Server image pull policy                          | `IfNotPresent` |
+| `ioContextServer.image`               | IO Context Server image override                        | `""`           |
+| `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy                     | `IfNotPresent` |
+| `kubeRBACProxy.image`                 | Kube-rbac-proxy image override                          | `""`           |
+| `kubeRBACProxy.imagePullPolicy`       | Kube-rbac-proxy image pull policy                       | `IfNotPresent` |
+| `routeInit.image`                     | Route Init container image override                     | `""`           |
+| `routeInit.legacy.image`              | Route Init container image override (legacy version)    |                |
+| `routeInit.imagePullPolicy`           | Route Init container image pull policy                  | `IfNotPresent` |
+| `routeInit.imagePullSecret`           | Route Init container image pull secret                  | `""`           |
+| `routeSidecar.image`                  | Route Sidecar container image override                  | `""`           |
+| `routeSidecar.legacy.image`           | Route Sidecar container image override (legacy version) | `""`           |
+| `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy               | `IfNotPresent` |
+| `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret               | `""`           |
+| `ioInit.image`                        | IO Init container image override                        | `""`           |
+| `ioInit.imagePullPolicy`              | IO Init container image pull policy                     | `IfNotPresent` |
+| `ioInit.imagePullSecret`              | IO Init container image pull secret                     | `""`           |
+| `ioSidecar.image`                     | IO Sidecar container image override                     | `""`           |
+| `ioSidecar.imagePullPolicy`           | IO Sidecar container image pull policy                  | `IfNotPresent` |
+| `ioSidecar.imagePullSecret`           | IO Sidecar container image pull secret                  | `""`           |
+| `execpodSidecar.image`                | ExecPod Sidecar container image override                | `""`           |
+| `execpodSidecar.imagePullPolicy`      | ExecPod Sidecar container image pull policy             | `IfNotPresent` |
+| `execpodSidecar.imagePullSecret`      | ExecPod Sidecar container image pull secret             | `""`           |
+| `tunnel.api.image`                    | Tunnel API image override                               | `""`           |
+| `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                            | `IfNotPresent` |
+| `tunnel.proxy.image`                  | Tunnel Proxy image override                             | `""`           |
+| `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                          | `IfNotPresent` |
+| `tunnel.auditor.init.image`           | Tunnel Auditor init image override                      | `""`           |
+| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor init image pull policy                   | `IfNotPresent` |
 
 ### Tunnel parameters
 

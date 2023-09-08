@@ -54,12 +54,16 @@
 #   imagePullPolicy: Always
 
 # routeInit:
-#   image: my-private-registry/signadot/sd-init-networking:latest
+#   image: my-private-registry/signadot/route-sidecar-init:latest
+#   legacy:
+#     image: my-private-registry/signadot/sd-init-networking:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-routeInit
 
 # routeSidecar:
 #   image: my-private-registry/signadot/route-sidecar:latest
+#   legacy:
+#     image: my-private-registry/signadot/route-sidecar-legacy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-routeSidecar
 
