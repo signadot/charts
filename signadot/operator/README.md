@@ -110,6 +110,8 @@ style resources and are not needed in an installation which uses the new
 | `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                            | `IfNotPresent` |
 | `tunnel.proxy.image`                  | Tunnel Proxy image override                             | `signadot/tunnel-proxy:vX.Y.Z`           |
 | `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                          | `IfNotPresent` |
+| `tunnel.auditor.image`           | Tunnel Auditor image override                      | `signadot/tunnel-auditor:vX.Y.Z`           |
+| `tunnel.auditor.imagePullPolicy` | Tunnel Auditor image pull policy                   | `IfNotPresent` |
 | `tunnel.auditor.init.image`           | Tunnel Auditor init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`           |
 | `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor init image pull policy                   | `IfNotPresent` |
 
@@ -132,3 +134,12 @@ style resources and are not needed in an installation which uses the new
 | `tunnel.auditor.inboundRulesLuaScript`   | All inbound traffic (from cluster to workstation) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details  | `""`    |
 | `tunnel.auditor.outboundRulesLuaScript`  | All outbound traffic (from workstation to cluster) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details | `""`    |
 |                                          |                                                                                                                                                                                                                                                                              |         |
+### Istio Parameters
+
+The Signadot Operator manipulates istio objects when istio VirtualServices are applied to workloads in sandboxes.  You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added if not present when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
+
+
+| Name                                     | Description | Default |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `istio.additionalAnnotations`                    | Annotations to add to istio objects if not present | `{}`     |
+| `istio.additionalLabels`                   | Labels to add to istio objects if not present | `{}`    |
