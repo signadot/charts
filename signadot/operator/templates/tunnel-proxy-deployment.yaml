@@ -53,7 +53,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.13.3{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.3{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.3{{- end }}{{- else -}}signadot/tunnel-proxy:v0.13.3{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.14.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-proxy
         ports:
@@ -70,7 +70,8 @@ spec:
         - /etc/config.yaml
         command:
         - envoy
-        image: envoyproxy/envoy:v1.26.1
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .image }}{{ . | quote}}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor
         securityContext:
           allowPrivilegeEscalation: false
@@ -97,7 +98,7 @@ spec:
           value: "10000"
         - name: OUTBOUND_AUDITOR_PORT
           value: "10001"
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.13.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.13.3{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.14.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor-init
         securityContext:

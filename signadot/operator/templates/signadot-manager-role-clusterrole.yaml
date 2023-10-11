@@ -13,11 +13,75 @@ metadata:
   name: signadot-manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - admissionregistration.k8s.io
   resourceNames:
   - signadot-mutating-webhook-configuration
   resources:
   - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - forkedworkloads
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - forkedworkloads/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - forkedworkloads/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - istioroutes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - istioroutes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - istioroutes/status
   verbs:
   - get
   - patch
@@ -44,6 +108,32 @@ rules:
   - signadot.com
   resources:
   - resources/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - routingconfigs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - routingconfigs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - routingconfigs/status
   verbs:
   - get
   - patch
@@ -190,20 +280,6 @@ rules:
   - patch
   - update
   - watch
-- apiGroups:
-  - signadot.com
-  resources:
-  - signadotroutes/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - signadot.com
-  resources:
-  - signadotroutes/status
-  verbs:
-  - get
-  - patch
-  - update
 - apiGroups:
   - signadot.com
   resources:

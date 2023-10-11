@@ -77,21 +77,27 @@ spec:
           value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: EXECPOD_SIDECAR_IMAGE_PULL_SECRET
           value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: ISTIO_ENABLED
+          value: {{ with .Values }}{{ with .istio }}{{ with .enabled }}{{ toString . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+        - name: ISTIO_ADDITIONAL_LABELS
+          value: {{ with .Values }}{{ with .istio }}{{ with .additionalLabels }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: ISTIO_ADDITIONAL_ANNOTATIONS
+          value: {{ with .Values }}{{ with .istio }}{{ with .additionalAnnotations }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: SIDECAR_INIT_IMAGE
-          value: {{ with .Values }}{{ with .routeInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-init:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar-init:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar-init:v0.13.3{{- end }}
+          value: {{ with .Values }}{{ with .routeInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar-init:v0.14.0-xrc.1{{- end }}
         - name: LEGACY_SIDECAR_INIT_IMAGE
           value: {{ with .Values }}{{ with .routeInit }}{{ with .legacy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/sd-init-networking:latest{{- end }}{{- else -}}signadot/sd-init-networking:latest{{- end }}{{- else -}}signadot/sd-init-networking:latest{{- end }}{{- else -}}signadot/sd-init-networking:latest{{- end }}
         - name: ROUTE_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar:v0.13.3{{- end }}
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar:v0.14.0-xrc.1{{- end }}
         - name: LEGACY_ROUTE_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .legacy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-legacy:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar-legacy:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar-legacy:v0.13.3{{- end }}{{- else -}}signadot/route-sidecar-legacy:v0.13.3{{- end }}
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .legacy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-legacy:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar-legacy:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar-legacy:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/route-sidecar-legacy:v0.14.0-xrc.1{{- end }}
         - name: EXECPOD_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/execpod-sidecar:v0.13.3{{- end }}{{- else -}}signadot/execpod-sidecar:v0.13.3{{- end }}{{- else -}}signadot/execpod-sidecar:v0.13.3{{- end }}
+          value: {{ with .Values }}{{ with .execpodSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/execpod-sidecar:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/execpod-sidecar:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/execpod-sidecar:v0.14.0-xrc.1{{- end }}
         - name: IO_INIT_IMAGE
-          value: {{ with .Values }}{{ with .ioInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-init:v0.13.3{{- end }}{{- else -}}signadot/io-init:v0.13.3{{- end }}{{- else -}}signadot/io-init:v0.13.3{{- end }}
+          value: {{ with .Values }}{{ with .ioInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/io-init:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/io-init:v0.14.0-xrc.1{{- end }}
         - name: IO_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-sidecar:v0.13.3{{- end }}{{- else -}}signadot/io-sidecar:v0.13.3{{- end }}{{- else -}}signadot/io-sidecar:v0.13.3{{- end }}
-        image: {{ with .Values }}{{ with .operator }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/operator:v0.13.3{{- end }}{{- else -}}signadot/operator:v0.13.3{{- end }}{{- else -}}signadot/operator:v0.13.3{{- end }}
+          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-sidecar:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/io-sidecar:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/io-sidecar:v0.14.0-xrc.1{{- end }}
+        image: {{ with .Values }}{{ with .operator }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/operator:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/operator:v0.14.0-xrc.1{{- end }}{{- else -}}signadot/operator:v0.14.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .operator }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
