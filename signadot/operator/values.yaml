@@ -27,11 +27,16 @@
 # route to some sandbox. 
 #
 # istio:
+#   # Enable the integration with Istio
+#   enabled: true
+#   # Add these labels or annotations to all istio objects when they are managed by
+#   # Signadot Note that virtual services are only managed by Signadot when they
+#   # route to some sandbox.  For virtual services, these labels or annotations are
+#   # only added if they were not present before becoming managed by signadot.
 #   additionalLabels:
 #     exampleLabel: exampleLabelValue
 #   additionalAnnotations:
 #     exampleAnnotatonKey: exampleAnnotationValue
-
 
 # By default, this chart will install the operator in
 # cluster-wide mode, where it watches all namespaces.

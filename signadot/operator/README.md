@@ -77,43 +77,43 @@ their name.  Additionally, the `execpod-` images are for compatibility with old
 style resources and are not needed in an installation which uses the new
 [resource plugins](https://www.signadot.com/docs/resourceplugins).
 
-| Name                                  | Description                                             | Default        |
-| ------------------------------------- | ------------------------------------------------------- | -------------- |
-| `operator.image`                      | Operator image override                                 | `signadot/operator:vX.Y.Z`           |
-| `operator.imagePullPolicy`            | Operator image pull policy                              | `IfNotPresent` |
-| `agent.image`                         | Agent image override                                    | `signadot/agent:vX.Y.Z`           |
-| `agent.imagePullPolicy`               | Agent image pull policy                                 | `IfNotPresent` |
-| `routeServer.image`                   | Route Server image override                             | `signadot/route-server:vX.Y.Z`           |
-| `routeServer.imagePullPolicy`         | Route Server image pull policy                          | `IfNotPresent` |
-| `ioContextServer.image`               | IO Context Server image override                        | `signadot/io-context-server:vX.Y.Z`           |
-| `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy                     | `IfNotPresent` |
-| `kubeRBACProxy.image`                 | Kube-rbac-proxy image override                          | `""`           |
-| `kubeRBACProxy.imagePullPolicy`       | Kube-rbac-proxy image pull policy                       | `IfNotPresent` |
-| `routeInit.image`                     | Route Init container image override                     | `signadot/route-sidecar-init:vX.Y.Z`           |
-| `routeInit.legacy.image`              | Route Init container image override (legacy version)    | `signadot/sd-init-networking:latest`               |
-| `routeInit.imagePullPolicy`           | Route Init container image pull policy                  | `IfNotPresent` |
-| `routeInit.imagePullSecret`           | Route Init container image pull secret                  | `""`           |
-| `routeSidecar.image`                  | Route Sidecar container image override                  | `signadot/route-sidecar:vX.Y.Z`           |
-| `routeSidecar.legacy.image`           | Route Sidecar container image override (legacy version) | `signadot/route-sidecar-legacy:vX.Y.Z`           |
-| `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy               | `IfNotPresent` |
-| `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret               | `""`           |
-| `ioInit.image`                        | IO Init container image override                        | `signadot/io-init:vX.Y.Z`           |
-| `ioInit.imagePullPolicy`              | IO Init container image pull policy                     | `IfNotPresent` |
-| `ioInit.imagePullSecret`              | IO Init container image pull secret                     | `""`           |
+| Name                                  | Description                                             | Default                                |
+| ------------------------------------- | ------------------------------------------------------- | -------------------------------------- |
+| `operator.image`                      | Operator image override                                 | `signadot/operator:vX.Y.Z`             |
+| `operator.imagePullPolicy`            | Operator image pull policy                              | `IfNotPresent`                         |
+| `agent.image`                         | Agent image override                                    | `signadot/agent:vX.Y.Z`                |
+| `agent.imagePullPolicy`               | Agent image pull policy                                 | `IfNotPresent`                         |
+| `routeServer.image`                   | Route Server image override                             | `signadot/route-server:vX.Y.Z`         |
+| `routeServer.imagePullPolicy`         | Route Server image pull policy                          | `IfNotPresent`                         |
+| `ioContextServer.image`               | IO Context Server image override                        | `signadot/io-context-server:vX.Y.Z`    |
+| `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy                     | `IfNotPresent`                         |
+| `kubeRBACProxy.image`                 | Kube-rbac-proxy image override                          | `""`                                   |
+| `kubeRBACProxy.imagePullPolicy`       | Kube-rbac-proxy image pull policy                       | `IfNotPresent`                         |
+| `routeInit.image`                     | Route Init container image override                     | `signadot/route-sidecar-init:vX.Y.Z`   |
+| `routeInit.legacy.image`              | Route Init container image override (legacy version)    | `signadot/sd-init-networking:latest`   |
+| `routeInit.imagePullPolicy`           | Route Init container image pull policy                  | `IfNotPresent`                         |
+| `routeInit.imagePullSecret`           | Route Init container image pull secret                  | `""`                                   |
+| `routeSidecar.image`                  | Route Sidecar container image override                  | `signadot/route-sidecar:vX.Y.Z`        |
+| `routeSidecar.legacy.image`           | Route Sidecar container image override (legacy version) | `signadot/route-sidecar-legacy:vX.Y.Z` |
+| `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy               | `IfNotPresent`                         |
+| `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret               | `""`                                   |
+| `ioInit.image`                        | IO Init container image override                        | `signadot/io-init:vX.Y.Z`              |
+| `ioInit.imagePullPolicy`              | IO Init container image pull policy                     | `IfNotPresent`                         |
+| `ioInit.imagePullSecret`              | IO Init container image pull secret                     | `""`                                   |
 | `ioSidecar.image`                     | IO Sidecar container image override                     | `signadot/io-sidecar:vX.Y.Z`           |
-| `ioSidecar.imagePullPolicy`           | IO Sidecar container image pull policy                  | `IfNotPresent` |
-| `ioSidecar.imagePullSecret`           | IO Sidecar container image pull secret                  | `""`           |
-| `execpodSidecar.image`                | ExecPod Sidecar container image override                | `signadot/execpod-sidecar:vX.Y.Z`           |
-| `execpodSidecar.imagePullPolicy`      | ExecPod Sidecar container image pull policy             | `IfNotPresent` |
-| `execpodSidecar.imagePullSecret`      | ExecPod Sidecar container image pull secret             | `""`           |
+| `ioSidecar.imagePullPolicy`           | IO Sidecar container image pull policy                  | `IfNotPresent`                         |
+| `ioSidecar.imagePullSecret`           | IO Sidecar container image pull secret                  | `""`                                   |
+| `execpodSidecar.image`                | ExecPod Sidecar container image override                | `signadot/execpod-sidecar:vX.Y.Z`      |
+| `execpodSidecar.imagePullPolicy`      | ExecPod Sidecar container image pull policy             | `IfNotPresent`                         |
+| `execpodSidecar.imagePullSecret`      | ExecPod Sidecar container image pull secret             | `""`                                   |
 | `tunnel.api.image`                    | Tunnel API image override                               | `signadot/tunnel-api:vX.Y.Z`           |
-| `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                            | `IfNotPresent` |
-| `tunnel.proxy.image`                  | Tunnel Proxy image override                             | `signadot/tunnel-proxy:vX.Y.Z`           |
-| `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                          | `IfNotPresent` |
-| `tunnel.auditor.image`           | Tunnel Auditor image override                      | `signadot/tunnel-auditor:vX.Y.Z`           |
-| `tunnel.auditor.imagePullPolicy` | Tunnel Auditor image pull policy                   | `IfNotPresent` |
-| `tunnel.auditor.init.image`           | Tunnel Auditor init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`           |
-| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor init image pull policy                   | `IfNotPresent` |
+| `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                            | `IfNotPresent`                         |
+| `tunnel.proxy.image`                  | Tunnel Proxy image override                             | `signadot/tunnel-proxy:vX.Y.Z`         |
+| `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                          | `IfNotPresent`                         |
+| `tunnel.auditor.image`                | Tunnel Auditor image override                           | `envoyproxy/envoy:v1.26.1`             |
+| `tunnel.auditor.imagePullPolicy`      | Tunnel Auditor image pull policy                        | `IfNotPresent`                         |
+| `tunnel.auditor.init.image`           | Tunnel Auditor init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`  |
+| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor init image pull policy                   | `IfNotPresent`                         |
 
 ### Tunnel parameters
 
@@ -136,10 +136,10 @@ style resources and are not needed in an installation which uses the new
 |                                          |                                                                                                                                                                                                                                                                              |         |
 ### Istio Parameters
 
-The Signadot Operator manipulates istio objects when istio VirtualServices are applied to workloads in sandboxes.  You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added if not present when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
+When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added if not present when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
 
-
-| Name                                     | Description | Default |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `istio.additionalAnnotations`                    | Annotations to add to istio VirtualServices if not present | `{}`     |
-| `istio.additionalLabels`                   | Labels to add to istio VirtualServices if not present | `{}`    |
+| Name                          | Description                                                | Default |
+| ----------------------------- | ---------------------------------------------------------  | ------- |
+| `istio.enabled`               | Enable Istio integration                                   | `false` |
+| `istio.additionalAnnotations` | Annotations to add to istio VirtualServices if not present | `{}`    |
+| `istio.additionalLabels`      | Labels to add to istio VirtualServices if not present      | `{}`    |
