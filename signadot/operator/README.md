@@ -136,7 +136,7 @@ style resources and are not needed in an installation which uses the new
 |                                          |                                                                                                                                                                                                                                                                              |         |
 ### Istio Parameters
 
-When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added if not present when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
+When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
 
 | Name                          | Description                                                | Default |
 | ----------------------------- | ---------------------------------------------------------  | ------- |
