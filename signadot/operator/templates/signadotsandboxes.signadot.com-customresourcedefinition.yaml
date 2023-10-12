@@ -55,10 +55,8 @@ spec:
                   running in the cluster should be customized for this sandbox.
                 properties:
                   images:
-                    description: "Images to replace when cloning workloads (e.g. Deployments)
-                      for this sandbox. \n Any live Deployment (one that isn't part
-                      of a sandbox) that uses an image from this list will be cloned
-                      and the clone will use the new image name and/or tag specified."
+                    description: 'DEPRECATED: this feature has been deprecated, image
+                      replacement commands will be ignored.'
                     items:
                       description: ImageReplacement describes a rule for replacing
                         images in cloned containers.
@@ -7106,8 +7104,7 @@ spec:
               readyManagedResources:
                 additionalProperties:
                   type: boolean
-                description: ReadyManagedResources is a map from resource name to
-                  ready status This field has been deprecated.
+                description: 'DEPRECATED: use ManagedResources instead.'
                 type: object
               readyResources:
                 description: ReadyResources is the number of signadot resources which

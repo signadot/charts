@@ -22,6 +22,17 @@ webhooks:
       path: /mutate-v1-pod
   failurePolicy: Ignore
   name: sidecar-injector.signadot.com
+  namespaceSelector:
+    matchExpressions:
+    - key: signadot.com/admission-webhooks
+      operator: NotIn
+      values:
+      - disabled
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values:
+      - kube-system
+      - kube-node-lease
   rules:
   - apiGroups:
     - ""

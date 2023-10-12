@@ -11,16 +11,16 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadotexternalworkloads.signadot.com
+  name: forkedworkloads.signadot.com
 spec:
   group: signadot.com
   names:
-    kind: SignadotExternalWorkload
-    listKind: SignadotExternalWorkloadList
-    plural: signadotexternalworkloads
+    kind: ForkedWorkload
+    listKind: ForkedWorkloadList
+    plural: forkedworkloads
     shortNames:
-    - sdxw
-    singular: signadotexternalworkload
+    - sdfw
+    singular: forkedworkload
   scope: Namespaced
   versions:
   - name: v1
@@ -40,10 +40,11 @@ spec:
           metadata:
             type: object
           spec:
+            description: ForkedWorkloadSpec defines the desired state of ForkedWorkload
             properties:
               baseline:
-                description: Baseline specifies the target workload to which this
-                  external workload applies.
+                description: Baseline specifies the target workload being forked by
+                  this object
                 properties:
                   apiVersion:
                     description: APIVersion specifies the API Version (e.g. "apps/v1")
@@ -65,50 +66,93 @@ spec:
                 - kind
                 - name
                 type: object
-              name:
-                description: 'Name of the external workload, this is an arbitrary
-                  string defined by the user (eg: "apiserver" or "playground-api")'
-                maxLength: 30
-                pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
-                type: string
-              routingKey:
-                description: 'DEPRECATED: this field is no longer needed.'
-                type: string
-              tunnel:
-                description: Tunnel defines that this external workload will be accessed
-                  via a reverse tunnel, in Tunnel Proxy.
-                properties:
-                  baselineToLocals:
-                    description: List of ports to be forwarded to the workstation
-                    items:
-                      properties:
-                        baselinePort:
-                          description: Baseline container port
-                          format: int32
-                          type: integer
-                        localAddress:
-                          description: TCP Address to which it is to be routed, for
-                            example "localhost:8080"
-                          type: string
-                      required:
-                      - baselinePort
-                      - localAddress
+              patches:
+                description: List of patches to be applied to the baseline workload
+                items:
+                  description: ForkedWorkloadPatch describes a set of changes to apply
+                    to a given object.
+                  properties:
+                    json:
+                      description: JSON specifies the patch in JSON Patch format (RFC
+                        6902).
+                      items:
+                        description: "RawExtension is a wrapper around runtime.RawExtension.
+                          \n It exists so we can add the PreserveUnknownFields directive
+                          on the items in a []RawExtension list, rather than to the
+                          list itself. Adding PreserveUnknownFields to the list itself
+                          works in the latest patch releases of k8s v1.18+, but the
+                          fix was never backported to v1.17 or older: \n https://github.com/kubernetes/kubernetes/pull/94888"
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                      type: array
+                    merge:
+                      description: Merge specifies the patch in JSON Merge Patch format
+                        (RFC 7396).
                       type: object
-                    type: array
-                required:
-                - baselineToLocals
+                      x-kubernetes-preserve-unknown-fields: true
+                    strategic:
+                      description: "Strategic specifies the patch in Kubernetes strategic
+                        merge patch format. \n See: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/"
+                      type: object
+                      x-kubernetes-preserve-unknown-fields: true
+                    template:
+                      description: "Template specifies whether to treat the patch
+                        content as a template. If enabled, variable substitution will
+                        be performed, allowing patches to refer to information that
+                        will only become available after the operator processes a
+                        sandbox spec, such as the names of SignadotResource plugin
+                        output objects. \n Default: false"
+                      type: boolean
+                  type: object
+                type: array
+              preservedLabels:
+                description: "PreservedLabels is a list of RE2 regular expressions
+                  to check against label keys on the original baseline Pod template.
+                  The expression can match any substring within the key, so use anchors
+                  if you want to require a full match. \n Normally, all baseline labels
+                  are stripped from the cloned Pod template to ensure it can't match
+                  any existing Services. Labels from the baseline Pod that match any
+                  of these regular expressions will be preserved on the cloned Pod
+                  instead. \n If preserving these labels would cause the cloned Pods
+                  to match a baseline Service, the sandbox controller will pause and
+                  report an error to avoid interference."
+                items:
+                  type: string
+                type: array
+              resourceTemplateData:
+                additionalProperties:
+                  description: ResourceTemplateData defines the template data related
+                    to a Resource (this applies both to Resources and SignadotResources)
+                  properties:
+                    name:
+                      description: Name is the name of the resource as referred to
+                        by the requestor.
+                      type: string
+                    objectName:
+                      description: ObjectName is the name of the Resource/SignadotResource
+                        object that will be created by the Sandbox controller.
+                      type: string
+                    outputKind:
+                      default: Secret
+                      description: OutputKind is the kind of object (ConfigMap or
+                        Secret) in which the plugin provisioner's output should be
+                        stored. The default is "Secret".
+                      enum:
+                      - Secret
+                      - ConfigMap
+                      type: string
+                  required:
+                  - name
+                  - objectName
+                  type: object
+                description: ResourceTemplateData is a map from resource name to the
+                  template data related to that resource.
                 type: object
-              workloadID:
-                description: 'DEPRECATED: this field is no longer needed.'
-                type: string
             required:
             - baseline
-            - name
-            - routingKey
-            - workloadID
             type: object
           status:
-            description: ExternalWorkloadStatus defines status of an external workload
+            description: ForkedWorkloadStatus defines status of a forked workload
             properties:
               baseline:
                 description: Baseline provides information about the baseline workload
@@ -155,9 +199,36 @@ spec:
                   - type
                   type: object
                 type: array
+              fork:
+                description: Fork provides information about the forked workload
+                properties:
+                  objectRef:
+                    description: ObjectRef is a reference to the forked workload object
+                    properties:
+                      apiVersion:
+                        description: APIVersion specifies the API Version (e.g. "apps/v1")
+                          of the object to patch.
+                        type: string
+                      kind:
+                        description: Kind specifies the Kind (e.g. "Deployment") of
+                          the object to patch.
+                        type: string
+                      name:
+                        description: Name specifies the name of the object to patch.
+                        type: string
+                      namespace:
+                        description: Namespace optionally specifies which namespace
+                          will be searched.
+                        type: string
+                    required:
+                    - apiVersion
+                    - kind
+                    - name
+                    type: object
+                type: object
               observedGeneration:
                 description: ObservedGeneration provides the Generation of the last
-                  ExternalWorkload seen by the controller.
+                  ForkedWorkload seen by the controller.
                 format: int64
                 type: integer
               routingConfig:
@@ -212,74 +283,6 @@ spec:
                     type: array
                 required:
                 - devMeshSidecarPresent
-                type: object
-              tunnel:
-                description: Tunnel exposes the status of the tunnel behind this external
-                  workload
-                properties:
-                  health:
-                    description: Is there an active tunnel to the workstation?
-                    properties:
-                      connected:
-                        description: Is there an active reverse tunnel to the workstation?
-                        type: boolean
-                      lastCheckTime:
-                        description: Last time we performed a health check
-                        format: date-time
-                        type: string
-                      lastConnectedTime:
-                        description: Last time we got a successful health check
-                        format: date-time
-                        type: string
-                    required:
-                    - connected
-                    type: object
-                  info:
-                    description: Reference to reverse tunnel exposing the workload
-                    properties:
-                      controlPort:
-                        description: This is the control port for this tunnel, used
-                          for health check control
-                        format: int32
-                        type: integer
-                      labels:
-                        additionalProperties:
-                          type: string
-                        description: Tunnel labels (information about the connected
-                          client)
-                        type: object
-                      tunnelProxyPodIP:
-                        description: Tunnel proxy pod ip
-                        type: string
-                      tunnelProxyPodName:
-                        description: Tunnel proxy pod name
-                        type: string
-                      workloadPorts:
-                        description: This is a map from the workload source port as
-                          a string to the port in which it is exposed in the Tunnel
-                          proxy.
-                        items:
-                          description: Baseline port mapping to proxy port
-                          properties:
-                            baseline:
-                              description: An exposed port on the baseline
-                              format: int32
-                              type: integer
-                            proxy:
-                              description: The corresponding proxy port
-                              format: int32
-                              type: integer
-                          required:
-                          - baseline
-                          - proxy
-                          type: object
-                        type: array
-                    required:
-                    - controlPort
-                    - tunnelProxyPodIP
-                    - tunnelProxyPodName
-                    - workloadPorts
-                    type: object
                 type: object
             type: object
         type: object

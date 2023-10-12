@@ -1,0 +1,174 @@
+# This file is generated. Do not edit.
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.2
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: istioroutes.signadot.com
+spec:
+  group: signadot.com
+  names:
+    kind: IstioRoute
+    listKind: IstioRouteList
+    plural: istioroutes
+    shortNames:
+    - sdir
+    singular: istioroute
+  scope: Cluster
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: IstioRouteSpec defines the desired state of an istio route
+            properties:
+              managed:
+                description: Definition of a managed route, a route whose destination
+                  is managed by the system (the result of a forked or external workload)
+                properties:
+                  baseline:
+                    description: Baseline workload informaton
+                    properties:
+                      generation:
+                        description: Generation is the latest generation of the underlying
+                          baseline workload as seen by the controller
+                        format: int64
+                        type: integer
+                      workloadID:
+                        description: WorkloadID is the UID of the underlying baseline
+                          workload.
+                        type: string
+                    required:
+                    - workloadID
+                    type: object
+                  mappings:
+                    description: Mappings defines a list of mappings from a port on
+                      the target service to an alternative destination (specified
+                      by a service)
+                    items:
+                      properties:
+                        fromPort:
+                          description: Source port from the target service
+                          format: int32
+                          type: integer
+                        toService:
+                          description: Destionation service
+                          type: string
+                        workloadPort:
+                          description: Source port in the workload (the service target
+                            port)
+                          format: int32
+                          type: integer
+                      required:
+                      - fromPort
+                      - toService
+                      type: object
+                    type: array
+                  namespace:
+                    description: Namespace of this managed route
+                    type: string
+                  targetService:
+                    description: Route target
+                    type: string
+                required:
+                - baseline
+                - mappings
+                - namespace
+                - targetService
+                type: object
+              routingKey:
+                description: RoutingKey associated with this route
+                type: string
+            required:
+            - managed
+            - routingKey
+            type: object
+          status:
+            description: IstioRouteStatus defines the status of an istio route
+            properties:
+              conditions:
+                description: 'Conditions is a list of conditions that matches the
+                  conventions expected by kubectl, allowing our CRDs to work with:
+                  kubectl wait --for=condition=...'
+                items:
+                  description: "StatusCondition is a condition struct that matches
+                    the conventions expected by kubectl, allowing our CRDs to work
+                    with: kubectl wait --for=condition=... \n StatusConditions must
+                    follow the following discipline in reconciliation: The operator
+                    MUST always populate all the condition types in a SignadotSandboxStatus
+                    struct, irrespective of whether the condition is known or not
+                    (see corev1.ConditionUnknown) so that access via a k8s client
+                    can determine whether the capability is supported in the operator."
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              matchedVirtualServices:
+                description: MatchedVirtualServices is a list of the matching virtual
+                  services for this route, along with its status
+                items:
+                  properties:
+                    message:
+                      description: Status related message
+                      type: string
+                    name:
+                      description: This is the virtual service name
+                      type: string
+                    status:
+                      description: Status information about the virtual service configuration
+                      type: string
+                  required:
+                  - name
+                  - status
+                  type: object
+                type: array
+              observedGeneration:
+                description: ObservedGeneration provides the Generation of the last
+                  IstioRoute seen by the controller.
+                format: int64
+                type: integer
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

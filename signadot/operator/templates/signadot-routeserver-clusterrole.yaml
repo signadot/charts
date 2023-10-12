@@ -15,7 +15,7 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
-  - signadotroutes
+  - routingconfigs
   verbs:
   - get
   - list
