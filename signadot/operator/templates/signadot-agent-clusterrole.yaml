@@ -20,11 +20,14 @@ rules:
   - signadotsandboxes
   - signadotroutes
   - signadotexternalworkloads
+  - signadoforkedworkloads
   - signadotresources
   - resources
   - signadotobjectlifecyclemethods
   - signadotresourceplugins
   - signadotroutegroups
+  - routingconfigs
+  - istioroutes
   verbs:
   - get
   - list
