@@ -141,5 +141,5 @@ The Signadot Operator manipulates istio objects when istio VirtualServices are a
 
 | Name                                     | Description | Default |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `istio.additionalAnnotations`                    | Annotations to add to istio objects if not present | `{}`     |
-| `istio.additionalLabels`                   | Labels to add to istio objects if not present | `{}`    |
+| `istio.additionalAnnotations`                    | Annotations to add to istio VirtualServices if not present | `{}`     |
+| `istio.additionalLabels`                   | Labels to add to istio VirtualServices if not present | `{}`    |
