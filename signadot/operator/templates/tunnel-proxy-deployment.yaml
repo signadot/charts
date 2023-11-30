@@ -1,4 +1,8 @@
 # This file is generated. Do not edit.
+{{- $istioEnabled := false -}}
+{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $auditorEnabled := true -}}
+{{- with .Values }}{{ with .tunnel }}{{ with .auditor }}{{- if hasKey . "enabled" }}{{ $auditorEnabled = .enabled }}{{- end }}{{- end }}{{- end }}{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,6 +42,9 @@ spec:
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        {{- if $istioEnabled }}
+        sidecar.istio.io/inject: "true"
+        {{- end }}
     spec:
       containers:
       - env:
@@ -65,6 +72,7 @@ spec:
 {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .resources }}        resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+      {{- if and (not $istioEnabled) $auditorEnabled }}
       - args:
         - -c
         - /etc/config.yaml
@@ -90,6 +98,8 @@ spec:
           name: varlog
         - mountPath: /usr/local/share/lua
           name: luarocks
+      {{- end }}
+      {{- if and (not $istioEnabled) $auditorEnabled }}
       initContainers:
       - env:
         - name: LUA_ROCKS
@@ -111,11 +121,14 @@ spec:
           name: varlog
         - mountPath: /usr/local/share/lua
           name: luarocks
+      {{- end }}
       serviceAccountName: tunnel-proxy
       volumes:
+      {{- if and (not $istioEnabled) $auditorEnabled }}
       - configMap:
           name: tunnel-auditor-config
         name: tunnel-auditor-config
+      {{- end }}
       - emptyDir: {}
         name: varlog
       - emptyDir: {}
