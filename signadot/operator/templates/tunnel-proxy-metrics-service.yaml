@@ -10,23 +10,21 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   labels:
+    app: tunnel-proxy
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
     {{- range $key, $val := .Values.serviceLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: tunnel-proxy
+  name: tunnel-proxy-metrics
   namespace: signadot
 spec:
   ports:
-  - name: als
-    port: 5000
-  - name: socks5
-    port: 1080
-  - name: revtun-ssh
-    port: 2222
-  - name: revtun-xap
-    port: 7777
+  - name: metrics
+    port: 9090
+    protocol: TCP
+    targetPort: 8001
   selector:
     app: tunnel-proxy
+  type: ClusterIP
