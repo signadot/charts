@@ -17,16 +17,12 @@ metadata:
     {{- range $key, $val := .Values.serviceLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: routeserver
+  name: routeserver-metrics
   namespace: signadot
 spec:
   ports:
-  - name: grpc
-    port: 7777
-  - name: http-api
-    port: 7778
-  - name: http-legacy
-    port: 8080
+  - name: http-metrics
+    port: 9090
   selector:
     app: routeserver
   type: ClusterIP

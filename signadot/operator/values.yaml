@@ -93,11 +93,6 @@
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
 
-# execpodSidecar:  # for legacy resource plugins
-#   image: my-private-registry/signadot/execpod-sidecar:latest
-#   imagePullPolicy: Always
-#   imagePullSecret: secret-execpodSidecar
-
 # tunnel:
 #   api:
 #     replicas: 1
