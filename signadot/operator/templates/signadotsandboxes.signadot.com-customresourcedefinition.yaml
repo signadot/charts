@@ -7101,8 +7101,7 @@ spec:
                 pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
                 type: string
               resources:
-                description: Resources describes a set of requests for required resources
-                  for this sandbox to run.
+                description: 'DEPRECATED: use ManagedResources instead.'
                 items:
                   properties:
                     name:
@@ -7293,12 +7292,11 @@ spec:
                 description: 'DEPRECATED: use ManagedResources instead.'
                 type: object
               readyResources:
-                description: ReadyResources is the number of signadot resources which
-                  have been provided by a Plugin.
+                description: 'DEPRECATED: use ManagedResources instead.'
                 format: int32
                 type: integer
               resources:
-                description: Resources is the total number of signadot resources requested.
+                description: 'DEPRECATED: use ManagedResources instead.'
                 format: int32
                 type: integer
             type: object

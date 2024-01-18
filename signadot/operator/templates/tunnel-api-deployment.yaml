@@ -45,7 +45,7 @@ spec:
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
 {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ with .syncInterval }}        - --external-dns-resync-interval={{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.14.1{{- end }}{{- else -}}signadot/tunnel-api:v0.14.1{{- end }}{{- else -}}signadot/tunnel-api:v0.14.1{{- end }}{{- else -}}signadot/tunnel-api:v0.14.1{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.15.0{{- end }}{{- else -}}signadot/tunnel-api:v0.15.0{{- end }}{{- else -}}signadot/tunnel-api:v0.15.0{{- end }}{{- else -}}signadot/tunnel-api:v0.15.0{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-api
         ports:
