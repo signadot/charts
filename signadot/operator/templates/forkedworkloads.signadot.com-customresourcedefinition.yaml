@@ -100,8 +100,8 @@ spec:
                         content as a template. If enabled, variable substitution will
                         be performed, allowing patches to refer to information that
                         will only become available after the operator processes a
-                        sandbox spec, such as the names of SignadotResource plugin
-                        output objects. \n Default: false"
+                        sandbox spec, such as the names of Resource output objects.
+                        \n Default: false"
                       type: boolean
                   type: object
                 type: array
@@ -122,15 +122,15 @@ spec:
               resourceTemplateData:
                 additionalProperties:
                   description: ResourceTemplateData defines the template data related
-                    to a Resource (this applies both to Resources and SignadotResources)
+                    to a Resource
                   properties:
                     name:
                       description: Name is the name of the resource as referred to
                         by the requestor.
                       type: string
                     objectName:
-                      description: ObjectName is the name of the Resource/SignadotResource
-                        object that will be created by the Sandbox controller.
+                      description: ObjectName is the name of the Resource object that
+                        will be created by the Sandbox controller.
                       type: string
                     outputKind:
                       default: Secret

@@ -58,6 +58,8 @@ spec:
                       type: string
                     namespace:
                       type: string
+                    sandboxName:
+                      type: string
                   required:
                   - kind
                   - name
@@ -110,6 +112,24 @@ spec:
                   as seen by the controller, along with its routing information
                 items:
                   properties:
+                    baseline:
+                      description: BaselineUID gives the UID of the baseline workload
+                        from which the sandboxed workload is derived
+                      properties:
+                        kind:
+                          type: string
+                        name:
+                          type: string
+                        namespace:
+                          type: string
+                        uid:
+                          type: string
+                      required:
+                      - kind
+                      - name
+                      - namespace
+                      - uid
+                      type: object
                     routes:
                       description: Routes is the list of the configured routes per
                         service mesh (including the signadot sidecar)
@@ -218,12 +238,15 @@ spec:
                           type: string
                         namespace:
                           type: string
+                        sandboxName:
+                          type: string
                       required:
                       - kind
                       - name
                       - namespace
                       type: object
                   required:
+                  - baseline
                   - workload
                   type: object
                 type: array
@@ -271,6 +294,9 @@ spec:
                           - host
                           - port
                           type: object
+                        sandboxName:
+                          description: Sandbox name owner of this route
+                          type: string
                         to:
                           description: To the specified location
                           properties:
