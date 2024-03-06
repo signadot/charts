@@ -95,8 +95,6 @@ spec:
                       - localAddress
                       type: object
                     type: array
-                required:
-                - baselineToLocals
                 type: object
               workloadID:
                 description: 'DEPRECATED: this field is no longer needed.'
@@ -278,7 +276,6 @@ spec:
                     - controlPort
                     - tunnelProxyPodIP
                     - tunnelProxyPodName
-                    - workloadPorts
                     type: object
                 type: object
             type: object

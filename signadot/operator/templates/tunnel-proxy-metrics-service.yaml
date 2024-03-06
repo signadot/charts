@@ -21,7 +21,8 @@ metadata:
   namespace: signadot
 spec:
   ports:
-  - name: metrics
+  - appProtocol: http
+    name: metrics
     port: 9090
     protocol: TCP
     targetPort: 8001
