@@ -20,13 +20,17 @@ metadata:
   namespace: signadot
 spec:
   ports:
-  - name: als
+  - appProtocol: grpc
+    name: grpc-als
     port: 5000
-  - name: socks5
+  - appProtocol: tcp
+    name: tcp-socks5
     port: 1080
-  - name: revtun-ssh
+  - appProtocol: tcp
+    name: tcp-revtun-ssh
     port: 2222
-  - name: revtun-xap
+  - appProtocol: tcp
+    name: tcp-revtun-xap
     port: 7777
   selector:
     app: tunnel-proxy
