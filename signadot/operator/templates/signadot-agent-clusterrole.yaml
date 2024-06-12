@@ -26,6 +26,8 @@ rules:
   - signadotroutegroups
   - routingconfigs
   - istioroutes
+  - jobs
+  - jobrunnergroups
   verbs:
   - get
   - list

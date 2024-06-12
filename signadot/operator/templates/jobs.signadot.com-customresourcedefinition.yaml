@@ -1,0 +1,296 @@
+# This file is generated. Do not edit.
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.13.0
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: jobs.signadot.com
+spec:
+  group: signadot.com
+  names:
+    kind: Job
+    listKind: JobList
+    plural: jobs
+    shortNames:
+    - sdjb
+    singular: job
+  scope: Cluster
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              artifacts:
+                description: List of artifacts to be kept after running the job.
+                items:
+                  properties:
+                    meta:
+                      additionalProperties:
+                        type: string
+                      description: Metadata to be included in the discovered artifacts
+                        (retrievable from the artifacts API)
+                      type: object
+                    path:
+                      description: Path from where to look for artifacts after running
+                        the job.
+                      type: string
+                  required:
+                  - path
+                  type: object
+                type: array
+                x-kubernetes-validations:
+                - message: Artifacts is immutable
+                  rule: self == oldSelf
+              canceled:
+                default: false
+                description: Canceled specifies whether the current job should be
+                  canceled
+                type: boolean
+              content:
+                description: Job content
+                properties:
+                  command:
+                    description: A command to be executed. Only one of "Command" or
+                      "Script" should be defined.
+                    items:
+                      type: string
+                    type: array
+                  script:
+                    description: 'The script to be executed. It should explicitly
+                      declare its interpreter (e.g.: #!/bin/bash). Only one of "Command"
+                      or "Script" should be defined.'
+                    type: string
+                type: object
+                x-kubernetes-validations:
+                - message: Content is immutable
+                  rule: self == oldSelf
+              env:
+                description: List of environment variables to set in the job.
+                items:
+                  properties:
+                    name:
+                      description: Environmental variable name
+                      type: string
+                    value:
+                      description: Environmental variable value
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+                x-kubernetes-validations:
+                - message: Env is immutable
+                  rule: self == oldSelf
+              routingContext:
+                description: Routing context used for running the job (empty means
+                  running against the baseline)
+                properties:
+                  routegroupName:
+                    description: RouteGroup name
+                    type: string
+                  sandboxName:
+                    description: Sandbox name (SDS object name)
+                    type: string
+                type: object
+                x-kubernetes-validations:
+                - message: RoutingContext is immutable
+                  rule: self == oldSelf
+              runnerGroup:
+                description: Job runner group responsible for running this job
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - name
+                - namespace
+                type: object
+                x-kubernetes-validations:
+                - message: RunnerGroup is immutable
+                  rule: self == oldSelf
+              timeout:
+                description: Timeout indicates an optional timeout to enforce on the
+                  Job.  It applies only to the execution of the specified script (the
+                  upload of artifacts is not affected by this timeout). If it exceeds
+                  the associated RunnerGroup's timeout and that RunnerGroup does not
+                  allow increasing timeouts, the smallest timeout will be used.
+                type: string
+                x-kubernetes-validations:
+                - message: Timeout is immutable
+                  rule: self == oldSelf
+            required:
+            - canceled
+            - content
+            - runnerGroup
+            type: object
+          status:
+            properties:
+              conditions:
+                description: 'Conditions is a list of conditions that matches the
+                  conventions expected by kubectl, allowing our CRDs to work with:
+                  kubectl wait --for=condition=...'
+                items:
+                  description: "StatusCondition is a condition struct that matches
+                    the conventions expected by kubectl, allowing our CRDs to work
+                    with: kubectl wait --for=condition=... \n StatusConditions must
+                    follow the following discipline in reconciliation: The operator
+                    MUST always populate all the condition types in a SignadotSandboxStatus
+                    struct, irrespective of whether the condition is known or not
+                    (see corev1.ConditionUnknown) so that access via a k8s client
+                    can determine whether the capability is supported in the operator."
+                  properties:
+                    lastTransitionTime:
+                      format: date-time
+                      type: string
+                    message:
+                      type: string
+                    reason:
+                      type: string
+                    status:
+                      type: string
+                    type:
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              observedAt:
+                description: Time at which the job was reconciled
+                format: date-time
+                type: string
+              observedGeneration:
+                description: ObservedGeneration provides the Generation of the last
+                  Job seen by the controller.
+                format: int64
+                type: integer
+              runner:
+                description: Information about the job runner assigned to this job
+                properties:
+                  runnerGroupVersion:
+                    description: RunnerGroupVersion indicates the job runner group
+                      version from the assigned pod (as specified in the JobRunnerGroupVersionLabel
+                      label)
+                    type: string
+                  runnerPod:
+                    description: RunnerPod is a reference to the pod assigned for
+                      running this job
+                    properties:
+                      name:
+                        type: string
+                      namespace:
+                        type: string
+                    required:
+                    - name
+                    - namespace
+                    type: object
+                required:
+                - runnerPod
+                type: object
+              state:
+                description: State holds details about the job's current condition
+                properties:
+                  running:
+                    description: Details about a running job
+                    properties:
+                      jobExecutionAddr:
+                        description: Address where is exposed the API of the job executor
+                          responsible for running this job
+                        type: string
+                      message:
+                        description: Message about the current phase of the job
+                        type: string
+                      phase:
+                        description: Phase describes the last known phase while running
+                          this job
+                        type: string
+                      reason:
+                        description: (brief) reason about the current phase of the
+                          job
+                        type: string
+                      startedAt:
+                        description: Time at which the job was last (re-)started
+                        format: date-time
+                        type: string
+                    type: object
+                  terminated:
+                    description: Details about a terminated job
+                    properties:
+                      canceled:
+                        description: Canceled specifies whether the execution was
+                          canceled or not
+                        type: boolean
+                      exitCode:
+                        description: Exit code obtained after running the specified
+                          script
+                        format: int32
+                        type: integer
+                      finishedAt:
+                        description: Time at which the execution of the job terminated
+                        format: date-time
+                        type: string
+                      message:
+                        description: Message regarding the termination of the job
+                        type: string
+                      reason:
+                        description: (brief) reason about the termination of the job
+                        type: string
+                      retryable:
+                        description: Retryable specifies whether makes sense to retry
+                          this job or not
+                        type: boolean
+                      startedAt:
+                        description: Time at which the execution of the job started
+                        format: date-time
+                        type: string
+                      success:
+                        description: Success specifies whether the execution was completed
+                          successfully or not.
+                        type: boolean
+                      timedOut:
+                        description: TimedOut specifies whether the execution was
+                          timed out or not
+                        type: boolean
+                    required:
+                    - canceled
+                    - success
+                    type: object
+                  waiting:
+                    description: Details about a waiting job
+                    properties:
+                      message:
+                        description: Message regarding why the job is not yet running.
+                        type: string
+                      reason:
+                        description: (brief) reason why the job is not yet running.
+                        type: string
+                    type: object
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -89,6 +89,58 @@ rules:
 - apiGroups:
   - signadot.com
   resources:
+  - jobrunnergroups
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - jobrunnergroups/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - jobrunnergroups/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - jobs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
+  - jobs/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - signadot.com
+  resources:
   - resources
   verbs:
   - create
