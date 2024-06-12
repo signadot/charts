@@ -112,8 +112,12 @@ style resources and are not needed in an installation which uses the new
 | `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                          | `IfNotPresent`                         |
 | `tunnel.auditor.image`                | Tunnel Auditor image override                           | `envoyproxy/envoy:v1.26.1`             |
 | `tunnel.auditor.imagePullPolicy`      | Tunnel Auditor image pull policy                        | `IfNotPresent`                         |
-| `tunnel.auditor.init.image`           | Tunnel Auditor init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`  |
-| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor init image pull policy                   | `IfNotPresent`                         |
+| `tunnel.auditor.init.image`           | Tunnel Auditor Init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`  |
+| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor Init image pull policy                   | `IfNotPresent`                         |
+| `jobExecutorInit.image`               | Job Executor Init container image override              | `signadot/job-executor-init:vX.Y.Z`    |
+| `jobExecutorInit.imagePullPolicy`     | Job Executor Init container image pull policy           | `IfNotPresent`                         |
+| `jobExecutorInit.imagePullSecret`     | Job Executor Init container image pull secret           | `""`                                   |
+
 
 ### Tunnel parameters
 

@@ -16,14 +16,7 @@ rules:
   - ""
   resources:
   - services
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - statefulsets
+  - pods
   verbs:
   - get
   - list
