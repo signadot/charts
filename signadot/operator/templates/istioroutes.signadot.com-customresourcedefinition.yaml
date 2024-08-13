@@ -147,11 +147,15 @@ spec:
                     name:
                       description: This is the virtual service name
                       type: string
+                    namespace:
+                      description: This is the virtual service namespace
+                      type: string
                     status:
                       description: Status information about the virtual service configuration
                       type: string
                   required:
                   - name
+                  - namespace
                   - status
                   type: object
                 type: array
