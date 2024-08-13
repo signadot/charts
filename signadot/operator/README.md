@@ -117,6 +117,9 @@ style resources and are not needed in an installation which uses the new
 | `jobExecutorInit.image`               | Job Executor Init container image override              | `signadot/job-executor-init:vX.Y.Z`    |
 | `jobExecutorInit.imagePullPolicy`     | Job Executor Init container image pull policy           | `IfNotPresent`                         |
 | `jobExecutorInit.imagePullSecret`     | Job Executor Init container image pull secret           | `""`                                   |
+| `jobExecutorProxy.image`              | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`   |
+| `jobExecutorProxy.imagePullPolicy`    | Job Executor Proxy container image pull policy          | `IfNotPresent`                         |
+| `jobExecutorProxy.imagePullSecret`    | Job Executor Proxy container image pull secret          | `""`                                   |
 
 
 ### Tunnel parameters
@@ -142,8 +145,10 @@ style resources and are not needed in an installation which uses the new
 
 When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
 
-| Name                          | Description                                                | Default |
-| ----------------------------- | ---------------------------------------------------------  | ------- |
-| `istio.enabled`               | Enable Istio integration                                   | `false` |
-| `istio.additionalAnnotations` | Annotations to add to istio VirtualServices if not present | `{}`    |
-| `istio.additionalLabels`      | Labels to add to istio VirtualServices if not present      | `{}`    |
+| Name                                | Description                                                                                               | Default |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
+| `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
+| `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
+| `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
+| `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
+
