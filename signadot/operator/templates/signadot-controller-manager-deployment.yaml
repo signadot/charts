@@ -62,6 +62,8 @@ spec:
           value: {{ with .Values }}{{ with .ioSidecar }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: ISTIO_ENABLED
           value: {{ with .Values }}{{ with .istio }}{{ with .enabled }}{{ toString . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+        - name: ISTIO_HOST_ROUTING
+          value: {{ with .Values }}{{ with .istio }}{{ with .enableDeprecatedHostRouting }}{{ toString . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
         - name: ISTIO_ADDITIONAL_LABELS
           value: {{ with .Values }}{{ with .istio }}{{ with .additionalLabels }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: ISTIO_ADDITIONAL_ANNOTATIONS
