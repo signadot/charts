@@ -140,6 +140,21 @@ spec:
                 x-kubernetes-validations:
                 - message: Timeout is immutable
                   rule: self == oldSelf
+              trafficManager:
+                description: Traffic manager settings
+                properties:
+                  injectRoutingKey:
+                    default: Disabled
+                    description: Enable the automatic insertion of routing key headers
+                      for HTTP and gRPC (H2C) traffic
+                    enum:
+                    - Disabled
+                    - Auto
+                    type: string
+                type: object
+                x-kubernetes-validations:
+                - message: Timeout is immutable
+                  rule: self == oldSelf
             required:
             - canceled
             - content
