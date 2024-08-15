@@ -125,7 +125,6 @@ data:
                       idleTimeout: 3600s
                       maxStreamDuration:
                         maxStreamDuration: 0s
-                        maxStreamDuration: 0s
 
           # TCP proxy
         - filters:
@@ -246,6 +245,14 @@ data:
               - name: envoy.filters.http.router
                 typed_config:
                   "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+              # enable HTTP CONNECT and Websockets
+              http2_protocol_options:
+                allow_connect: true
+              upgrade_configs:
+              - upgrade_type: CONNECT
+              - upgrade_type: websocket
+
               route_config:
                 name: local_route
                 virtual_hosts:
@@ -259,7 +266,6 @@ data:
                       timeout: 0s
                       idleTimeout: 3600s
                       maxStreamDuration:
-                        maxStreamDuration: 0s
                         maxStreamDuration: 0s
 
           # TCP filter
