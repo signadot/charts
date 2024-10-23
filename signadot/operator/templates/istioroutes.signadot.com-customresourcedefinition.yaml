@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.13.0
+    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
@@ -28,14 +28,19 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
@@ -43,15 +48,17 @@ spec:
             description: IstioRouteSpec defines the desired state of an istio route
             properties:
               managed:
-                description: Definition of a managed route, a route whose destination
-                  is managed by the system (the result of a forked or external workload)
+                description: |-
+                  Definition of a managed route, a route whose destination is managed by
+                  the system (the result of a forked or external workload)
                 properties:
                   baseline:
                     description: Baseline workload informaton
                     properties:
                       generation:
-                        description: Generation is the latest generation of the underlying
-                          baseline workload as seen by the controller
+                        description: |-
+                          Generation is the latest generation of the underlying baseline workload
+                          as seen by the controller
                         format: int64
                         type: integer
                       workloadID:
@@ -62,9 +69,9 @@ spec:
                     - workloadID
                     type: object
                   mappings:
-                    description: Mappings defines a list of mappings from a port on
-                      the target service to an alternative destination (specified
-                      by a service)
+                    description: |-
+                      Mappings defines a list of mappings from a port on the target service to
+                      an alternative destination (specified by a service)
                     items:
                       properties:
                         fromPort:
@@ -107,18 +114,19 @@ spec:
             description: IstioRouteStatus defines the status of an istio route
             properties:
               conditions:
-                description: 'Conditions is a list of conditions that matches the
-                  conventions expected by kubectl, allowing our CRDs to work with:
-                  kubectl wait --for=condition=...'
+                description: |-
+                  Conditions is a list of conditions that matches the conventions expected
+                  by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
                 items:
-                  description: "StatusCondition is a condition struct that matches
-                    the conventions expected by kubectl, allowing our CRDs to work
-                    with: kubectl wait --for=condition=... \n StatusConditions must
-                    follow the following discipline in reconciliation: The operator
-                    MUST always populate all the condition types in a SignadotSandboxStatus
-                    struct, irrespective of whether the condition is known or not
-                    (see corev1.ConditionUnknown) so that access via a k8s client
-                    can determine whether the capability is supported in the operator."
+                  description: |-
+                    StatusCondition is a condition struct that matches the conventions expected
+                    by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
+
+                    StatusConditions must follow the following discipline in reconciliation:
+                    The operator MUST always populate all the condition types in a
+                    SignadotSandboxStatus struct, irrespective of whether
+                    the condition is known or not (see corev1.ConditionUnknown) so that access via
+                    a k8s client can determine whether the capability is supported in the operator.
                   properties:
                     lastTransitionTime:
                       format: date-time
@@ -137,8 +145,9 @@ spec:
                   type: object
                 type: array
               matchedVirtualServices:
-                description: MatchedVirtualServices is a list of the matching virtual
-                  services for this route, along with its status
+                description: |-
+                  MatchedVirtualServices is a list of the matching virtual services for
+                  this route, along with its status
                 items:
                   properties:
                     message:
@@ -160,8 +169,9 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: ObservedGeneration provides the Generation of the last
-                  IstioRoute seen by the controller.
+                description: |-
+                  ObservedGeneration provides the Generation of the last IstioRoute seen by
+                  the controller.
                 format: int64
                 type: integer
             type: object

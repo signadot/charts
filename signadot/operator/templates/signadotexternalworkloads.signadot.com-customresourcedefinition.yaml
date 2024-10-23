@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.13.0
+    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
@@ -28,22 +28,28 @@ spec:
       openAPIV3Schema:
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
           spec:
             properties:
               baseline:
-                description: Baseline specifies the target workload to which this
-                  external workload applies.
+                description: |-
+                  Baseline specifies the target workload to which this external
+                  workload applies.
                 properties:
                   apiVersion:
                     description: APIVersion specifies the API Version (e.g. "apps/v1")
@@ -66,8 +72,9 @@ spec:
                 - name
                 type: object
               name:
-                description: 'Name of the external workload, this is an arbitrary
-                  string defined by the user (eg: "apiserver" or "playground-api")'
+                description: |-
+                  Name of the external workload, this is an arbitrary string defined by
+                  the user (eg: "apiserver" or "playground-api")
                 maxLength: 30
                 pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
                 type: string
@@ -75,7 +82,8 @@ spec:
                 description: 'DEPRECATED: this field is no longer needed.'
                 type: string
               tunnel:
-                description: Tunnel defines that this external workload will be accessed
+                description: |-
+                  Tunnel defines that this external workload will be accessed
                   via a reverse tunnel, in Tunnel Proxy.
                 properties:
                   baselineToLocals:
@@ -112,8 +120,9 @@ spec:
                 description: Baseline provides information about the baseline workload
                 properties:
                   generation:
-                    description: Generation is the latest generation of the underlying
-                      baseline workload as seen by the controller
+                    description: |-
+                      Generation is the latest generation of the underlying baseline workload
+                      as seen by the controller
                     format: int64
                     type: integer
                   workloadID:
@@ -124,18 +133,19 @@ spec:
                 - workloadID
                 type: object
               conditions:
-                description: 'Conditions is a list of conditions that matches the
-                  conventions expected by kubectl, allowing our CRDs to work with:
-                  kubectl wait --for=condition=...'
+                description: |-
+                  Conditions is a list of conditions that matches the conventions expected
+                  by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
                 items:
-                  description: "StatusCondition is a condition struct that matches
-                    the conventions expected by kubectl, allowing our CRDs to work
-                    with: kubectl wait --for=condition=... \n StatusConditions must
-                    follow the following discipline in reconciliation: The operator
-                    MUST always populate all the condition types in a SignadotSandboxStatus
-                    struct, irrespective of whether the condition is known or not
-                    (see corev1.ConditionUnknown) so that access via a k8s client
-                    can determine whether the capability is supported in the operator."
+                  description: |-
+                    StatusCondition is a condition struct that matches the conventions expected
+                    by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
+
+                    StatusConditions must follow the following discipline in reconciliation:
+                    The operator MUST always populate all the condition types in a
+                    SignadotSandboxStatus struct, irrespective of whether
+                    the condition is known or not (see corev1.ConditionUnknown) so that access via
+                    a k8s client can determine whether the capability is supported in the operator.
                   properties:
                     lastTransitionTime:
                       format: date-time
@@ -154,17 +164,20 @@ spec:
                   type: object
                 type: array
               observedGeneration:
-                description: ObservedGeneration provides the Generation of the last
-                  ExternalWorkload seen by the controller.
+                description: |-
+                  ObservedGeneration provides the Generation of the last ExternalWorkload
+                  seen by the controller.
                 format: int64
                 type: integer
               routingConfig:
-                description: This is routing information about the workload, exposed
-                  to the RoutingConfig controller.
+                description: |-
+                  This is routing information about the workload, exposed to the
+                  RoutingConfig controller.
                 properties:
                   devMeshSidecarPresent:
-                    description: DevMeshSidecarPresent defines if the DevMesh sidecar
-                      is present in the baseline workload
+                    description: |-
+                      DevMeshSidecarPresent defines if the DevMesh sidecar is present in the
+                      baseline workload
                     type: boolean
                   services:
                     description: Services provides the list of matching services for
@@ -175,8 +188,9 @@ spec:
                           description: Name of the baseline service
                           type: string
                         missingPorts:
-                          description: List of ports in the baseline service which
-                            do not have a corresponding TargetPort in the workload.
+                          description: |-
+                            List of ports in the baseline service which do not
+                            have a corresponding TargetPort in the workload.
                           items:
                             format: int32
                             type: integer
@@ -199,10 +213,11 @@ spec:
                             type: object
                           type: array
                         to:
-                          description: Name of the service created for the forked
-                            or external workload An empty name means that no service
-                            was created because there were no ports in the baseline
-                            service which resolved to ports in the baseline workload.
+                          description: |-
+                            Name of the service created for the forked or external workload
+                            An empty name means that no service was created because there
+                            were no ports in the baseline service which resolved to ports
+                            in the baseline workload.
                           type: string
                       required:
                       - from
@@ -212,7 +227,8 @@ spec:
                 - devMeshSidecarPresent
                 type: object
               tunnel:
-                description: Tunnel exposes the status of the tunnel behind this external
+                description: |-
+                  Tunnel exposes the status of the tunnel behind this external
                   workload
                 properties:
                   health:
@@ -253,9 +269,9 @@ spec:
                         description: Tunnel proxy pod name
                         type: string
                       workloadPorts:
-                        description: This is a map from the workload source port as
-                          a string to the port in which it is exposed in the Tunnel
-                          proxy.
+                        description: |-
+                          This is a map from the workload source port as a string to the port in which it is
+                          exposed in the Tunnel proxy.
                         items:
                           description: Baseline port mapping to proxy port
                           properties:
