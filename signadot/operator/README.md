@@ -120,6 +120,13 @@ style resources and are not needed in an installation which uses the new
 | `jobExecutorProxy.image`              | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`   |
 | `jobExecutorProxy.imagePullPolicy`    | Job Executor Proxy container image pull policy          | `IfNotPresent`                         |
 | `jobExecutorProxy.imagePullSecret`    | Job Executor Proxy container image pull secret          | `""`                                   |
+| `sandboxTrafficManager.enabled`     | Whether to enable the sandbox traffic manager sidecar on forked workloads | `true`                         |
+| `sandboxTrafficManager.init.Image`     | Sandbox traffic manager sidecar image override | `signadot/sandbox-traffic-manager:vX.Y.Z`                         |
+| `sandboxTrafficManager.init.ImagePullPolicy`     | Sandbox traffic manager sidecar image pull policy | `IfNotPresent`                         |
+| `sandboxTrafficManager.init.ImagePullSecret`     | Sandbox traffic manager sidecar image pull secret | `""`                         |
+| `sandboxTrafficManager.sidecar.Image`     | Sandbox traffic manager sidecar image override | `signadot/sandbox-traffic-manager:vX.Y.Z`                         |
+| `sandboxTrafficManager.sidecar.ImagePullPolicy`     | Sandbox traffic manager sidecar image pull policy | `IfNotPresent`                         |
+| `sandboxTrafficManager.sidecar.ImagePullSecret`     | Sandbox traffic manager sidecar image pull secret | `""`                         |
 
 
 ### Tunnel parameters
