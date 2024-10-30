@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.13.0
+    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
@@ -29,14 +29,19 @@ spec:
         description: SignadotRoute is the Schema for the signadotroutes API
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
@@ -44,15 +49,18 @@ spec:
             description: SignadotRouteSpec defines the desired state of SignadotRoute
             properties:
               containerPorts:
-                description: "ContainerPorts are all the ports declared by all containers
-                  in the underlying workload. \n This is optional for routes specified
-                  with the \"static\" field, but is required for all other routes."
+                description: |-
+                  ContainerPorts are all the ports declared by all containers in the underlying workload.
+
+                  This is optional for routes specified with the "static" field,
+                  but is required for all other routes.
                 items:
                   description: ContainerPort represents a network port in a single
                     container.
                   properties:
                     containerPort:
-                      description: Number of port to expose on the pod's IP address.
+                      description: |-
+                        Number of port to expose on the pod's IP address.
                         This must be a valid port number, 0 < x < 65536.
                       format: int32
                       type: integer
@@ -60,53 +68,60 @@ spec:
                       description: What host IP to bind the external port to.
                       type: string
                     hostPort:
-                      description: Number of port to expose on the host. If specified,
-                        this must be a valid port number, 0 < x < 65536. If HostNetwork
-                        is specified, this must match ContainerPort. Most containers
-                        do not need this.
+                      description: |-
+                        Number of port to expose on the host.
+                        If specified, this must be a valid port number, 0 < x < 65536.
+                        If HostNetwork is specified, this must match ContainerPort.
+                        Most containers do not need this.
                       format: int32
                       type: integer
                     name:
-                      description: If specified, this must be an IANA_SVC_NAME and
-                        unique within the pod. Each named port in a pod must have
-                        a unique name. Name for the port that can be referred to by
-                        services.
+                      description: |-
+                        If specified, this must be an IANA_SVC_NAME and unique within the pod. Each
+                        named port in a pod must have a unique name. Name for the port that can be
+                        referred to by services.
                       type: string
                     protocol:
                       default: TCP
-                      description: Protocol for port. Must be UDP, TCP, or SCTP. Defaults
-                        to "TCP".
+                      description: |-
+                        Protocol for port. Must be UDP, TCP, or SCTP.
+                        Defaults to "TCP".
                       type: string
                   required:
                   - containerPort
                   type: object
                 type: array
               routeGroupName:
-                description: RouteGroupName is the k8s name of the RouteGroup which
-                  was used to generate this SignadotRouteSpec.  It is optional, and
-                  if not specified or empty, means the route is not generated by a
-                  RouteGroup.  If it is specified, no service will be created for
-                  this route, and the sandboxID field will refer to a routing key
-                  rather than a real sandbox id.
+                description: |-
+                  RouteGroupName is the k8s name of the RouteGroup which
+                  was used to generate this SignadotRouteSpec.  It is
+                  optional, and if not specified or empty, means the route
+                  is not generated by a RouteGroup.  If it is specified,
+                  no service will be created for this route, and the sandboxID field
+                  will refer to a routing key rather than a real sandbox id.
                 type: string
               sandboxID:
-                description: SandboxID is the unique ID of the destination sandbox
-                  of this route. In case RouteGroupName is not empty, SandboxID is
-                  actually the routing key for the route group with name RouteGroupName.   We
-                  keep the name SandboxID for backward compatibility.
+                description: |-
+                  SandboxID is the unique ID of the destination sandbox of this route.
+                  In case RouteGroupName is not empty, SandboxID is actually the
+                  routing key for the route group with name RouteGroupName.   We keep
+                  the name SandboxID for backward compatibility.
                 type: string
               static:
-                description: "Static can optionally be used to specify a route by
-                  providing an explicit list of endpoints rather than relying on the
-                  default behavior of selecting forked Pods with a label selector.
-                  \ Static may not be specified if RouteGroupName is non-empty. \n
-                  If this is specified, the SignadotRoute will not create a child
-                  Service to select forked Pods."
+                description: |-
+                  Static can optionally be used to specify a route by providing an explicit
+                  list of endpoints rather than relying on the default behavior of
+                  selecting forked Pods with a label selector.  Static may not be specified
+                  if RouteGroupName is non-empty.
+
+                  If this is specified, the SignadotRoute will not create a child Service
+                  to select forked Pods.
                 properties:
                   endpoints:
-                    description: Endpoints are the fixed values that will be copied
-                      unchanged from Spec to Status, allowing you to statically specify
-                      the exact list of endpoints that will be used for the route.
+                    description: |-
+                      Endpoints are the fixed values that will be copied unchanged from Spec to Status,
+                      allowing you to statically specify the exact list of endpoints that will
+                      be used for the route.
                     items:
                       description: RouteEndpoint is one endpoint that can be used
                         to satisfy a given route.
@@ -127,8 +142,9 @@ spec:
                 - endpoints
                 type: object
               workloadID:
-                description: WorkloadID is the unique ID of the original workload
-                  (e.g. a Deployment) that was cloned into the destination sandbox.
+                description: |-
+                  WorkloadID is the unique ID of the original workload (e.g. a Deployment)
+                  that was cloned into the destination sandbox.
                 type: string
             required:
             - sandboxID
