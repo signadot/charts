@@ -152,10 +152,23 @@ style resources and are not needed in an installation which uses the new
 
 When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
 
+Enabling Istio will activate the Istio proxy in the following components: the Signadot `agent` (for control-plane access to the cluster), the `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and the managed job runner group (for executing in-cluster smart tests).
+
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
 | `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
 | `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
 | `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
+
+
+### Linkerd Parameters
+
+Enabling Linkerd will activate the Linkerd proxy in the following components: the Signadot `agent` (for control-plane access to the cluster), the `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and the managed job runner group (for executing in-cluster smart tests).
+
+Note that, unlike with Istio, we don't have native integration for Linkerd. Therefore, to enable sandbox routing, DevMesh must be enabled in the relevant workloads.
+
+| Name              | Description              | Default |
+| ----------------- | ------------------------ | ------- |
+| `linkerd.enabled` | Enable Istio integration | `false` |
 
