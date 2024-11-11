@@ -148,11 +148,11 @@ style resources and are not needed in an installation which uses the new
 | `tunnel.auditor.inboundRulesLuaScript`   | All inbound traffic (from cluster to workstation) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details  | `""`    |
 | `tunnel.auditor.outboundRulesLuaScript`  | All outbound traffic (from workstation to cluster) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details | `""`    |
 |                                          |                                                                                                                                                                                                                                                                              |         |
-### Istio Parameters
+### Istio parameters
 
 When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
 
-Enabling Istio will activate the Istio proxy in the following components: the Signadot `agent` (for control-plane access to the cluster), the `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and the managed job runner group (for executing in-cluster smart tests).
+Enabling Istio will activate the Istio proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
 
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
@@ -162,13 +162,27 @@ Enabling Istio will activate the Istio proxy in the following components: the Si
 | `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
 
 
-### Linkerd Parameters
+### Linkerd parameters
 
-Enabling Linkerd will activate the Linkerd proxy in the following components: the Signadot `agent` (for control-plane access to the cluster), the `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and the managed job runner group (for executing in-cluster smart tests).
+Enabling Linkerd will activate the Linkerd proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
 
-Note that, unlike with Istio, we don't have native integration for Linkerd. Therefore, to enable sandbox routing, DevMesh must be enabled in the relevant workloads.
+Note that, unlike with Istio, we don't have a native integration for Linkerd. Therefore, to enable sandbox routing, DevMesh must be enabled in the relevant workloads.
 
 | Name              | Description              | Default |
 | ----------------- | ------------------------ | ------- |
 | `linkerd.enabled` | Enable Istio integration | `false` |
 
+
+### Routing parameters
+
+| Name                    | Description                                     | Default |
+| ----------------------- | ----------------------------------------------- | ------- |
+| `routing.customHeaders` | List of custom headers used for sandbox routing | `[]`    |
+
+
+### Traffic capture parameters
+
+| Name                                  | Description                                                 | Default |
+| ------------------------------------- | ----------------------------------------------------------- | ------- |
+| `trafficCapture.requestHeadersElide`  | List of request headers to be elided from traffic captures  | `[]`    |
+| `trafficCapture.responseHeadersElide` | List of response headers to be elided from traffic captures | `[]`    |
