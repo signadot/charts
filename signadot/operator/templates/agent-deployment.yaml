@@ -1,4 +1,8 @@
 # This file is generated. Do not edit.
+{{- $istioEnabled := false -}}
+{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $linkerdEnabled := false -}}
+{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 {{ if not .Values.disableAgent }}
 apiVersion: apps/v1
 kind: Deployment
@@ -27,14 +31,19 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        {{- if $linkerdEnabled }}
+        linkerd.io/inject: enabled
+        {{- end }}
       labels:
         app: signadot-agent
-        sidecar.istio.io/inject: "true"
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- if $istioEnabled }}
+        sidecar.istio.io/inject: "true"
         {{- end }}
     spec:
       containers:

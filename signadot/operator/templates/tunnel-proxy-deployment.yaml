@@ -1,6 +1,8 @@
 # This file is generated. Do not edit.
 {{- $istioEnabled := false -}}
 {{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $linkerdEnabled := false -}}
+{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 {{- $auditorEnabled := true -}}
 {{- with .Values }}{{ with .tunnel }}{{ with .auditor }}{{- if hasKey . "enabled" }}{{ $auditorEnabled = .enabled }}{{- end }}{{- end }}{{- end }}{{- end }}
 apiVersion: apps/v1
@@ -33,6 +35,9 @@ spec:
         {{- end }}
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- if $linkerdEnabled }}
+        linkerd.io/inject: enabled
         {{- end }}
       labels:
         app: tunnel-proxy
@@ -72,7 +77,7 @@ spec:
 {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .resources }}        resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-      {{- if and (not $istioEnabled) $auditorEnabled }}
+      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       - args:
         - -c
         - /etc/config.yaml
@@ -99,7 +104,7 @@ spec:
         - mountPath: /usr/local/share/lua
           name: luarocks
       {{- end }}
-      {{- if and (not $istioEnabled) $auditorEnabled }}
+      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       initContainers:
       - env:
         - name: LUA_ROCKS
@@ -124,7 +129,7 @@ spec:
       {{- end }}
       serviceAccountName: tunnel-proxy
       volumes:
-      {{- if and (not $istioEnabled) $auditorEnabled }}
+      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       - configMap:
           name: tunnel-auditor-config
         name: tunnel-auditor-config
