@@ -75,4 +75,14 @@ rules:
   - get
   - list
   - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - signadot-cluster-config
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
 {{ end }}
