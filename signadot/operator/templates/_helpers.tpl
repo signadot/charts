@@ -4,12 +4,15 @@ cluster config template
 {{- define "compileClusterConfig" -}}
 routing:
   istio:
-    enabled: {{ with .Values }}{{ with .istio }}{{ with .enabled }}{{ toString .}}{{- else -}}false{{- end }}{{- else -}}false{{- end }}{{- else -}}false{{- end }}
-    enableHostRouting: {{ with .Values }}{{ with .istio }}{{ with .enableDeprecatedHostRouting }}{{ toString .}}{{- else -}}false{{- end }}{{- else -}}false{{- end }}{{- else -}}false{{- end }}
+    enabled: {{ if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") -}}{{ toString .Values.istio.enabled }}{{- else -}}false{{- end }}
+    enableHostRouting: {{ if and (hasKey .Values "istio") (hasKey .Values.istio "enableDeprecatedHostRouting") -}}{{ toString .Values.istio.enableDeprecatedHostRouting }}{{- else -}}false{{- end }}
   linkerd:
-    enabled: {{ with .Values }}{{ with .linkerd }}{{ with .enabled }}{{ toString .}}{{- else -}}false{{- end }}{{- else -}}false{{- end }}{{- else -}}false{{- end }}
+    enabled: {{ if and (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") -}}{{ toString .Values.linkerd.enabled }}{{- else -}}false{{- end }}
   customHeaders: {{ with .Values }}{{ with .routing }}{{ with .customHeaders }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
+sandboxTrafficManager:
+  enabled: {{ if and (hasKey .Values "sandboxTrafficManager") (hasKey .Values.sandboxTrafficManager "enabled") -}}{{ toString .Values.sandboxTrafficManager.enabled }}{{- else -}}true{{- end }}
 trafficCapture:
+  enabled: {{ if and (hasKey .Values "trafficCapture") (hasKey .Values.trafficCapture "enabled") -}}{{ toString .Values.trafficCapture.enabled }}{{- else -}}true{{- end }}
   requestHeadersElide: {{ with .Values }}{{ with .trafficCapture }}{{ with .requestHeadersElide }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
   responseHeadersElide: {{ with .Values }}{{ with .trafficCapture }}{{ with .responseHeadersElide }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
 {{- end -}}
