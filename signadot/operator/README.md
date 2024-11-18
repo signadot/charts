@@ -184,5 +184,6 @@ Note that, unlike with Istio, we don't have a native integration for Linkerd. Th
 
 | Name                                  | Description                                                 | Default |
 | ------------------------------------- | ----------------------------------------------------------- | ------- |
+| `trafficCapture.enabled`              | Enable traffic capture                                      | `true`  |
 | `trafficCapture.requestHeadersElide`  | List of request headers to be elided from traffic captures  | `[]`    |
 | `trafficCapture.responseHeadersElide` | List of response headers to be elided from traffic captures | `[]`    |
