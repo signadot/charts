@@ -1,6 +1,7 @@
 # Bind the ClusterRole containing namespaced permissions to the
 # controller-manager's ServiceAccount only in the specified namespaces.
-{{ range $namespace := .Values.allowedNamespaces }}
+{{- $allowedNamespaces := (include "getAllowedNamespaces" . | fromJsonArray) -}}
+{{ range $namespace := $allowedNamespaces }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
