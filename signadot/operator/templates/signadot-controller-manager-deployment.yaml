@@ -72,8 +72,6 @@ spec:
           value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: JOB_EXECUTOR_PROXY_IMAGE_PULL_SECRET
           value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
-        - name: SANDBOX_TRAFFICMANAGER_ENABLED
-          value: {{ with .Values }}{{ with .sandboxTrafficManager }}{{ with .enabled }}{{ toString . | quote}}{{- else -}}"true"{{- end }}{{- else -}}"true"{{- end }}{{- else -}}"true"{{- end }}
         - name: SANDBOX_TRAFFICMANAGER_INIT_IMAGE_PULL_POLICY
           value: {{ with .Values }}{{ with .sandboxTrafficManager }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: SANDBOX_TRAFFICMANAGER_INIT_IMAGE_PULL_SECRET

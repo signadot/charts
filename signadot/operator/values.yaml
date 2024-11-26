@@ -183,6 +183,7 @@
 #     - header2
 
 # trafficCapture:
+#   enabled: true
 #   # Request headers to be elided from traffic captures
 #   requestHeadersElide:
 #     - header1
