@@ -42,8 +42,6 @@ spec:
         command:
         - /manager
         env:
-        - name: ALLOWED_NAMESPACES
-          value: {{ range $i, $val := .Values.allowedNamespaces }}{{ if gt $i 0 }},{{ end }}{{ $val }}{{ else }}""{{ end }}
         - name: SIDECAR_INIT_IMAGE_PULL_POLICY
           value: {{ with .Values }}{{ with .routeInit }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: SIDECAR_INIT_IMAGE_PULL_SECRET

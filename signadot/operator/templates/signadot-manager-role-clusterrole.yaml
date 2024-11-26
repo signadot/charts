@@ -13,18 +13,6 @@ metadata:
   name: signadot-manager-role
 rules:
 - apiGroups:
-  - ""
-  resources:
-  - endpoints
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
   - admissionregistration.k8s.io
   resourceNames:
   - signadot-mutating-webhook-configuration
