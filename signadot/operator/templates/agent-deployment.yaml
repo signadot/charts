@@ -31,6 +31,8 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/signadot-cluster-config-configmap.yaml")
+          . | sha256sum }}'
         {{- if $linkerdEnabled }}
         linkerd.io/inject: enabled
         {{- end }}
@@ -57,7 +59,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.0{{- end }}{{- else -}}signadot/agent:v0.19.0{{- end }}{{- else -}}signadot/agent:v0.19.0{{- end }}
+        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.1{{- end }}{{- else -}}signadot/agent:v0.19.1{{- end }}{{- else -}}signadot/agent:v0.19.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
