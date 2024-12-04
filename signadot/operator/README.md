@@ -173,11 +173,11 @@ Enabling Istio will activate the Istio proxy in the following components: in Sig
 
 Enabling Linkerd will activate the Linkerd proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
 
-Note that, unlike with Istio, we don't have a native integration for Linkerd. Therefore, to enable sandbox routing, DevMesh must be enabled in the relevant workloads.
+Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CRDs, but by using the DevMesh sidecars in the relevant workloads.
 
 | Name              | Description              | Default |
 | ----------------- | ------------------------ | ------- |
-| `linkerd.enabled` | Enable Istio integration | `false` |
+| `linkerd.enabled` | Enable Linkerd integration | `false` |
 
 
 ### Routing parameters
