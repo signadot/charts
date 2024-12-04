@@ -1,0 +1,14 @@
+{{- if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") .Values.istio.enabled
+           (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") .Values.linkerd.enabled
+}}
+{{ fail "istio and linkerd cannot be enabled at the same time" }}
+{{- end }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: signadot-cluster-config
+  namespace: signadot
+data:
+  cluster_config.yaml: |
+    {{- include "compileClusterConfig" . | nindent 4 }}

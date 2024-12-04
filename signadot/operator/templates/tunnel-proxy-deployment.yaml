@@ -1,6 +1,8 @@
 # This file is generated. Do not edit.
 {{- $istioEnabled := false -}}
 {{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $linkerdEnabled := false -}}
+{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 {{- $auditorEnabled := true -}}
 {{- with .Values }}{{ with .tunnel }}{{ with .auditor }}{{- if hasKey . "enabled" }}{{ $auditorEnabled = .enabled }}{{- end }}{{- end }}{{- end }}{{- end }}
 apiVersion: apps/v1
@@ -34,6 +36,9 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        {{- if $linkerdEnabled }}
+        linkerd.io/inject: enabled
+        {{- end }}
       labels:
         app: tunnel-proxy
         {{- range $key, $val := .Values.commonLabels }}
@@ -60,7 +65,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.19.0{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.0{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.0{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.0{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-proxy
         ports:
@@ -72,7 +77,7 @@ spec:
 {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .resources }}        resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-      {{- if and (not $istioEnabled) $auditorEnabled }}
+      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       - args:
         - -c
         - /etc/config.yaml
@@ -99,7 +104,7 @@ spec:
         - mountPath: /usr/local/share/lua
           name: luarocks
       {{- end }}
-      {{- if and (not $istioEnabled) $auditorEnabled }}
+      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       initContainers:
       - env:
         - name: LUA_ROCKS
@@ -108,7 +113,7 @@ spec:
           value: "10000"
         - name: OUTBOUND_AUDITOR_PORT
           value: "10001"
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.0{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor-init
         securityContext:
@@ -124,7 +129,7 @@ spec:
       {{- end }}
       serviceAccountName: tunnel-proxy
       volumes:
-      {{- if and (not $istioEnabled) $auditorEnabled }}
+      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       - configMap:
           name: tunnel-auditor-config
         name: tunnel-auditor-config

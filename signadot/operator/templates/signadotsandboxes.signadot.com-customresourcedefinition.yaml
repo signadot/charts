@@ -7962,6 +7962,64 @@ spec:
                     name:
                       description: Name of the external workload
                       type: string
+                    routing:
+                      description: |-
+                        Routing exposes information about the routing status of the external
+                        workload
+                      properties:
+                        devMesh:
+                          description: |-
+                            DevMesh provides information about the setup of the DevMesh sidecar for
+                            the workload
+                          properties:
+                            enabled:
+                              description: |-
+                                Enabled means that the DevMesh sidecar container is present and ready in
+                                all the baseline workload pods
+                              type: boolean
+                          required:
+                          - enabled
+                          type: object
+                        istio:
+                          description: |-
+                            Istio provides information about the Virtual Service configuration for
+                            each of the baseline services
+                          items:
+                            properties:
+                              baselineService:
+                                description: Baseline service name that includes the
+                                  target workload
+                                type: string
+                              matchedVirtualServices:
+                                description: |-
+                                  MatchedVirtualServices is a list of the matching virtual services for
+                                  the baseline service, along with its status
+                                items:
+                                  properties:
+                                    message:
+                                      description: Status related message
+                                      type: string
+                                    name:
+                                      description: This is the virtual service name
+                                      type: string
+                                    namespace:
+                                      description: This is the virtual service namespace
+                                      type: string
+                                    status:
+                                      description: Status information about the virtual
+                                        service configuration
+                                      type: string
+                                  required:
+                                  - name
+                                  - namespace
+                                  - status
+                                  type: object
+                                type: array
+                            required:
+                            - baselineService
+                            type: object
+                          type: array
+                      type: object
                     tunnel:
                       description: |-
                         Tunnel exposes the status of the tunnel behind this external
@@ -8033,6 +8091,95 @@ spec:
                       type: object
                   required:
                   - name
+                  type: object
+                type: array
+              forkedWorkloads:
+                description: Status of each of the forked workloads
+                items:
+                  properties:
+                    forkTarget:
+                      description: ForkTarget specifies the workload being forked
+                      properties:
+                        apiVersion:
+                          description: APIVersion specifies the API Version (e.g.
+                            "apps/v1") of the object to patch.
+                          type: string
+                        kind:
+                          description: Kind specifies the Kind (e.g. "Deployment")
+                            of the object to patch.
+                          type: string
+                        name:
+                          description: Name specifies the name of the object to patch.
+                          type: string
+                        namespace:
+                          description: Namespace optionally specifies which namespace
+                            will be searched.
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      - name
+                      type: object
+                    routing:
+                      description: |-
+                        Routing exposes information about the routing status of the forked
+                        workload
+                      properties:
+                        devMesh:
+                          description: |-
+                            DevMesh provides information about the setup of the DevMesh sidecar for
+                            the workload
+                          properties:
+                            enabled:
+                              description: |-
+                                Enabled means that the DevMesh sidecar container is present and ready in
+                                all the baseline workload pods
+                              type: boolean
+                          required:
+                          - enabled
+                          type: object
+                        istio:
+                          description: |-
+                            Istio provides information about the Virtual Service configuration for
+                            each of the baseline services
+                          items:
+                            properties:
+                              baselineService:
+                                description: Baseline service name that includes the
+                                  target workload
+                                type: string
+                              matchedVirtualServices:
+                                description: |-
+                                  MatchedVirtualServices is a list of the matching virtual services for
+                                  the baseline service, along with its status
+                                items:
+                                  properties:
+                                    message:
+                                      description: Status related message
+                                      type: string
+                                    name:
+                                      description: This is the virtual service name
+                                      type: string
+                                    namespace:
+                                      description: This is the virtual service namespace
+                                      type: string
+                                    status:
+                                      description: Status information about the virtual
+                                        service configuration
+                                      type: string
+                                  required:
+                                  - name
+                                  - namespace
+                                  - status
+                                  type: object
+                                type: array
+                            required:
+                            - baselineService
+                            type: object
+                          type: array
+                      type: object
+                  required:
+                  - forkTarget
                   type: object
                 type: array
               managedResources:

@@ -1,4 +1,8 @@
 # This file is generated. Do not edit.
+{{- $istioEnabled := false -}}
+{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $linkerdEnabled := false -}}
+{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 {{ if not .Values.disableAgent }}
 apiVersion: apps/v1
 kind: Deployment
@@ -27,14 +31,21 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/signadot-cluster-config-configmap.yaml")
+          . | sha256sum }}'
+        {{- if $linkerdEnabled }}
+        linkerd.io/inject: enabled
+        {{- end }}
       labels:
         app: signadot-agent
-        sidecar.istio.io/inject: "true"
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- if $istioEnabled }}
+        sidecar.istio.io/inject: "true"
         {{- end }}
     spec:
       containers:
@@ -48,7 +59,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.0{{- end }}{{- else -}}signadot/agent:v0.19.0{{- end }}{{- else -}}signadot/agent:v0.19.0{{- end }}
+        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.1{{- end }}{{- else -}}signadot/agent:v0.19.1{{- end }}{{- else -}}signadot/agent:v0.19.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:

@@ -22,13 +22,12 @@
 # serviceAnnotations:
 #   exampleServiceLAnnotation: exampleServiceLAnnotationValue
 
-# Add these labels or annotations to all istio objects when they are managed by
-# Signadot Note that VirtualServices are only managed by Signadot when they
-# route to some sandbox. 
-#
+# Istio settings
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
+#   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
+#   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
 #   # Signadot Note that virtual services are only managed by Signadot when they
 #   # route to some sandbox.  For virtual services, these labels or annotations are
@@ -37,6 +36,11 @@
 #     exampleLabel: exampleLabelValue
 #   additionalAnnotations:
 #     exampleAnnotatonKey: exampleAnnotationValue
+
+# Linkerd settings
+# linkerd:
+#   # Enable the integration with Linkerd
+#   enabled: true
 
 # By default, this chart will install the operator in
 # cluster-wide mode, where it watches all namespaces.
@@ -171,3 +175,20 @@
 #       syncInterval: 60
 #     disableSSH: false
 #     disableXAP: false
+
+# routing:
+#   # Define a list of custom routing headers
+#   customHeaders:
+#     - header1
+#     - header2
+
+# trafficCapture:
+#   enabled: true
+#   # Request headers to be elided from traffic captures
+#   requestHeadersElide:
+#     - header1
+#     - header2
+#   # Response headers to be elided from traffic captures
+#   responseHeadersElide:
+#     - header1
+#     - header2

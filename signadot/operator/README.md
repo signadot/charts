@@ -66,6 +66,14 @@ kubectl delete ns signadot
 | `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`     |
 | `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
 
+### Controller Manager parameters
+
+| Name                            | Description                                                                 | Default |
+| ------------------------------- | --------------------------------------------------------------------------- | ------- |
+| `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate | `[]`    |
+| `sandboxTrafficManager.enabled` | Whether to enable the sandbox traffic manager sidecar on forked workloads   | `true`  |
+
+
 ### Image customization parameters
 
 The parameters in the table below allow one to specify image names for the
@@ -120,7 +128,6 @@ style resources and are not needed in an installation which uses the new
 | `jobExecutorProxy.image`              | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`   |
 | `jobExecutorProxy.imagePullPolicy`    | Job Executor Proxy container image pull policy          | `IfNotPresent`                         |
 | `jobExecutorProxy.imagePullSecret`    | Job Executor Proxy container image pull secret          | `""`                                   |
-| `sandboxTrafficManager.enabled`     | Whether to enable the sandbox traffic manager sidecar on forked workloads | `true`                         |
 | `sandboxTrafficManager.init.Image`     | Sandbox traffic manager sidecar image override | `signadot/sandbox-traffic-manager:vX.Y.Z`                         |
 | `sandboxTrafficManager.init.ImagePullPolicy`     | Sandbox traffic manager sidecar image pull policy | `IfNotPresent`                         |
 | `sandboxTrafficManager.init.ImagePullSecret`     | Sandbox traffic manager sidecar image pull secret | `""`                         |
@@ -148,9 +155,11 @@ style resources and are not needed in an installation which uses the new
 | `tunnel.auditor.inboundRulesLuaScript`   | All inbound traffic (from cluster to workstation) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details  | `""`    |
 | `tunnel.auditor.outboundRulesLuaScript`  | All outbound traffic (from workstation to cluster) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details | `""`    |
 |                                          |                                                                                                                                                                                                                                                                              |         |
-### Istio Parameters
+### Istio parameters
 
 When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
+
+Enabling Istio will activate the Istio proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
 
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
@@ -159,3 +168,29 @@ When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates
 | `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
 | `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
 
+
+### Linkerd parameters
+
+Enabling Linkerd will activate the Linkerd proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
+
+Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CRDs, but by using the DevMesh sidecars in the relevant workloads.
+
+| Name              | Description              | Default |
+| ----------------- | ------------------------ | ------- |
+| `linkerd.enabled` | Enable Linkerd integration | `false` |
+
+
+### Routing parameters
+
+| Name                    | Description                                     | Default |
+| ----------------------- | ----------------------------------------------- | ------- |
+| `routing.customHeaders` | List of custom headers used for sandbox routing | `[]`    |
+
+
+### Traffic capture parameters
+
+| Name                                  | Description                                                 | Default |
+| ------------------------------------- | ----------------------------------------------------------- | ------- |
+| `trafficCapture.enabled`              | Enable traffic capture                                      | `true`  |
+| `trafficCapture.requestHeadersElide`  | List of request headers to be elided from traffic captures  | `[]`    |
+| `trafficCapture.responseHeadersElide` | List of response headers to be elided from traffic captures | `[]`    |
