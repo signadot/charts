@@ -1,6 +1,8 @@
 # This file is generated. Do not edit.
 {{- $istioEnabled := false -}}
 {{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $istioRevision := "" -}}
+{{- with .Values }}{{ with .istio }}{{- if hasKey . "revision" }}{{ $istioRevision = .revision }}{{- end }}{{- end }}{{- end }}
 {{- $linkerdEnabled := false -}}
 {{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 {{- $auditorEnabled := true -}}
@@ -48,7 +50,11 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $istioEnabled }}
+        {{- if ne $istioRevision "" }}
+        istio.io/rev: {{ $istioRevision }}
+        {{- else }}
         sidecar.istio.io/inject: "true"
+        {{- end }}
         {{- end }}
     spec:
       containers:

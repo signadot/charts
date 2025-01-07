@@ -164,6 +164,7 @@ Enabling Istio will activate the Istio proxy in the following components: in Sig
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
+| `istio.revision`                    | The revision of istio control plane to use; uses `istio.io/rev` label on pods                             | `""`    |
 | `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
 | `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
 | `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |

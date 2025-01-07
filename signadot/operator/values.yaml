@@ -26,6 +26,8 @@
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
+#   # Specify the revision of Istio control plane to use
+#   revision: default
 #   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
 #   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
