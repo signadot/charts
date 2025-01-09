@@ -45,4 +45,8 @@ spec:
         name: io-context-server
         ports:
         - containerPort: 8443
+{{- with .Values }}{{- with .ioContextServer }}{{- with .resources }}
+        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: io-context-server

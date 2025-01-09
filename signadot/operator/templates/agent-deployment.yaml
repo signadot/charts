@@ -72,5 +72,9 @@ spec:
           httpGet:
             path: /healthz
             port: 8088
+{{- with .Values }}{{- with .agent }}{{- with .resources }}
+        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: agent
 {{ end }}

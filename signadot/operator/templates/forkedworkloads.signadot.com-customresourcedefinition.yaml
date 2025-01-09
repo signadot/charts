@@ -71,6 +71,8 @@ spec:
                 - kind
                 - name
                 type: object
+              disableSandboxTrafficManager:
+                type: boolean
               patches:
                 description: List of patches to be applied to the baseline workload
                 items:

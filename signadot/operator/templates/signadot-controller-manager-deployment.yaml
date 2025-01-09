@@ -119,13 +119,10 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 10
+{{- with .Values }}{{- with .operator }}{{- with .resources }}
         resources:
-          limits:
-            cpu: {{ with .Values }}{{ with .operator }}{{ with .cpu }}{{ . | quote}}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}
-            memory: {{ with .Values }}{{ with .operator }}{{ with .memory }}{{ . | quote}}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}
-          requests:
-            cpu: {{ with .Values }}{{ with .operator }}{{ with .cpu }}{{ . | quote}}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}{{- else -}}100m{{- end }}
-            memory: {{ with .Values }}{{ with .operator }}{{ with .memory }}{{ . | quote}}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}{{- else -}}512Mi{{- end }}
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
         securityContext:
           allowPrivilegeEscalation: false
         volumeMounts:

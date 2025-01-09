@@ -11,23 +11,23 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-agent
+  name: signadot-agent-namespaced
 rules:
 - apiGroups:
-  - signadot.com
+  - ""
   resources:
-  - resources
-  - signadotsandboxes
-  - signadotroutes
-  - signadotexternalworkloads
-  - signadoforkedworkloads
-  - resources
-  - signadotobjectlifecyclemethods
-  - signadotroutegroups
-  - routingconfigs
-  - istioroutes
-  - jobs
-  - jobrunnergroups
+  - pods
+  - pods/log
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  - events.k8s.io
+  resources:
+  - events
   verbs:
   - get
   - list
@@ -36,9 +36,18 @@ rules:
   - update
   - delete
 - apiGroups:
-  - ""
+  - apps
   resources:
-  - namespaces
+  - deployments
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
   verbs:
   - get
   - list
