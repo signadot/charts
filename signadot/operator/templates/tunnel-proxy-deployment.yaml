@@ -27,7 +27,7 @@ spec:
       app: tunnel-proxy
 {{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .strategy }}
   strategy:
-{{ toYaml . | indent 10 }}
+{{ toYaml . | indent 4 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   template:
     metadata:

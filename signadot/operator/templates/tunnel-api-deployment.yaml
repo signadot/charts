@@ -21,7 +21,7 @@ spec:
       app: tunnel-api
 {{- with .Values }}{{- with .tunnel }}{{- with .api }}{{- with .strategy }}
   strategy:
-{{ toYaml . | indent 10 }}
+{{ toYaml . | indent 4 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   template:
     metadata:
