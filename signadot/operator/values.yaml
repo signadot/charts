@@ -1,3 +1,6 @@
+# Common settings
+# -----------------------------------------------------------------------------
+
 # Add these labels to all objects deployed by this chart.
 # commonLabels:
 #   exampleCommonLabel: exampleCommonLabelValue
@@ -22,7 +25,19 @@
 # serviceAnnotations:
 #   exampleServiceLAnnotation: exampleServiceLAnnotationValue
 
+# By default, this chart will install the operator in
+# cluster-wide mode, where it watches all namespaces.
+
+# Uncomment the following to configure the operator to
+# only watch specific namespaces.
+# allowedNamespaces:
+# - ns1
+# - ns2
+
+
 # Istio settings
+# -----------------------------------------------------------------------------
+
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
@@ -37,20 +52,17 @@
 #   additionalAnnotations:
 #     exampleAnnotatonKey: exampleAnnotationValue
 
+
 # Linkerd settings
+# -----------------------------------------------------------------------------
+
 # linkerd:
 #   # Enable the integration with Linkerd
 #   enabled: true
 
-# By default, this chart will install the operator in
-# cluster-wide mode, where it watches all namespaces.
 
-# Uncomment the following to configure the operator to
-# only watch specific namespaces.
-# allowedNamespaces:
-# - ns1
-# - ns2
-
+# Component settings
+# -----------------------------------------------------------------------------
 
 operator:
   resources:
@@ -189,11 +201,40 @@ tunnel:
   #   disableSSH: false
   #   disableXAP: false
 
+# jobExecutorInit:
+#   image: my-private-registry/signadot/job-executor-init:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-jobExecutorInit
+
+# jobExecutorProxy:
+#   image: my-private-registry/signadot/job-executor-proxy:latest
+#   imagePullPolicy: Always
+#   imagePullSecret: secret-jobExecutorProxy
+
+# sandboxTrafficManager:
+#   enabled: true
+#   init:
+#     image: my-private-registry/signadot/sandbox-traffic-manager-init:latest
+#     imagePullPolicy: Always
+#     imagePullSecret: secret-sandboxTrafficManagerInit
+#   sidecar:
+#     image: my-private-registry/signadot/sandbox-traffic-manager-sidecar:latest
+#     imagePullPolicy: Always
+#     imagePullSecret: secret-sandboxTrafficManagerSidecart
+
+
+# Routing settings
+# -----------------------------------------------------------------------------
+
 # routing:
 #   # Define a list of custom routing headers
 #   customHeaders:
 #     - header1
 #     - header2
+
+
+# Traffic capture settings
+# -----------------------------------------------------------------------------
 
 # trafficCapture:
 #   enabled: true
