@@ -5,6 +5,7 @@ cluster config template
 {{- define "compileClusterConfig" -}}
 {{- $allowedNamespaces := (include "getAllowedNamespaces" . | fromJsonArray) -}}
 allowedNamespaces: {{ if gt (len $allowedNamespaces) 0 }}{{ printf "\n" }}{{ toYaml $allowedNamespaces | indent 2}}{{- else -}}[]{{- end }}
+allowOrphanedResources: {{ if hasKey .Values "allowOrphanedResources" -}}{{ toString .Values.allowOrphanedResources }}{{- else -}}false{{- end }}
 routing:
   istio:
     enabled: {{ if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") -}}{{ toString .Values.istio.enabled }}{{- else -}}false{{- end }}

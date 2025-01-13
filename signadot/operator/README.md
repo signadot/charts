@@ -68,10 +68,11 @@ kubectl delete ns signadot
 
 ### Controller Manager parameters
 
-| Name                            | Description                                                                 | Default |
-| ------------------------------- | --------------------------------------------------------------------------- | ------- |
-| `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate | `[]`    |
-| `sandboxTrafficManager.enabled` | Whether to enable the sandbox traffic manager sidecar on forked workloads   | `true`  |
+| Name                            | Description                                                                                               | Default |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
+| `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
+| `sandboxTrafficManager.enabled` | Whether to enable the sandbox traffic manager sidecar on forked workloads                                 | `true`  |
+| `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
 
 ### Image customization parameters
