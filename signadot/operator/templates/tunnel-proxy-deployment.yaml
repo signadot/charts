@@ -117,6 +117,8 @@ spec:
       {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       initContainers:
       - env:
+        - name: SIGNADOT_IPTABLES_MODE
+          value: {{ with .Values }}{{ with .routing }}{{ with .iptablesMode }}{{ . }}{{- else -}}"legacy"{{- end }}{{- else -}}"legacy"{{- end }}{{- else -}}"legacy"{{- end }}
         - name: LUA_ROCKS
           value: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .luaRocks }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: INBOUND_AUDITOR_PORT

@@ -22,6 +22,8 @@ spec:
   selector:
     matchLabels:
       app: signadot-agent
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:

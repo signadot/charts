@@ -227,6 +227,7 @@ tunnel:
 # -----------------------------------------------------------------------------
 
 # routing:
+#   iptablesMode: nft
 #   # Define a list of custom routing headers
 #   customHeaders:
 #     - header1
