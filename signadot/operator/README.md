@@ -320,9 +320,11 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 
 ### Routing parameters
 
-| Name                    | Description                                     | Default |
-| ----------------------- | ----------------------------------------------- | ------- |
-| `routing.customHeaders` | List of custom headers used for sandbox routing | `[]`    |
+| Name                    | Description                                                                           | Default  |
+| ----------------------- | ------------------------------------------------------------------------------------- | -------- |
+| `routing.iptablesMode`  | `iptables` variant to use when configuring rules (possible values: `legacy` or `nft`) | `legacy` |
+| `routing.customHeaders` | List of custom headers used for sandbox routing                                       | `[]`     |
+
 
 
 ### Traffic capture parameters
