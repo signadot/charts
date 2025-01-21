@@ -1,4 +1,5 @@
 # This file is generated. Do not edit.
+{{ if not .Values.disableAgent }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -28,3 +29,4 @@ spec:
   selector:
     app: signadot-agent
   type: ClusterIP
+{{ end }}

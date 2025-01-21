@@ -1,7 +1,7 @@
 # This file is generated. Do not edit.
 {{ if not .Values.disableAgent }}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   annotations:
     {{- range $key, $val := .Values.commonAnnotations }}
@@ -12,33 +12,14 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: signadot-agent
+  namespace: signadot
 rules:
 - apiGroups:
-  - signadot.com
-  resources:
-  - resources
-  - signadotsandboxes
-  - signadotroutes
-  - signadotexternalworkloads
-  - signadoforkedworkloads
-  - resources
-  - signadotobjectlifecyclemethods
-  - signadotroutegroups
-  - routingconfigs
-  - istioroutes
-  - jobs
-  - jobrunnergroups
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - delete
-- apiGroups:
   - ""
+  resourceNames:
+  - signadot-cluster-config
   resources:
-  - namespaces
+  - configmaps
   verbs:
   - get
   - list

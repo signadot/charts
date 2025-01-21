@@ -22,6 +22,8 @@ spec:
   selector:
     matchLabels:
       app: signadot-agent
+  strategy:
+    type: Recreate
   template:
     metadata:
       annotations:
@@ -59,7 +61,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.1{{- end }}{{- else -}}signadot/agent:v0.19.1{{- end }}{{- else -}}signadot/agent:v0.19.1{{- end }}
+        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.2{{- end }}{{- else -}}signadot/agent:v0.19.2{{- end }}{{- else -}}signadot/agent:v0.19.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
@@ -72,5 +74,9 @@ spec:
           httpGet:
             path: /healthz
             port: 8088
+{{- with .Values }}{{- with .agent }}{{- with .resources }}
+        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: agent
 {{ end }}

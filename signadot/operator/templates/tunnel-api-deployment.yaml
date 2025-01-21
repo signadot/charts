@@ -13,13 +13,15 @@ metadata:
   name: tunnel-api
   namespace: signadot
 spec:
-{{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .replicas }}  replicas: {{ . }}
+{{- with .Values }}{{- with .tunnel }}{{- with .api }}{{- with .replicas }}
+  replicas: {{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
       app: tunnel-api
-{{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .strategy }}  strategy:
-{{ toYaml . | indent 10 }}
+{{- with .Values }}{{- with .tunnel }}{{- with .api }}{{- with .strategy }}
+  strategy:
+{{ toYaml . | indent 4 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   template:
     metadata:
@@ -41,16 +43,19 @@ spec:
     spec:
       containers:
       - args:
-{{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ with .server }}        - --external-dns-server={{ . }}
+{{- with .Values }}{{- with .tunnel }}{{- with .config }}{{- with .externalDNS }}{{- with .server }}
+        - --external-dns-server={{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-{{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS }}{{ with .syncInterval }}        - --external-dns-resync-interval={{ . }}
+{{- with .Values }}{{- with .tunnel }}{{- with .config }}{{- with .externalDNS }}{{- with .syncInterval }}
+        - --external-dns-resync-interval={{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.19.1{{- end }}{{- else -}}signadot/tunnel-api:v0.19.1{{- end }}{{- else -}}signadot/tunnel-api:v0.19.1{{- end }}{{- else -}}signadot/tunnel-api:v0.19.1{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v0.19.2{{- end }}{{- else -}}signadot/tunnel-api:v0.19.2{{- end }}{{- else -}}signadot/tunnel-api:v0.19.2{{- end }}{{- else -}}signadot/tunnel-api:v0.19.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-api
         ports:
         - containerPort: 9070
-{{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .resources }}        resources:
+{{- with .Values }}{{- with .tunnel }}{{- with .api }}{{- with .resources }}
+        resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: tunnel-api

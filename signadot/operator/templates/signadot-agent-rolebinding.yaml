@@ -1,0 +1,24 @@
+# This file is generated. Do not edit.
+{{ if not .Values.disableAgent }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: signadot-agent
+  namespace: signadot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: signadot-agent
+subjects:
+- kind: ServiceAccount
+  name: agent
+  namespace: signadot
+{{ end }}

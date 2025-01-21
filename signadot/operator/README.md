@@ -68,10 +68,11 @@ kubectl delete ns signadot
 
 ### Controller Manager parameters
 
-| Name                            | Description                                                                 | Default |
-| ------------------------------- | --------------------------------------------------------------------------- | ------- |
-| `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate | `[]`    |
-| `sandboxTrafficManager.enabled` | Whether to enable the sandbox traffic manager sidecar on forked workloads   | `true`  |
+| Name                            | Description                                                                                               | Default |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
+| `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
+| `sandboxTrafficManager.enabled` | Whether to enable the sandbox traffic manager sidecar on forked workloads                                 | `true`  |
+| `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
 
 ### Image customization parameters
@@ -85,55 +86,194 @@ their name.  Additionally, the `execpod-` images are for compatibility with old
 style resources and are not needed in an installation which uses the new
 [resource plugins](https://www.signadot.com/docs/resourceplugins).
 
-| Name                                  | Description                                             | Default                                |
-| ------------------------------------- | ------------------------------------------------------- | -------------------------------------- |
-| `operator.image`                      | Operator image override                                 | `signadot/operator:vX.Y.Z`             |
-| `operator.imagePullPolicy`            | Operator image pull policy                              | `IfNotPresent`                         |
-| `agent.image`                         | Agent image override                                    | `signadot/agent:vX.Y.Z`                |
-| `agent.imagePullPolicy`               | Agent image pull policy                                 | `IfNotPresent`                         |
-| `routeServer.image`                   | Route Server image override                             | `signadot/route-server:vX.Y.Z`         |
-| `routeServer.imagePullPolicy`         | Route Server image pull policy                          | `IfNotPresent`                         |
-| `ioContextServer.image`               | IO Context Server image override                        | `signadot/io-context-server:vX.Y.Z`    |
-| `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy                     | `IfNotPresent`                         |
-| `kubeRBACProxy.image`                 | Kube-rbac-proxy image override                          | `""`                                   |
-| `kubeRBACProxy.imagePullPolicy`       | Kube-rbac-proxy image pull policy                       | `IfNotPresent`                         |
-| `routeInit.image`                     | Route Init container image override                     | `signadot/route-sidecar-init:vX.Y.Z`   |
-| `routeInit.legacy.image`              | Route Init container image override (legacy version)    | `signadot/sd-init-networking:latest`   |
-| `routeInit.imagePullPolicy`           | Route Init container image pull policy                  | `IfNotPresent`                         |
-| `routeInit.imagePullSecret`           | Route Init container image pull secret                  | `""`                                   |
-| `routeSidecar.image`                  | Route Sidecar container image override                  | `signadot/route-sidecar:vX.Y.Z`        |
-| `routeSidecar.legacy.image`           | Route Sidecar container image override (legacy version) | `signadot/route-sidecar-legacy:vX.Y.Z` |
-| `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy               | `IfNotPresent`                         |
-| `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret               | `""`                                   |
-| `ioInit.image`                        | IO Init container image override                        | `signadot/io-init:vX.Y.Z`              |
-| `ioInit.imagePullPolicy`              | IO Init container image pull policy                     | `IfNotPresent`                         |
-| `ioInit.imagePullSecret`              | IO Init container image pull secret                     | `""`                                   |
-| `ioSidecar.image`                     | IO Sidecar container image override                     | `signadot/io-sidecar:vX.Y.Z`           |
-| `ioSidecar.imagePullPolicy`           | IO Sidecar container image pull policy                  | `IfNotPresent`                         |
-| `ioSidecar.imagePullSecret`           | IO Sidecar container image pull secret                  | `""`                                   |
-| `execpodSidecar.image`                | ExecPod Sidecar container image override                | `signadot/execpod-sidecar:vX.Y.Z`      |
-| `execpodSidecar.imagePullPolicy`      | ExecPod Sidecar container image pull policy             | `IfNotPresent`                         |
-| `execpodSidecar.imagePullSecret`      | ExecPod Sidecar container image pull secret             | `""`                                   |
-| `tunnel.api.image`                    | Tunnel API image override                               | `signadot/tunnel-api:vX.Y.Z`           |
-| `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                            | `IfNotPresent`                         |
-| `tunnel.proxy.image`                  | Tunnel Proxy image override                             | `signadot/tunnel-proxy:vX.Y.Z`         |
-| `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                          | `IfNotPresent`                         |
-| `tunnel.auditor.image`                | Tunnel Auditor image override                           | `envoyproxy/envoy:v1.26.1`             |
-| `tunnel.auditor.imagePullPolicy`      | Tunnel Auditor image pull policy                        | `IfNotPresent`                         |
-| `tunnel.auditor.init.image`           | Tunnel Auditor Init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`  |
-| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor Init image pull policy                   | `IfNotPresent`                         |
-| `jobExecutorInit.image`               | Job Executor Init container image override              | `signadot/job-executor-init:vX.Y.Z`    |
-| `jobExecutorInit.imagePullPolicy`     | Job Executor Init container image pull policy           | `IfNotPresent`                         |
-| `jobExecutorInit.imagePullSecret`     | Job Executor Init container image pull secret           | `""`                                   |
-| `jobExecutorProxy.image`              | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`   |
-| `jobExecutorProxy.imagePullPolicy`    | Job Executor Proxy container image pull policy          | `IfNotPresent`                         |
-| `jobExecutorProxy.imagePullSecret`    | Job Executor Proxy container image pull secret          | `""`                                   |
-| `sandboxTrafficManager.init.Image`     | Sandbox traffic manager sidecar image override | `signadot/sandbox-traffic-manager:vX.Y.Z`                         |
-| `sandboxTrafficManager.init.ImagePullPolicy`     | Sandbox traffic manager sidecar image pull policy | `IfNotPresent`                         |
-| `sandboxTrafficManager.init.ImagePullSecret`     | Sandbox traffic manager sidecar image pull secret | `""`                         |
-| `sandboxTrafficManager.sidecar.Image`     | Sandbox traffic manager sidecar image override | `signadot/sandbox-traffic-manager:vX.Y.Z`                         |
-| `sandboxTrafficManager.sidecar.ImagePullPolicy`     | Sandbox traffic manager sidecar image pull policy | `IfNotPresent`                         |
-| `sandboxTrafficManager.sidecar.ImagePullSecret`     | Sandbox traffic manager sidecar image pull secret | `""`                         |
+| Name                                            | Description                                             | Default                                           |
+| ----------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| `operator.image`                                | Operator image override                                 | `signadot/operator:vX.Y.Z`                        |
+| `operator.imagePullPolicy`                      | Operator image pull policy                              | `IfNotPresent`                                    |
+| `agent.image`                                   | Agent image override                                    | `signadot/agent:vX.Y.Z`                           |
+| `agent.imagePullPolicy`                         | Agent image pull policy                                 | `IfNotPresent`                                    |
+| `routeServer.image`                             | Route Server image override                             | `signadot/route-server:vX.Y.Z`                    |
+| `routeServer.imagePullPolicy`                   | Route Server image pull policy                          | `IfNotPresent`                                    |
+| `ioContextServer.image`                         | IO Context Server image override                        | `signadot/io-context-server:vX.Y.Z`               |
+| `ioContextServer.imagePullPolicy`               | IO Context Server image pull policy                     | `IfNotPresent`                                    |
+| `routeInit.image`                               | Route Init container image override                     | `signadot/route-sidecar-init:vX.Y.Z`              |
+| `routeInit.legacy.image`                        | Route Init container image override (legacy version)    | `signadot/sd-init-networking:latest`              |
+| `routeInit.imagePullPolicy`                     | Route Init container image pull policy                  | `IfNotPresent`                                    |
+| `routeInit.imagePullSecret`                     | Route Init container image pull secret                  | `""`                                              |
+| `routeSidecar.image`                            | Route Sidecar container image override                  | `signadot/route-sidecar:vX.Y.Z`                   |
+| `routeSidecar.legacy.image`                     | Route Sidecar container image override (legacy version) | `signadot/route-sidecar-legacy:vX.Y.Z`            |
+| `routeSidecar.imagePullPolicy`                  | Route Sidecar container image pull policy               | `IfNotPresent`                                    |
+| `routeSidecar.imagePullSecret`                  | Route Sidecar container image pull secret               | `""`                                              |
+| `ioInit.image`                                  | IO Init container image override                        | `signadot/io-init:vX.Y.Z`                         |
+| `ioInit.imagePullPolicy`                        | IO Init container image pull policy                     | `IfNotPresent`                                    |
+| `ioInit.imagePullSecret`                        | IO Init container image pull secret                     | `""`                                              |
+| `ioSidecar.image`                               | IO Sidecar container image override                     | `signadot/io-sidecar:vX.Y.Z`                      |
+| `ioSidecar.imagePullPolicy`                     | IO Sidecar container image pull policy                  | `IfNotPresent`                                    |
+| `ioSidecar.imagePullSecret`                     | IO Sidecar container image pull secret                  | `""`                                              |
+| `execpodSidecar.image`                          | ExecPod Sidecar container image override                | `signadot/execpod-sidecar:vX.Y.Z`                 |
+| `execpodSidecar.imagePullPolicy`                | ExecPod Sidecar container image pull policy             | `IfNotPresent`                                    |
+| `execpodSidecar.imagePullSecret`                | ExecPod Sidecar container image pull secret             | `""`                                              |
+| `tunnel.api.image`                              | Tunnel API image override                               | `signadot/tunnel-api:vX.Y.Z`                      |
+| `tunnel.api.imagePullPolicy`                    | Tunnel API image pull policy                            | `IfNotPresent`                                    |
+| `tunnel.proxy.image`                            | Tunnel Proxy image override                             | `signadot/tunnel-proxy:vX.Y.Z`                    |
+| `tunnel.proxy.imagePullPolicy`                  | Tunnel Proxy image pull policy                          | `IfNotPresent`                                    |
+| `tunnel.auditor.image`                          | Tunnel Auditor image override                           | `envoyproxy/envoy:v1.26.1`                        |
+| `tunnel.auditor.imagePullPolicy`                | Tunnel Auditor image pull policy                        | `IfNotPresent`                                    |
+| `tunnel.auditor.init.image`                     | Tunnel Auditor Init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`             |
+| `tunnel.auditor.init.imagePullPolicy`           | Tunnel Auditor Init image pull policy                   | `IfNotPresent`                                    |
+| `jobExecutorInit.image`                         | Job Executor Init container image override              | `signadot/job-executor-init:vX.Y.Z`               |
+| `jobExecutorInit.imagePullPolicy`               | Job Executor Init container image pull policy           | `IfNotPresent`                                    |
+| `jobExecutorInit.imagePullSecret`               | Job Executor Init container image pull secret           | `""`                                              |
+| `jobExecutorProxy.image`                        | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`              |
+| `jobExecutorProxy.imagePullPolicy`              | Job Executor Proxy container image pull policy          | `IfNotPresent`                                    |
+| `jobExecutorProxy.imagePullSecret`              | Job Executor Proxy container image pull secret          | `""`                                              |
+| `sandboxTrafficManager.init.Image`              | Sandbox traffic manager init image override             | `signadot/sandbox-traffic-manager-init:vX.Y.Z`    |
+| `sandboxTrafficManager.init.ImagePullPolicy`    | Sandbox traffic manager init image pull policy          | `IfNotPresent`                                    |
+| `sandboxTrafficManager.init.ImagePullSecret`    | Sandbox traffic manager init image pull secret          | `""`                                              |
+| `sandboxTrafficManager.sidecar.Image`           | Sandbox traffic manager sidecar image override          | `signadot/sandbox-traffic-manager-sidecar:vX.Y.Z` |
+| `sandboxTrafficManager.sidecar.ImagePullPolicy` | Sandbox traffic manager sidecar image pull policy       | `IfNotPresent`                                    |
+| `sandboxTrafficManager.sidecar.ImagePullSecret` | Sandbox traffic manager sidecar image pull secret       | `""`                                              |
+
+
+### Resource customization parameters
+
+<table>
+
+<tr>
+<th>
+Name
+</th>
+<th>
+Description
+</th>
+<th>
+Default
+</th>
+</tr>
+
+<tr>
+<td>
+
+`operator.resources`
+
+</td>
+<td>
+Operator resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: 100m
+  memory: 512Mi
+requests:
+  cpu: 100m
+  memory: 512Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`agent.resources`
+
+</td>
+<td>
+Agent resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`ioContextServer.resources`
+
+</td>
+<td>
+IO Context Server resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`routeserver.resources`
+
+</td>
+<td>
+Route Server resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`tunnel.api.resources`
+
+</td>
+<td>
+Tunnel API resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 1Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`tunnel.proxy.resources`
+
+</td>
+<td>
+Tunnel Proxy resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+</table>
 
 
 ### Tunnel parameters
@@ -141,10 +281,8 @@ style resources and are not needed in an installation which uses the new
 | Name                                     | Description                                                                                                                                                                                                                                                                  | Default |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | `tunnel.api.replicas`                    | Number of replicas for the Tunnel API deployment                                                                                                                                                                                                                             | `1`     |
-| `tunnel.api.resources`                   | Resources for the Tunnel API deployment                                                                                                                                                                                                                                      | `{}`    |
 | `tunnel.api.strategy`                    | Strategy to be used for the Tunnel API deployment                                                                                                                                                                                                                            | `{}`    |
 | `tunnel.proxy.replicas`                  | Number of replicas for the Tunnel Proxy deployment                                                                                                                                                                                                                           | `1`     |
-| `tunnel.proxy.resources`                 | Resources for the Tunnel Proxy deployment                                                                                                                                                                                                                                    | `{}`    |
 | `tunnel.proxy.strategy`                  | Strategy to be used for the Tunnel Proxy deployment                                                                                                                                                                                                                          | `{}`    |
 | `tunnel.config.cidrs`                    | Default CIDRs configuration to be used for connected clients                                                                                                                                                                                                                 | `""`    |
 | `tunnel.config.externalDNS.server`       | If configured, the Tunnel API will pull this server to fetch domains which will be added to the `/etc/hosts` of the connected clients                                                                                                                                        | `""`    |
@@ -182,9 +320,11 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 
 ### Routing parameters
 
-| Name                    | Description                                     | Default |
-| ----------------------- | ----------------------------------------------- | ------- |
-| `routing.customHeaders` | List of custom headers used for sandbox routing | `[]`    |
+| Name                    | Description                                                                           | Default  |
+| ----------------------- | ------------------------------------------------------------------------------------- | -------- |
+| `routing.iptablesMode`  | `iptables` variant to use when configuring rules (possible values: `legacy` or `nft`) | `legacy` |
+| `routing.customHeaders` | List of custom headers used for sandbox routing                                       | `[]`     |
+
 
 
 ### Traffic capture parameters

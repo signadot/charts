@@ -19,13 +19,15 @@ metadata:
   name: tunnel-proxy
   namespace: signadot
 spec:
-{{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .replicas }}  replicas: {{ . }}
+{{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .replicas }}
+  replicas: {{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
       app: tunnel-proxy
-{{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .strategy }}  strategy:
-{{ toYaml . | indent 10 }}
+{{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .strategy }}
+  strategy:
+{{ toYaml . | indent 4 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   template:
     metadata:
@@ -65,7 +67,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.1{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-proxy
         ports:
@@ -74,7 +76,8 @@ spec:
         - containerPort: 2222
         - containerPort: 7777
         - containerPort: 8001
-{{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .resources }}        resources:
+{{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .resources }}
+        resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
@@ -83,9 +86,16 @@ spec:
         - /etc/config.yaml
         command:
         - envoy
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .image }}{{ . | quote}}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}{{- else -}}envoyproxy/envoy:v1.26.1{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .image }}{{ . | quote}}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor
+        resources:
+          limits:
+            cpu: "2"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         securityContext:
           allowPrivilegeEscalation: false
           runAsUser: 1011
@@ -107,15 +117,24 @@ spec:
       {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
       initContainers:
       - env:
+        - name: SIGNADOT_IPTABLES_MODE
+          value: {{ with .Values }}{{ with .routing }}{{ with .iptablesMode }}{{ . }}{{- else -}}"legacy"{{- end }}{{- else -}}"legacy"{{- end }}{{- else -}}"legacy"{{- end }}
         - name: LUA_ROCKS
           value: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .luaRocks }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: INBOUND_AUDITOR_PORT
           value: "10000"
         - name: OUTBOUND_AUDITOR_PORT
           value: "10001"
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.1{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor-init
+        resources:
+          limits:
+            cpu: "2"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         securityContext:
           capabilities:
             add:

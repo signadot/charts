@@ -259,6 +259,17 @@ data:
                 - name: local_service
                   domains: ["*"]
                   routes:
+                  # forward http connect traffic
+                  - match:
+                      connect_matcher:  {}
+                    route:
+                      cluster: passthrough_proxy
+                      timeout: "900s"
+                      idle_timeout: "900s"
+                      max_stream_duration:
+                        max_stream_duration: "0s"
+                        grpc_timeout_header_max: "0s"
+                  # redirected http traffic
                   - match:
                       prefix: "/"
                     route:

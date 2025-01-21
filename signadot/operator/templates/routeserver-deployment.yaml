@@ -36,7 +36,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v0.19.1{{- end }}{{- else -}}signadot/route-server:v0.19.1{{- end }}{{- else -}}signadot/route-server:v0.19.1{{- end }}
+      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v0.19.2{{- end }}{{- else -}}signadot/route-server:v0.19.2{{- end }}{{- else -}}signadot/route-server:v0.19.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .routeServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: routeserver
         ports:
@@ -48,4 +48,8 @@ spec:
           name: http-legacy
         - containerPort: 9090
           name: http-metrics
+{{- with .Values }}{{- with .routeServer }}{{- with .resources }}
+        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: routeserver
