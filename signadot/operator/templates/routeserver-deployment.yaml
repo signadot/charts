@@ -48,4 +48,8 @@ spec:
           name: http-legacy
         - containerPort: 9090
           name: http-metrics
+{{- with .Values }}{{- with .routeServer }}{{- with .resources }}
+        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
       serviceAccountName: routeserver

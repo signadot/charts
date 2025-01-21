@@ -209,6 +209,8 @@ spec:
                       type: string
                     type: array
                 type: object
+              disableSandboxTrafficManager:
+                type: boolean
               externalWorkloads:
                 description: |-
                   This is the list of externally controlled workloads this sandbox will route

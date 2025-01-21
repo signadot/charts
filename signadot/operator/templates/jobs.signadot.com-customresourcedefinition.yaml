@@ -151,11 +151,16 @@ spec:
               trafficManager:
                 description: Traffic manager settings
                 properties:
+                  enabled:
+                    description: Explicitly enable traffic manager in runner pods
+                      for this job.
+                    type: boolean
                   injectRoutingKey:
                     default: Disabled
                     description: |-
                       Enable the automatic insertion of routing key headers for HTTP and gRPC
-                      (H2C) traffic
+                      (H2C) traffic. The "auto" value will overwrite the value of the Enabled
+                      field, setting it to true.
                     enum:
                     - Disabled
                     - Auto
