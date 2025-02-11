@@ -89,13 +89,10 @@ spec:
         image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .image }}{{ . | quote}}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor
+{{- with .Values }}{{- with .tunnel }}{{- with .auditor }}{{- with .resources }}
         resources:
-          limits:
-            cpu: "2"
-            memory: 1Gi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
         securityContext:
           allowPrivilegeEscalation: false
           runAsUser: 1011
@@ -128,13 +125,10 @@ spec:
         image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor-init
+{{- with .Values }}{{- with .tunnel }}{{- with .auditor }}{{- with .init }}{{- with .resources }}
         resources:
-          limits:
-            cpu: "2"
-            memory: 1Gi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
         securityContext:
           capabilities:
             add:

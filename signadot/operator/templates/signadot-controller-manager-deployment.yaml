@@ -44,6 +44,22 @@ spec:
         command:
         - /manager
         env:
+        - name: DEV_MESH_INIT_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .routeInit }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: DEV_MESH_SIDECAR_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: SANDBOX_TRAFFIC_MANAGER_INIT_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .sandboxTrafficManager }}{{ with .init }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: SANDBOX_TRAFFIC_MANAGER_SIDECAR_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .sandboxTrafficManager }}{{ with .sidecar }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: IO_INIT_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .ioInit }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: IO_SIDECAR_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: JOB_EXECUTOR_INIT_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .jobExecutorInit }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: JOB_EXECUTOR_PROXY_CONTAINER_RESOURCES
+          value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: SIDECAR_INIT_IMAGE_PULL_POLICY
           value: {{ with .Values }}{{ with .routeInit }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: SIDECAR_INIT_IMAGE_PULL_SECRET
