@@ -14,7 +14,9 @@ metadata:
   name: signadot-controller-manager
   namespace: signadot
 spec:
-  replicas: 1
+{{- with .Values }}{{- with .operator }}{{- with .replicas }}
+  replicas: {{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
       control-plane: controller-manager
