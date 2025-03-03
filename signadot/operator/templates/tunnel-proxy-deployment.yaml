@@ -67,7 +67,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.2{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-proxy:v0.19.3-xrc.3{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-proxy
         ports:
@@ -122,7 +122,7 @@ spec:
           value: "10000"
         - name: OUTBOUND_AUDITOR_PORT
           value: "10001"
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.2{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.3-xrc.3{{- end }}{{- else -}}signadot/tunnel-auditor-init:v0.19.3-xrc.3{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         name: auditor-init
 {{- with .Values }}{{- with .tunnel }}{{- with .auditor }}{{- with .init }}{{- with .resources }}
@@ -130,10 +130,18 @@ spec:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
         securityContext:
+          allowPrivilegeEscalation: false
           capabilities:
             add:
             - NET_ADMIN
-          privileged: true
+            - NET_RAW
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsGroup: 0
+          runAsNonRoot: false
+          runAsUser: 0
         volumeMounts:
         - mountPath: /var/log
           name: varlog
