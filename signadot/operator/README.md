@@ -3,6 +3,7 @@
 This chart installs Signadot Operator, which consists of the in-cluster
 components for Signadot.
 
+
 ## Installing the Chart
 
 To install the chart with the release name `signadot-operator`:
@@ -66,14 +67,22 @@ kubectl delete ns signadot
 | `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`     |
 | `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
 
+
 ### Controller Manager parameters
 
 | Name                            | Description                                                                                               | Default |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
+| `operator.replicas`             | Number of replicas for `signadot-controller-manager` deployment                                           | `2`     |
 | `sandboxTrafficManager.enabled` | Whether to enable the Sandbox Traffic Manager Sidecar on forked workloads                                 | `true`  |
 | `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
+ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend  
+running the controller manager with `operator.replicas = 1` to minimize resource  
+usage. Note that increasing replicas (`replicas > 1`) does not replicate most  
+controller functionality in parallel; only one replica is active at a time, and  
+high availability operates in an active-passive manner, primarily benefiting  
+sidecar injection.
 
 ### Image customization parameters
 
