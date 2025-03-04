@@ -105,11 +105,11 @@ ioContextServer:
 # routeInit:
 #   resources:
 #     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
 #       cpu: 100m
 #       memory: 128Mi
-#     requests:
-#       cpu: 60m
-#       memory: 64Mi
 #   image: my-private-registry/signadot/route-sidecar-init:latest
 #   legacy:
 #     image: my-private-registry/signadot/sd-init-networking:latest
@@ -119,11 +119,11 @@ ioContextServer:
 # routeSidecar:
 #   resources:
 #     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
 #       cpu: 100m
 #       memory: 128Mi
-#     requests:
-#       cpu: 60m
-#       memory: 64Mi
 #   image: my-private-registry/signadot/route-sidecar:latest
 #   legacy:
 #     image: my-private-registry/signadot/route-sidecar-legacy:latest
@@ -133,11 +133,11 @@ ioContextServer:
 # ioInit:
 #   resources:
 #     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
 #       cpu: 100m
 #       memory: 128Mi
-#     requests:
-#       cpu: 60m
-#       memory: 64Mi
 #   image: my-private-registry/signadot/io-init:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioInit
@@ -145,8 +145,8 @@ ioContextServer:
 # ioSidecar:
 #   resources:
 #     limits:
-#       cpu: 200m
-#       memory: 256Mi
+#       cpu: 2
+#       memory: 1Gi
 #     requests:
 #       cpu: 100m
 #       memory: 128Mi
@@ -242,11 +242,11 @@ tunnel:
 # jobExecutorInit:
 #   resources:
 #     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
 #       cpu: 100m
 #       memory: 128Mi
-#     requests:
-#       cpu: 60m
-#       memory: 64Mi
 #   image: my-private-registry/signadot/job-executor-init:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorInit
@@ -254,8 +254,8 @@ tunnel:
 # jobExecutorProxy:
 #   resources:
 #     limits:
-#       cpu: 200m
-#       memory: 256Mi
+#       cpu: 2
+#       memory: 1Gi
 #     requests:
 #       cpu: 100m
 #       memory: 128Mi
@@ -268,19 +268,19 @@ tunnel:
 #   init:
 #     resources:
 #       limits:
+#         cpu: 2
+#         memory: 1Gi
+#       requests:
 #         cpu: 100m
 #         memory: 128Mi
-#       requests:
-#         cpu: 60m
-#         memory: 64Mi
 #     image: my-private-registry/signadot/sandbox-traffic-manager-init:latest
 #     imagePullPolicy: Always
 #     imagePullSecret: secret-sandboxTrafficManagerInit
 #   sidecar:
 #     resources:
 #       limits:
-#         cpu: 200m
-#         memory: 256Mi
+#         cpu: 2
+#         memory: 1Gi
 #       requests:
 #         cpu: 100m
 #         memory: 128Mi
