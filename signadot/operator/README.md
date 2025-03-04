@@ -77,9 +77,12 @@ kubectl delete ns signadot
 | `sandboxTrafficManager.enabled` | Whether to enable the Sandbox Traffic Manager Sidecar on forked workloads                                 | `true`  |
 | `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
-ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend
-running the controller manager with `operator.replicas = 1` to minimize resource
-usage.
+ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend  
+running the controller manager with `operator.replicas = 1` to minimize resource  
+usage. Note that increasing replicas (`replicas > 1`) does not replicate most  
+controller functionality in parallel; only one replica is active at a time, and  
+high availability operates in an active-passive manner, primarily benefiting  
+sidecar injection.
 
 ### Image customization parameters
 
