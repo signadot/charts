@@ -40,7 +40,7 @@ spec:
         - /app/io-context-server
         - -tls=secretns=signadot
         - -port=8443
-        image: {{ with .Values }}{{ with .ioContextServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-context-server:v0.19.2{{- end }}{{- else -}}signadot/io-context-server:v0.19.2{{- end }}{{- else -}}signadot/io-context-server:v0.19.2{{- end }}
+        image: {{ with .Values }}{{ with .ioContextServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-context-server:v0.19.3{{- end }}{{- else -}}signadot/io-context-server:v0.19.3{{- end }}{{- else -}}signadot/io-context-server:v0.19.3{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .ioContextServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: io-context-server
         ports:

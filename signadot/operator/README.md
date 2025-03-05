@@ -3,6 +3,7 @@
 This chart installs Signadot Operator, which consists of the in-cluster
 components for Signadot.
 
+
 ## Installing the Chart
 
 To install the chart with the release name `signadot-operator`:
@@ -66,14 +67,22 @@ kubectl delete ns signadot
 | `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`     |
 | `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
 
+
 ### Controller Manager parameters
 
 | Name                            | Description                                                                                               | Default |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
-| `sandboxTrafficManager.enabled` | Whether to enable the sandbox traffic manager sidecar on forked workloads                                 | `true`  |
+| `operator.replicas`             | Number of replicas for `signadot-controller-manager` deployment                                           | `2`     |
+| `sandboxTrafficManager.enabled` | Whether to enable the Sandbox Traffic Manager Sidecar on forked workloads                                 | `true`  |
 | `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
+ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend  
+running the controller manager with `operator.replicas = 1` to minimize resource  
+usage. Note that increasing replicas (`replicas > 1`) does not replicate most  
+controller functionality in parallel; only one replica is active at a time, and  
+high availability operates in an active-passive manner, primarily benefiting  
+sidecar injection.
 
 ### Image customization parameters
 
@@ -127,12 +136,12 @@ style resources and are not needed in an installation which uses the new
 | `jobExecutorProxy.image`                        | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`              |
 | `jobExecutorProxy.imagePullPolicy`              | Job Executor Proxy container image pull policy          | `IfNotPresent`                                    |
 | `jobExecutorProxy.imagePullSecret`              | Job Executor Proxy container image pull secret          | `""`                                              |
-| `sandboxTrafficManager.init.Image`              | Sandbox traffic manager init image override             | `signadot/sandbox-traffic-manager-init:vX.Y.Z`    |
-| `sandboxTrafficManager.init.ImagePullPolicy`    | Sandbox traffic manager init image pull policy          | `IfNotPresent`                                    |
-| `sandboxTrafficManager.init.ImagePullSecret`    | Sandbox traffic manager init image pull secret          | `""`                                              |
-| `sandboxTrafficManager.sidecar.Image`           | Sandbox traffic manager sidecar image override          | `signadot/sandbox-traffic-manager-sidecar:vX.Y.Z` |
-| `sandboxTrafficManager.sidecar.ImagePullPolicy` | Sandbox traffic manager sidecar image pull policy       | `IfNotPresent`                                    |
-| `sandboxTrafficManager.sidecar.ImagePullSecret` | Sandbox traffic manager sidecar image pull secret       | `""`                                              |
+| `sandboxTrafficManager.init.Image`              | Sandbox Traffic Manager Init image override             | `signadot/sandbox-traffic-manager-init:vX.Y.Z`    |
+| `sandboxTrafficManager.init.ImagePullPolicy`    | Sandbox Traffic Manager Init image pull policy          | `IfNotPresent`                                    |
+| `sandboxTrafficManager.init.ImagePullSecret`    | Sandbox Traffic Manager Init image pull secret          | `""`                                              |
+| `sandboxTrafficManager.sidecar.Image`           | Sandbox Traffic Manager Sidecar image override          | `signadot/sandbox-traffic-manager-sidecar:vX.Y.Z` |
+| `sandboxTrafficManager.sidecar.ImagePullPolicy` | Sandbox Traffic Manager Sidecar image pull policy       | `IfNotPresent`                                    |
+| `sandboxTrafficManager.sidecar.ImagePullSecret` | Sandbox Traffic Manager Sidecar image pull secret       | `""`                                              |
 
 
 ### Resource customization parameters
@@ -268,6 +277,224 @@ Tunnel Proxy resources
 limits:
   memory: 2Gi
 requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`tunnel.auditor.init.resources`
+
+</td>
+<td>
+Tunnel Auditor Init container resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`tunnel.auditor.resources`
+
+</td>
+<td>
+Tunnel Auditor resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`routeInit.resources`
+
+</td>
+<td>
+Route Init container resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`routeSidecar.resources`
+
+</td>
+<td>
+Route Sidecar resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`sandboxTrafficManager.init.resources`
+
+</td>
+<td>
+Sandbox Traffic Manager Init container resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`sandboxTrafficManager.sidecar.resources`
+
+</td>
+<td>
+Sandbox Traffic Manager Sidecar resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+</tr>
+<tr>
+<td>
+
+`ioInit.resources`
+
+</td>
+<td>
+IO Init container resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`ioSidecar.resources`
+
+</td>
+<td>
+IO Sidecar resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+</tr>
+<tr>
+<td>
+
+`jobExecutorInit.resources`
+
+</td>
+<td>
+Job Executor Init container resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+`jobExecutorProxy.resources`
+
+</td>
+<td>
+Job Executor Proxy resources
+</td>
+<td>
+
+```yaml
+limits:
+  cpu: "2"
+  memory: 1Gi
+requests:
+  cpu: 100m
   memory: 128Mi
 ```
 

@@ -65,6 +65,7 @@
 # -----------------------------------------------------------------------------
 
 operator:
+  replicas: 2
   resources:
     limits:
       cpu: 100m
@@ -103,6 +104,13 @@ ioContextServer:
   # imagePullPolicy: Always
 
 # routeInit:
+#   resources:
+#     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
 #   image: my-private-registry/signadot/route-sidecar-init:latest
 #   legacy:
 #     image: my-private-registry/signadot/sd-init-networking:latest
@@ -110,6 +118,13 @@ ioContextServer:
 #   imagePullSecret: secret-routeInit
 
 # routeSidecar:
+#   resources:
+#     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
 #   image: my-private-registry/signadot/route-sidecar:latest
 #   legacy:
 #     image: my-private-registry/signadot/route-sidecar-legacy:latest
@@ -117,11 +132,25 @@ ioContextServer:
 #   imagePullSecret: secret-routeSidecar
 
 # ioInit:
+#   resources:
+#     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
 #   image: my-private-registry/signadot/io-init:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioInit
 
 # ioSidecar:
+#   resources:
+#     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
 #   image: my-private-registry/signadot/io-sidecar:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
@@ -160,12 +189,22 @@ tunnel:
   #       maxSurge: 25%
   #       maxUnavailable: 25%
   #     type: RollingUpdate
-  # auditor:
-  #   image: my-private-registry/signadot/tunnel-auditor:latest
-  #   imagePullPolicy: Always
-  #   init:
+  auditor:
+    init:
+      resources:
+        limits:
+          memory: 2Gi
+        requests:
+          memory: 128Mi
   #     image: my-private-registry/signadot/tunnel-auditor-init:latest
   #     imagePullPolicy: Always
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        memory: 128Mi
+  #   image: my-private-registry/signadot/tunnel-auditor:latest
+  #   imagePullPolicy: Always
   #   # luaRocks is an optional, space-separated list of Lua packages (called rocks)
   #   # to install in the Envoy auditor Lua environment.
   #   # These packages' modules can then be required from inboundRulesLuaScript and
@@ -202,11 +241,25 @@ tunnel:
   #   disableXAP: false
 
 # jobExecutorInit:
+#   resources:
+#     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
 #   image: my-private-registry/signadot/job-executor-init:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorInit
 
 # jobExecutorProxy:
+#   resources:
+#     limits:
+#       cpu: 2
+#       memory: 1Gi
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
 #   image: my-private-registry/signadot/job-executor-proxy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorProxy
@@ -214,10 +267,24 @@ tunnel:
 # sandboxTrafficManager:
 #   enabled: true
 #   init:
+#     resources:
+#       limits:
+#         cpu: 2
+#         memory: 1Gi
+#       requests:
+#         cpu: 100m
+#         memory: 128Mi
 #     image: my-private-registry/signadot/sandbox-traffic-manager-init:latest
 #     imagePullPolicy: Always
 #     imagePullSecret: secret-sandboxTrafficManagerInit
 #   sidecar:
+#     resources:
+#       limits:
+#         cpu: 2
+#         memory: 1Gi
+#       requests:
+#         cpu: 100m
+#         memory: 128Mi
 #     image: my-private-registry/signadot/sandbox-traffic-manager-sidecar:latest
 #     imagePullPolicy: Always
 #     imagePullSecret: secret-sandboxTrafficManagerSidecart
