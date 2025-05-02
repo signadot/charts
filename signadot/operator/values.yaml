@@ -318,5 +318,5 @@ tunnel:
 
 # Control Plane Settings for this cluster
 # -----------------------------------------------------------------------------
-controlPlane:
-  proxy: "disabled"  # can also be "disabled"
+# controlPlane:
+#    proxy: "enabled"  # can also be "disabled"
