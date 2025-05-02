@@ -561,3 +561,9 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | `trafficCapture.enabled`              | Enable traffic capture                                      | `true`  |
 | `trafficCapture.requestHeadersElide`  | List of request headers to be elided from traffic captures  | `[]`    |
 | `trafficCapture.responseHeadersElide` | List of response headers to be elided from traffic captures | `[]`    |
+
+### Control plane parameters
+
+| Name                                  | Description                                                 | Default |
+| ------------------------------------- | ----------------------------------------------------------- | ------- |
+| `controlPlane.proxy`              | Enable control plane proxy                                      | `enabled`  |

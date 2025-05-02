@@ -314,3 +314,9 @@ tunnel:
 #   responseHeadersElide:
 #     - header1
 #     - header2
+#
+
+# Control Plane Settings for this cluster
+# -----------------------------------------------------------------------------
+controlPlane:
+  proxy: "disabled"  # can also be "disabled"
