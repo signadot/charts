@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <title>Signadot Helm Charts</title>
+  </head>
+  <body>
+
+  <h1 id="signadot-charts">Signadot Operator Helm Charts</h1>
+
+  <a href="https://www.signadot.com/docs/concepts/architecture/operator">Signadot Operator</a> is the in-cluster component of the Signadot Platform.
+
+  <h2 id="tldr">TL;DR</h2>
+
+  <code>
+  # Create signadot namespace<br />
+  $ kubectl create ns signadot<br /><br />
+
+  # Install<br />
+  $ helm repo add signadot https://charts.signadot.com<br />
+  $ helm install signadot-operator signadot/operator
+  </code>
+
+  <p>For more information, please refer to the <a href="https://github.com/signadot/charts/tree/main/signadot/operator">Signadot Operator charts project on GitHub</a>.</p>
+
+  </body>
+</html>
