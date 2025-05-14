@@ -41,6 +41,11 @@
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
+#   # Specify custom pod labels for sandbox workloads, if the field does
+#   # not exist, or no labels are specified, then it will default to 
+#   # sidecar.istio.io/inject: "true"
+#   workloadLabels:
+#     dataplane.istio.io: ambient
 #   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
 #   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
@@ -59,8 +64,12 @@
 # linkerd:
 #   # Enable the integration with Linkerd
 #   enabled: true
-
-
+#   # Specify custom pod annotations for sandbox workloads, if the field does
+#   # not exist, or no annotations are specified then it will default to 
+#   # linkerd.io/inject: "enabled"
+#   workloadAnnotations:
+#     linkerd.io/inject: enabled
+#     config.linkerd.io/proxy-await: enabled
 # Component settings
 # -----------------------------------------------------------------------------
 

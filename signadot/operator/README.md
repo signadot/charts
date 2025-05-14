@@ -529,6 +529,7 @@ Enabling Istio will activate the Istio proxy in the following components: in Sig
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
+| `istio.workloadLabels`      | `{"sidecar.istio.io/inject": "true"}` | Pod Labels to add to signadot components which should use Istio |
 | `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
 | `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
 | `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
@@ -543,6 +544,7 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | Name              | Description              | Default |
 | ----------------- | ------------------------ | ------- |
 | `linkerd.enabled` | Enable Linkerd integration | `false` |
+| `linkerd.workloadAnnotations`      | `{"linkerd.io/inject": "enabled"}` | Pod Annotations to add to signadot components which should use Linkerd |
 
 
 ### Routing parameters
