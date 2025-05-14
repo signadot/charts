@@ -36,7 +36,13 @@ spec:
         cluster-config-checksum: '{{ include (print $.Template.BasePath "/signadot-cluster-config-configmap.yaml")
           . | sha256sum }}'
         {{- if $linkerdEnabled }}
-        linkerd.io/inject: enabled
+        {{- if and (hasKey .Values.linkerd "workloadAnnotations") (.Values.linkerd.workloadAnnotations) }}
+        {{- range $key, $val := .Values.linkerd.workloadAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- else }}
+        linkerd.io/inject: "enabled"
+        {{- end }}
         {{- end }}
       labels:
         app: signadot-agent
@@ -47,7 +53,13 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $istioEnabled }}
+        {{- if and (hasKey .Values.istio "workloadLabels") .Values.istio.workloadLabels }}
+        {{- range $key, $val := .Values.istio.workloadLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- else }}
         sidecar.istio.io/inject: "true"
+        {{- end }}
         {{- end }}
     spec:
       containers:
