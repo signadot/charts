@@ -568,4 +568,4 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 
 | Name                                  | Description                                                 | Default |
 | ------------------------------------- | ----------------------------------------------------------- | ------- |
-| `controlPlane.proxy`              | Enable control plane proxy                                      | `enabled`  |
+| `controlPlane.proxy`              | Enable [control plane proxy](https://www.signadot.com/docs/concepts/architecture/control-plane#proxy-server)                                      | `enabled`  |
