@@ -52,7 +52,6 @@ spec:
     spec:
       containers:
       - args:
-        - --agent-token=$(AGENT_TOKEN)
         - --api-url=https://api.signadot.com
         - --tunnel-addr=tunnel.signadot.com:443
         env:
