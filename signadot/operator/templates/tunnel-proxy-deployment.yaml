@@ -39,8 +39,8 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $linkerdEnabled }}
-        {{- if and (hasKey .Values.linkerd "workloadAnnotations") (.Values.linkerd.workloadAnnotations) }}
-        {{- range $key, $val := .Values.linkerd.workloadAnnotations }}
+        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "annotations") (.Values.linkerd.operator.annotations)}}
+        {{- range $key, $val := .Values.linkerd.operator.annotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- else }}
@@ -56,8 +56,8 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $istioEnabled }}
-        {{- if and (hasKey .Values.istio "workloadLabels") (.Values.istio.workloadLabels) }}
-        {{- range $key, $val := .Values.istio.workloadLabels }}
+        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "labels") (.Values.istio.operator.labels) }}
+        {{- range $key, $val := .Values.istio.operator.labels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- else }}
