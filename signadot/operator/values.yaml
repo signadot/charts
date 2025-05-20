@@ -75,7 +75,7 @@
 # Component settings
 # -----------------------------------------------------------------------------
 
-operator:
+controllerManager:
   replicas: 2
   resources:
     limits:

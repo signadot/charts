@@ -14,7 +14,7 @@ metadata:
   name: signadot-controller-manager
   namespace: signadot
 spec:
-{{- with .Values }}{{- with .operator }}{{- with .replicas }}
+{{- with .Values }}{{- with .controllerManager }}{{- with .replicas }}
   replicas: {{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
@@ -114,8 +114,8 @@ spec:
           value: {{ with .Values }}{{ with .sandboxTrafficManager }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/sandbox-traffic-manager-init:v0.19.3{{- end }}{{- else -}}signadot/sandbox-traffic-manager-init:v0.19.3{{- end }}{{- else -}}signadot/sandbox-traffic-manager-init:v0.19.3{{- end }}{{- else -}}signadot/sandbox-traffic-manager-init:v0.19.3{{- end }}
         - name: SANDBOX_TRAFFICMANAGER_SIDECAR_IMAGE
           value: {{ with .Values }}{{ with .sandboxTrafficManager }}{{ with .sidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/sandbox-traffic-manager-sidecar:v0.19.3{{- end }}{{- else -}}signadot/sandbox-traffic-manager-sidecar:v0.19.3{{- end }}{{- else -}}signadot/sandbox-traffic-manager-sidecar:v0.19.3{{- end }}{{- else -}}signadot/sandbox-traffic-manager-sidecar:v0.19.3{{- end }}
-        image: {{ with .Values }}{{ with .operator }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/operator:v0.19.3{{- end }}{{- else -}}signadot/operator:v0.19.3{{- end }}{{- else -}}signadot/operator:v0.19.3{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .operator }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        image: {{ with .Values }}{{ with .controllerManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/operator:v0.19.3{{- end }}{{- else -}}signadot/operator:v0.19.3{{- end }}{{- else -}}signadot/operator:v0.19.3{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .controllerManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -133,7 +133,7 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 10
-{{- with .Values }}{{- with .operator }}{{- with .resources }}
+{{- with .Values }}{{- with .controllerManager }}{{- with .resources }}
         resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
