@@ -10,15 +10,15 @@ controlPlane:
 allowOrphanedResources: {{ if hasKey .Values "allowOrphanedResources" -}}{{ toString .Values.allowOrphanedResources }}{{- else -}}false{{- end }}
 routing:
   istio:
-    enabled:{{- if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") -}}{{ toString .Values.istio.enabled }}{{- else -}}false{{- end }}
+    enabled:{{- if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") -}}{{ toString .Values.istio.enabled }}{{- else }} false{{- end }}
     operator:
       podLabels:{{- if and (hasKey .Values "istio") (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
 {{ toYaml .Values.istio.operator.podLabels | indent 8}}{{- else }}
         {{"sidecar.istio.io/inject"}}: {{"true"}}
     {{- end}}
-    enableHostRouting: {{ if and (hasKey .Values "istio") (hasKey .Values.istio "enableDeprecatedHostRouting") -}}{{ toString .Values.istio.enableDeprecatedHostRouting }}{{- else -}}false{{- end }}
+    enableHostRouting: {{ if and (hasKey .Values "istio") (hasKey .Values.istio "enableDeprecatedHostRouting") -}}{{ toString .Values.istio.enableDeprecatedHostRouting }}{{- else }} false{{- end }}
   linkerd:
-    enabled:{{- if and (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") -}}{{ toString .Values.linkerd.enabled }}{{- else -}}false{{- end }}
+    enabled:{{- if and (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") -}}{{ toString .Values.linkerd.enabled }}{{- else }} false{{- end }}
     operator:
       podAnnotations:{{- if and (hasKey .Values "linkerd") (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations) }}
 {{ toYaml .Values.linkerd.operator.podAnnotations | indent 8}}{{- else }}
