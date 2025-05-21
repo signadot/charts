@@ -97,8 +97,8 @@ style resources and are not needed in an installation which uses the new
 
 | Name                                            | Description                                             | Default                                           |
 | ----------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
-| `controllerManager.image`                                | Operator image override                                 | `signadot/operator:vX.Y.Z`                        |
-| `controllerManager.imagePullPolicy`                      | Operator image pull policy                              | `IfNotPresent`                                    |
+| `controllerManager.image`                                | Controller Manager image override                                 | `signadot/controller-manager:vX.Y.Z`                        |
+| `controllerManager.imagePullPolicy`                      | Controller Manager image pull policy                              | `IfNotPresent`                                    |
 | `agent.image`                                   | Agent image override                                    | `signadot/agent:vX.Y.Z`                           |
 | `agent.imagePullPolicy`                         | Agent image pull policy                                 | `IfNotPresent`                                    |
 | `routeServer.image`                             | Route Server image override                             | `signadot/route-server:vX.Y.Z`                    |
