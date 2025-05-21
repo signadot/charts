@@ -73,12 +73,12 @@ kubectl delete ns signadot
 | Name                            | Description                                                                                               | Default |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
-| `operator.replicas`             | Number of replicas for `signadot-controller-manager` deployment                                           | `2`     |
+| `controllerManager.replicas`             | Number of replicas for `signadot-controller-manager` deployment                                           | `2`     |
 | `sandboxTrafficManager.enabled` | Whether to enable the Sandbox Traffic Manager Sidecar on forked workloads                                 | `true`  |
 | `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
 ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend  
-running the controller manager with `operator.replicas = 1` to minimize resource  
+running the controller manager with `controllerManager.replicas = 1` to minimize resource  
 usage. Note that increasing replicas (`replicas > 1`) does not replicate most  
 controller functionality in parallel; only one replica is active at a time, and  
 high availability operates in an active-passive manner, primarily benefiting  
@@ -97,8 +97,8 @@ style resources and are not needed in an installation which uses the new
 
 | Name                                            | Description                                             | Default                                           |
 | ----------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
-| `operator.image`                                | Operator image override                                 | `signadot/operator:vX.Y.Z`                        |
-| `operator.imagePullPolicy`                      | Operator image pull policy                              | `IfNotPresent`                                    |
+| `controllerManager.image`                                | Controller Manager image override                                 | `signadot/controller-manager:vX.Y.Z`                        |
+| `controllerManager.imagePullPolicy`                      | Controller Manager image pull policy                              | `IfNotPresent`                                    |
 | `agent.image`                                   | Agent image override                                    | `signadot/agent:vX.Y.Z`                           |
 | `agent.imagePullPolicy`                         | Agent image pull policy                                 | `IfNotPresent`                                    |
 | `routeServer.image`                             | Route Server image override                             | `signadot/route-server:vX.Y.Z`                    |
@@ -163,11 +163,11 @@ Default
 <tr>
 <td>
 
-`operator.resources`
+`controllerManager.resources`
 
 </td>
 <td>
-Operator resources
+Controller Manager resources
 </td>
 <td>
 
@@ -529,6 +529,7 @@ Enabling Istio will activate the Istio proxy in the following components: in Sig
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
+| `istio.operator.podLabels`      | Pod Labels to add to signadot components which should use Istio | `{"sidecar.istio.io/inject": "true"}`  |
 | `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
 | `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
 | `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
@@ -543,6 +544,7 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | Name              | Description              | Default |
 | ----------------- | ------------------------ | ------- |
 | `linkerd.enabled` | Enable Linkerd integration | `false` |
+| `linkerd.operator.podAnnotations`      | Pod Annotations to add to signadot components which should use Linkerd |`{"linkerd.io/inject": "enabled"}`  |
 
 
 ### Routing parameters
@@ -566,4 +568,4 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 
 | Name                                  | Description                                                 | Default |
 | ------------------------------------- | ----------------------------------------------------------- | ------- |
-| `controlPlane.proxy`              | Enable control plane proxy                                      | `enabled`  |
+| `controlPlane.proxy`              | Enable [control plane proxy](https://www.signadot.com/docs/concepts/architecture/control-plane#proxy-server)                                      | `enabled`  |

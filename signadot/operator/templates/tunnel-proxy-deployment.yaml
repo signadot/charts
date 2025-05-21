@@ -39,7 +39,13 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $linkerdEnabled }}
+        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
+        {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- else }}
         linkerd.io/inject: enabled
+        {{- end }}
         {{- end }}
       labels:
         app: tunnel-proxy
@@ -50,7 +56,13 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $istioEnabled }}
+        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
+        {{- range $key, $val := .Values.istio.operator.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- else }}
         sidecar.istio.io/inject: "true"
+        {{- end }}
         {{- end }}
     spec:
       containers:
