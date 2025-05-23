@@ -37,7 +37,6 @@
 
 # Istio settings
 # -----------------------------------------------------------------------------
-
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
@@ -46,7 +45,10 @@
 #     # If the field does not exist, or no labels are specified, then it will default to 
 #     # sidecar.istio.io/inject: "true"
 #     podLabels:
-#       dataplane.istio.io: ambient
+#       # For ambient mode, you should have a waypoint installed in the signadot namespace 
+#       # and point the in-mesh operator components to it like so
+#       istio.io/dataplane-mode: ambient
+#       istio.io/use-waypoint: waypoint
 #   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
 #   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
