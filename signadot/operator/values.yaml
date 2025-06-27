@@ -37,10 +37,18 @@
 
 # Istio settings
 # -----------------------------------------------------------------------------
-
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
+#   operator:
+#     # Specify custom pod labels for operator workloads placed on the Istio mesh. 
+#     # If the field does not exist, or no labels are specified, then it will default to 
+#     # sidecar.istio.io/inject: "true"
+#     podLabels:
+#       # For ambient mode, you should have a waypoint installed in the signadot namespace 
+#       # and point the in-mesh operator components to it like so
+#       istio.io/dataplane-mode: ambient
+#       istio.io/use-waypoint: waypoint
 #   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
 #   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
@@ -59,12 +67,19 @@
 # linkerd:
 #   # Enable the integration with Linkerd
 #   enabled: true
+#   operator:
+#     # Specify custom pod annotations for operator workloads placed on the Linkerd mesh. 
+#     # If the field does not exist, or no annotations are specified, then it will default to 
+#     # linkerd.io/inject: "enabled"
+#     podAnnotations:
+#       linkerd.io/inject: enabled
+#       config.linkerd.io/proxy-await: enabled
 
 
 # Component settings
 # -----------------------------------------------------------------------------
 
-operator:
+controllerManager:
   replicas: 2
   resources:
     limits:
@@ -314,3 +329,9 @@ tunnel:
 #   responseHeadersElide:
 #     - header1
 #     - header2
+#
+
+# Control Plane Settings for this cluster
+# -----------------------------------------------------------------------------
+# controlPlane:
+#    proxy: "enabled"  # can also be "disabled"
