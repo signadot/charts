@@ -22,20 +22,9 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ""
-  resourceNames:
-  - io-context-tls
-  resources:
-  - secrets
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
   - signadot.com
   resources:
   - signadotsandboxes
-  - resources
   verbs:
   - get
   - list

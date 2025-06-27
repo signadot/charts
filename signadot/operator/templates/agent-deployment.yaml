@@ -36,13 +36,7 @@ spec:
         cluster-config-checksum: '{{ include (print $.Template.BasePath "/signadot-cluster-config-configmap.yaml")
           . | sha256sum }}'
         {{- if $linkerdEnabled }}
-        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
-        {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
-        {{ $key | quote }}: {{ $val | quote }}
-        {{- end }}
-        {{- else }}
-        linkerd.io/inject: "enabled"
-        {{- end }}
+        linkerd.io/inject: enabled
         {{- end }}
       labels:
         app: signadot-agent
@@ -53,17 +47,12 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- if $istioEnabled }}
-        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
-        {{- range $key, $val := .Values.istio.operator.podLabels }}
-        {{ $key | quote }}: {{ $val | quote }}
-        {{- end }}
-        {{- else }}
         sidecar.istio.io/inject: "true"
-        {{- end }}
         {{- end }}
     spec:
       containers:
       - args:
+        - --agent-token=$(AGENT_TOKEN)
         - --api-url=https://api.signadot.com
         - --tunnel-addr=tunnel.signadot.com:443
         env:
@@ -72,7 +61,7 @@ spec:
             secretKeyRef:
               key: token
               name: cluster-agent
-        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.0.0{{- end }}{{- else -}}signadot/agent:v1.0.0{{- end }}{{- else -}}signadot/agent:v1.0.0{{- end }}
+        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v0.19.3{{- end }}{{- else -}}signadot/agent:v0.19.3{{- end }}{{- else -}}signadot/agent:v0.19.3{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:

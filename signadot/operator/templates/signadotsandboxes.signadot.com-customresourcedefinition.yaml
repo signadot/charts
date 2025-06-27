@@ -226,8 +226,6 @@ spec:
                           description: APIVersion specifies the API Version (e.g.
                             "apps/v1") of the object to patch.
                           type: string
-                        fake:
-                          type: boolean
                         kind:
                           description: Kind specifies the Kind (e.g. "Deployment")
                             of the object to patch.
@@ -3010,39 +3008,6 @@ spec:
                                             x-kubernetes-list-map-keys:
                                             - name
                                             x-kubernetes-list-type: map
-                                          resources:
-                                            properties:
-                                              claims:
-                                                items:
-                                                  properties:
-                                                    name:
-                                                      type: string
-                                                    request:
-                                                      type: string
-                                                  required:
-                                                  - name
-                                                  type: object
-                                                type: array
-                                                x-kubernetes-list-map-keys:
-                                                - name
-                                                x-kubernetes-list-type: map
-                                              limits:
-                                                additionalProperties:
-                                                  anyOf:
-                                                  - type: integer
-                                                  - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                                                  x-kubernetes-int-or-string: true
-                                                type: object
-                                              requests:
-                                                additionalProperties:
-                                                  anyOf:
-                                                  - type: integer
-                                                  - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                                                  x-kubernetes-int-or-string: true
-                                                type: object
-                                            type: object
                                           restartPolicy:
                                             type: string
                                           runtimeClassName:
@@ -3085,8 +3050,6 @@ spec:
                                               runAsUser:
                                                 format: int64
                                                 type: integer
-                                              seLinuxChangePolicy:
-                                                type: string
                                               seLinuxOptions:
                                                 properties:
                                                   level:
@@ -6811,39 +6774,6 @@ spec:
                                             x-kubernetes-list-map-keys:
                                             - name
                                             x-kubernetes-list-type: map
-                                          resources:
-                                            properties:
-                                              claims:
-                                                items:
-                                                  properties:
-                                                    name:
-                                                      type: string
-                                                    request:
-                                                      type: string
-                                                  required:
-                                                  - name
-                                                  type: object
-                                                type: array
-                                                x-kubernetes-list-map-keys:
-                                                - name
-                                                x-kubernetes-list-type: map
-                                              limits:
-                                                additionalProperties:
-                                                  anyOf:
-                                                  - type: integer
-                                                  - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                                                  x-kubernetes-int-or-string: true
-                                                type: object
-                                              requests:
-                                                additionalProperties:
-                                                  anyOf:
-                                                  - type: integer
-                                                  - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
-                                                  x-kubernetes-int-or-string: true
-                                                type: object
-                                            type: object
                                           restartPolicy:
                                             type: string
                                           runtimeClassName:
@@ -6886,8 +6816,6 @@ spec:
                                               runAsUser:
                                                 format: int64
                                                 type: integer
-                                              seLinuxChangePolicy:
-                                                type: string
                                               seLinuxOptions:
                                                 properties:
                                                   level:
@@ -7939,6 +7867,48 @@ spec:
                 maxLength: 30
                 pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
                 type: string
+              resources:
+                description: 'DEPRECATED: use ManagedResources instead.'
+                items:
+                  properties:
+                    name:
+                      description: |-
+                        Name is the name of the resource as referred to by
+                        the requestor.
+
+                        The name must start with a letter and contain only alphanumeric characters
+                        so that it can be a template variable name.
+                      maxLength: 20
+                      minLength: 1
+                      pattern: ^[A-Za-z][A-Za-z0-9]*$
+                      type: string
+                    outputKind:
+                      default: Secret
+                      description: |-
+                        OutputKind is the kind of object (ConfigMap or Secret) in which the
+                        plugin provisioner's output should be stored. The default is "Secret".
+                      enum:
+                      - Secret
+                      - ConfigMap
+                      type: string
+                    params:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        Params is a map of unstructured key-value pairs
+                        which will be provided to the Provisioner.
+                      type: object
+                    pluginName:
+                      description: |-
+                        PluginName is the name of the plugin
+                        which will provision and deprovision the
+                        resource.
+                      type: string
+                  required:
+                  - name
+                  - pluginName
+                  type: object
+                type: array
               sdRevision:
                 description: |-
                   SDRevision indicates the number of updates to the Signadot
@@ -8243,6 +8213,14 @@ spec:
                   type: boolean
                 description: 'DEPRECATED: use ManagedResources instead.'
                 type: object
+              readyResources:
+                description: 'DEPRECATED: use ManagedResources instead.'
+                format: int32
+                type: integer
+              resources:
+                description: 'DEPRECATED: use ManagedResources instead.'
+                format: int32
+                type: integer
             type: object
         type: object
     served: true
