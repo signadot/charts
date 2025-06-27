@@ -226,6 +226,8 @@ spec:
                           description: APIVersion specifies the API Version (e.g.
                             "apps/v1") of the object to patch.
                           type: string
+                        fake:
+                          type: boolean
                         kind:
                           description: Kind specifies the Kind (e.g. "Deployment")
                             of the object to patch.

@@ -71,6 +71,7 @@ data:
               "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
               stat_prefix: ingress_http
               codec_type: AUTO
+              preserve_external_request_id: true
               access_log:
               - name: envoy.access_loggers.file
                 typed_config:
@@ -199,6 +200,7 @@ data:
               "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
               stat_prefix: ingress_http
               codec_type: AUTO
+              preserve_external_request_id: true
               access_log:
               - name: envoy.access_loggers.file
                 typed_config:
