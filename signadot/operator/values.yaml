@@ -101,6 +101,7 @@ agent:
   # imagePullPolicy: Always
 
 routeServer:
+  replicas: 1
   resources:
     limits:
       memory: 2Gi
@@ -110,6 +111,7 @@ routeServer:
   # imagePullPolicy: Always
 
 ioContextServer:
+  replicas: 1
   resources:
     limits:
       memory: 1Gi
@@ -170,19 +172,14 @@ ioContextServer:
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
 
-# execpodSidecar:  # for legacy resource plugins
-#   image: my-private-registry/signadot/execpod-sidecar:latest
-#   imagePullPolicy: Always
-#   imagePullSecret: secret-execpodSidecar
-
 tunnel:
   api:
+    replicas: 1
     resources:
       limits:
         memory: 1Gi
       requests:
         memory: 128Mi
-    replicas: 1
     # image: my-private-registry/signadot/tunnel-api:latest
     # imagePullPolicy: Always
     # strategy:
@@ -191,12 +188,12 @@ tunnel:
     #     maxUnavailable: 25%
     #   type: RollingUpdate
   proxy:
+    replicas: 1
     resources:
       limits:
         memory: 2Gi
       requests:
         memory: 128Mi
-    replicas: 1
   #   image: my-private-registry/signadot/tunnel-proxy:latest
   #   imagePullPolicy: Always
   #   strategy:
@@ -255,6 +252,16 @@ tunnel:
   #   disableSSH: false
   #   disableXAP: false
 
+trafficManager:
+  replicas: 2
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      memory: 128Mi
+  # image: my-private-registry/signadot/traffic-manager:latest
+  # imagePullPolicy: Always
+
 # jobExecutorInit:
 #   resources:
 #     limits:
@@ -278,31 +285,6 @@ tunnel:
 #   image: my-private-registry/signadot/job-executor-proxy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorProxy
-
-# sandboxTrafficManager:
-#   enabled: true
-#   init:
-#     resources:
-#       limits:
-#         cpu: 2
-#         memory: 1Gi
-#       requests:
-#         cpu: 100m
-#         memory: 128Mi
-#     image: my-private-registry/signadot/sandbox-traffic-manager-init:latest
-#     imagePullPolicy: Always
-#     imagePullSecret: secret-sandboxTrafficManagerInit
-#   sidecar:
-#     resources:
-#       limits:
-#         cpu: 2
-#         memory: 1Gi
-#       requests:
-#         cpu: 100m
-#         memory: 128Mi
-#     image: my-private-registry/signadot/sandbox-traffic-manager-sidecar:latest
-#     imagePullPolicy: Always
-#     imagePullSecret: secret-sandboxTrafficManagerSidecart
 
 
 # Routing settings

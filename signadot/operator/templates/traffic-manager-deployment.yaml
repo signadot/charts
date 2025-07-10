@@ -10,15 +10,15 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: routeserver
+  name: traffic-manager
   namespace: signadot
 spec:
-{{- with .Values }}{{- with .routeServer }}{{- with .replicas }}
+{{- with .Values }}{{- with .trafficManager }}{{- with .replicas }}
   replicas: {{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
-      app: routeserver
+      app: traffic-manager
   template:
     metadata:
       annotations:
@@ -29,7 +29,7 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
       labels:
-        app: routeserver
+        app: traffic-manager
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -38,20 +38,20 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v1.0.0{{- end }}{{- else -}}signadot/route-server:v1.0.0{{- end }}{{- else -}}signadot/route-server:v1.0.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .routeServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
-        name: routeserver
+      - image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .trafficManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        name: traffic-manager
         ports:
-        - containerPort: 7777
-          name: grpc
-        - containerPort: 7778
-          name: http-api
         - containerPort: 8080
-          name: http-legacy
-        - containerPort: 9090
-          name: http-metrics
-{{- with .Values }}{{- with .routeServer }}{{- with .resources }}
+          name: proxy
+        - containerPort: 16001
+          name: healthz
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 16001
+{{- with .Values }}{{- with .trafficManager }}{{- with .resources }}
         resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-      serviceAccountName: routeserver
+      serviceAccountName: traffic-manager
