@@ -16,7 +16,7 @@ rules:
 - apiGroups:
   - ""
   resourceNames:
-  - cluster-agent
+  - {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
   resources:
   - secrets
   verbs:

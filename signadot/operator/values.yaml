@@ -97,6 +97,7 @@ agent:
       memory: 2Gi
     requests:
       memory: 128Mi
+  # tokenSecret: cluster-agent
   # image: my-private-registry/signadot/agent:latest
   # imagePullPolicy: Always
 
