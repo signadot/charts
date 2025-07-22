@@ -71,8 +71,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: token
-              name: cluster-agent
-              value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
+              name: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
         image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.0.0{{- end }}{{- else -}}signadot/agent:v1.0.0{{- end }}{{- else -}}signadot/agent:v1.0.0{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:

@@ -86,6 +86,8 @@ spec:
           value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: JOB_EXECUTOR_PROXY_IMAGE_PULL_SECRET
           value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: AGENT_TOKEN_SECRET
+          value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
         - name: SIDECAR_INIT_IMAGE
           value: {{ with .Values }}{{ with .routeInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-init:v1.0.0{{- end }}{{- else -}}signadot/route-sidecar-init:v1.0.0{{- end }}{{- else -}}signadot/route-sidecar-init:v1.0.0{{- end }}
         - name: ROUTE_SIDECAR_IMAGE
