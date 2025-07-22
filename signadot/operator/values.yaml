@@ -49,8 +49,6 @@
 #       # and point the in-mesh operator components to it like so
 #       istio.io/dataplane-mode: ambient
 #       istio.io/use-waypoint: waypoint
-#   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
-#   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
 #   # Signadot Note that virtual services are only managed by Signadot when they
 #   # route to some sandbox.  For virtual services, these labels or annotations are
