@@ -13,9 +13,7 @@ metadata:
   name: routeserver
   namespace: signadot
 spec:
-{{- with .Values }}{{- with .routeServer }}{{- with .replicas }}
-  replicas: {{ . }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+  replicas: 1
   selector:
     matchLabels:
       app: routeserver
