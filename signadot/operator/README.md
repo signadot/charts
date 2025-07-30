@@ -50,7 +50,7 @@ To upgrade an existing `signadot-operator` deployment:
 ```sh
 # Upgrade
 helm repo update
-helm upgrade signadot-operator signadot/operator --set agent.clusterToken=$CLUSTER_TOKEN
+helm upgrade signadot-operator signadot/operator
 ```
 
 ## Uninstalling the Chart
