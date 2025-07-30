@@ -9,7 +9,7 @@ components for Signadot.
 To install this chart, the cluster should also be connected
 in the [Signadot dashboard](https://app.signadot.com/settings/clusters) by
 clicking "Connect Cluster".  This will provide you with a cluster token,
-referred to below by `$CLUSTER_TOKEN`
+referred to below by `$CLUSTER_TOKEN`.
 
 
 To install the chart with the release name `signadot-operator`:
@@ -35,7 +35,7 @@ kubectl -n signadot create secret generic cluster-agent --from-literal=token=$CL
 ```
 
 Note that to rotate the secret, you will need to delete the secret first and
-also restart the agent deployment
+also restart the agent deployment afterwards.
 
 ```sh
 kubectl -n signadot delete secret cluster-agent
