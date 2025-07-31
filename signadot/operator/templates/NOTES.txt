@@ -1,10 +1,13 @@
 {{ if not .Values.disableAgent }}
-
+{{- if and (hasKey .Values "agent") (hasKey .Values.agent "clusterToken") }}
+Please visit https://app.signadot.com to verify that your cluster has been
+successfully registered.
+{{- else }}
 Please visit https://app.signadot.com to register this cluster and create a cluster token.
 
 Then populate the cluster token in a Secret by running the following command
 with "..." replaced by the token value.
 
 kubectl -n signadot create secret generic cluster-agent --from-literal=token=...
-
+{{- end }}
 {{ end }}

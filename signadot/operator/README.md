@@ -6,6 +6,12 @@ components for Signadot.
 
 ## Installing the Chart
 
+To install this chart, the cluster should also be connected
+in the [Signadot dashboard](https://app.signadot.com/settings/clusters) by
+clicking "Connect Cluster".  This will provide you with a cluster token,
+referred to below by `$CLUSTER_TOKEN`.
+
+
 To install the chart with the release name `signadot-operator`:
 
 ```sh
@@ -14,22 +20,27 @@ kubectl create ns signadot
 
 # Install
 helm repo add signadot https://charts.signadot.com
-helm install signadot-operator signadot/operator
+helm install signadot-operator signadot/operator --set agent.clusterToken=$CLUSTER_TOKEN
 ```
 The command deploys Signadot Operator on the Kubernetes cluster with default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
 
-## Cluster Registration
+## Cluster Tokens
 
-In addition to installing this chart, the cluster must also be registered
-in the [Signadot dashboard](https://app.signadot.com).
-
-After generating a cluster token, complete the registration by populating a Secret
-called `cluster-agent` in the `signadot` namespace:
+If you installed the chart without a cluster token or would like to rotate the cluster
+token, you can create the associated secret with
 
 ```sh
-# Replace "..." with the token value.
-kubectl -n signadot create secret generic cluster-agent --from-literal=token=...
+kubectl -n signadot create secret generic cluster-agent --from-literal=token=$CLUSTER_TOKEN
+```
+
+Note that to rotate the secret, you will need to delete the secret first and
+also restart the agent deployment afterwards.
+
+```sh
+kubectl -n signadot delete secret cluster-agent
+kubectl -n signadot create secret generic cluster-agent --from-literal=token=$CLUSTER_TOKEN
+kubectl -n signadot rollout restart deploy agent
 ```
 
 ## Upgrading the Chart
