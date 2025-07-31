@@ -83,7 +83,6 @@ Some images are sleighted for deprecation, in particular those with the suffix
 | `controllerManager.imagePullPolicy`   | Controller Manager image pull policy                     | `IfNotPresent`                         |
 | `agent.image`                         | Agent image override                                     | `signadot/agent:vX.Y.Z`                |
 | `agent.imagePullPolicy`               | Agent image pull policy                                  | `IfNotPresent`                         |
-| `routeServer.replicas`                | Number of replicas for the Route Server deployment       | `1`                                    |
 | `routeServer.image`                   | Route Server image override                              | `signadot/route-server:vX.Y.Z`         |
 | `routeServer.imagePullPolicy`         | Route Server image pull policy                           | `IfNotPresent`                         |
 | `ioContextServer.replicas`            | Number of replicas for the IO Context Server deployment  | `1`                                    |
