@@ -13,7 +13,9 @@ metadata:
   name: io-context-server
   namespace: signadot
 spec:
-  replicas: 1
+{{- with .Values }}{{- with .ioContextServer }}{{- with .replicas }}
+  replicas: {{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
       app: io-context-server

@@ -1,0 +1,60 @@
+# This file is generated. Do not edit.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: traffic-manager
+  namespace: signadot
+spec:
+{{- with .Values }}{{- with .trafficManager }}{{- with .replicas }}
+  replicas: {{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+  selector:
+    matchLabels:
+      app: traffic-manager
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $val := .Values.commonAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+      labels:
+        app: traffic-manager
+        {{- range $key, $val := .Values.commonLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- range $key, $val := .Values.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+    spec:
+      containers:
+      - env:
+        - name: AGENT_TOKEN_SECRET
+          value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
+        image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .trafficManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        name: traffic-manager
+        ports:
+        - containerPort: 8080
+          name: proxy
+        - containerPort: 16001
+          name: healthz
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 16001
+{{- with .Values }}{{- with .trafficManager }}{{- with .resources }}
+        resources:
+{{ toYaml . | indent 10 }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+      serviceAccountName: traffic-manager
