@@ -3,6 +3,9 @@
 }}
 {{ fail "istio and linkerd cannot be enabled at the same time" }}
 {{- end }}
+{{- if and (hasKey .Values "istio") (hasKey .Values.istio "enableDeprecatedHostRouting") }}
+{{ fail "istio host routing is no longer supported" }}
+{{- end }}
 
 apiVersion: v1
 kind: ConfigMap

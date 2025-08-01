@@ -41,7 +41,7 @@ spec:
       - env:
         - name: AGENT_TOKEN_SECRET
           value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
-        image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}
+        image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.1.0-xrc.1{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0-xrc.1{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .trafficManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: traffic-manager
         ports:
