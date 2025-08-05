@@ -43,6 +43,9 @@ kubectl -n signadot create secret generic cluster-agent --from-literal=token=$CL
 kubectl -n signadot rollout restart deploy agent
 ```
 
+If you have specified a custom secret name via the `agent.tokenSecret` values, then
+you should replace `cluster-agent` above with the value of `agent.tokenSecret`.
+
 ## Upgrading the Chart
 
 To upgrade an existing `signadot-operator` deployment:
