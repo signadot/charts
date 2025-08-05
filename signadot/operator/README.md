@@ -484,6 +484,15 @@ requests:
 | `allowOrphanedResources` | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
 
+### Agent parameters
+
+| Name                                  | Description                                                 | Default |
+| ------------------------------------- | ----------------------------------------------------------- | ------- |
+| `agent.tokenSecret`              | Name of the Secret in the signadot namespace which contains the agent token                              | `cluster-agent`  |
+| `agent.clusterToken`              | Cluster token for connecting the agent to Signadot              | unspecified  |
+
+
+
 ### Tunnel parameters
 
 | Name                                     | Description                                                                                                                                                                                                                                                                  | Default |
