@@ -325,4 +325,4 @@ dev:
   apiURL: http://apiserver.signadot-control:8080
   tunnelAddr: tunnel.signadot-control:2222
   artifactsAPIURL: http://artifactsserver.signadot-control:8180
-  trafficModelsAPIURL: trafficmodelsserver.signadot-control:8280
+  trafficModelsAPIURL: http://trafficmodelsserver.signadot-control:8280
