@@ -318,11 +318,11 @@ trafficManager:
 #    proxy: "enabled"  # can also be "disabled"
 #
 
-# Development settings
+# UNSUPPORTED Internal Development Settings 
 # -----------------------------------------------------------------------------
 #
-dev:
-  apiURL: http://apiserver.signadot-control:8080
-  tunnelAddr: tunnel.signadot-control:2222
-  artifactsAPIURL: http://artifactsserver.signadot-control:8180
-  trafficModelsAPIURL: http://trafficmodelsserver.signadot-control:8280
+# dev:
+#   apiURL: http://apiserver.signadot-control:8080
+#   tunnelAddr: tunnel.signadot-control:2222
+#   artifactsAPIURL: http://artifactsserver.signadot-control:8180
+#   trafficModelsAPIURL: http://trafficmodelsserver.signadot-control:8280
