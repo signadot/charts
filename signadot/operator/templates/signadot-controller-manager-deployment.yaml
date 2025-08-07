@@ -46,6 +46,14 @@ spec:
         command:
         - /manager
         env:
+        {{- if and (hasKey .Values "dev") (hasKey .Values.dev "artifactsAPIURL") }}
+        - name: ARTIFACTS_API_URL
+          value: {{ .Values.dev.artifactsAPIURL }}
+        {{- end}}
+        {{- if and (hasKey .Values "dev") (hasKey .Values.dev "trafficModelsAPIURL") }}
+        - name: TRAFFICMODELS_API_URL
+          value: {{ .Values.dev.trafficModelsAPIURL }}
+        {{- end}}
         - name: DEV_MESH_INIT_CONTAINER_RESOURCES
           value: {{ with .Values }}{{ with .routeInit }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: DEV_MESH_SIDECAR_CONTAINER_RESOURCES

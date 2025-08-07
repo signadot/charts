@@ -61,6 +61,14 @@ spec:
     spec:
       containers:
       - env:
+        {{- if and (hasKey .Values "dev") (hasKey .Values.dev "apiURL") }}
+        - name: API_SERVER_URL
+          value: {{ .Values.dev.apiURL }}
+        {{- end}}
+        {{- if and (hasKey .Values "dev") (hasKey .Values.dev "trafficModelsAPIURL") }}
+        - name: TRAFFICMODELS_API_URL
+          value: {{ .Values.dev.trafficModelsAPIURL }}
+        {{- end}}
         - name: AGENT_TOKEN_SECRET
           value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
         image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}{{- else -}}signadot/traffic-manager:v1.0.0{{- end }}
