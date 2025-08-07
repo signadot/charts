@@ -210,6 +210,7 @@ spec:
                     type: array
                 type: object
               disableSandboxTrafficManager:
+                description: 'DEPRECATED: this field is no longer needed.'
                 type: boolean
               externalWorkloads:
                 description: |-
@@ -7945,6 +7946,51 @@ spec:
                   sandbox specification as hosted by Signadot.
                 format: int64
                 type: integer
+              virtualWorkloads:
+                description: |-
+                  This is a list of virtual workloads, which are workloads that trigger
+                  special traffic handling without creating an actual new backing workload.
+                  If the special traffic handling ends up not responding to a request, it
+                  will go to the baseline.
+                items:
+                  properties:
+                    baseline:
+                      description: |-
+                        Baseline specifies the target workload to which this virtual
+                        workload applies.
+                      properties:
+                        apiVersion:
+                          description: APIVersion specifies the API Version (e.g.
+                            "apps/v1") of the object to patch.
+                          type: string
+                        kind:
+                          description: Kind specifies the Kind (e.g. "Deployment")
+                            of the object to patch.
+                          type: string
+                        name:
+                          description: Name specifies the name of the object to patch.
+                          type: string
+                        namespace:
+                          description: Namespace optionally specifies which namespace
+                            will be searched.
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      - name
+                      type: object
+                    name:
+                      description: |-
+                        Name of the virtual workload, this is an arbitrary string defined by
+                        the user (eg: "apiserver" or "playground-api")
+                      maxLength: 30
+                      pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
+                      type: string
+                  required:
+                  - baseline
+                  - name
+                  type: object
+                type: array
             required:
             - id
             type: object
@@ -8243,6 +8289,95 @@ spec:
                   type: boolean
                 description: 'DEPRECATED: use ManagedResources instead.'
                 type: object
+              virtualWorkloads:
+                description: Status of each of the external workloads
+                items:
+                  properties:
+                    baseline:
+                      description: ForkTarget specifies the workload being forked
+                      properties:
+                        apiVersion:
+                          description: APIVersion specifies the API Version (e.g.
+                            "apps/v1") of the object to patch.
+                          type: string
+                        kind:
+                          description: Kind specifies the Kind (e.g. "Deployment")
+                            of the object to patch.
+                          type: string
+                        name:
+                          description: Name specifies the name of the object to patch.
+                          type: string
+                        namespace:
+                          description: Namespace optionally specifies which namespace
+                            will be searched.
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      - name
+                      type: object
+                    routing:
+                      description: |-
+                        Routing exposes information about the routing status of the forked
+                        workload
+                      properties:
+                        devMesh:
+                          description: |-
+                            DevMesh provides information about the setup of the DevMesh sidecar for
+                            the workload
+                          properties:
+                            enabled:
+                              description: |-
+                                Enabled means that the DevMesh sidecar container is present and ready in
+                                all the baseline workload pods
+                              type: boolean
+                          required:
+                          - enabled
+                          type: object
+                        istio:
+                          description: |-
+                            Istio provides information about the Virtual Service configuration for
+                            each of the baseline services
+                          items:
+                            properties:
+                              baselineService:
+                                description: Baseline service name that includes the
+                                  target workload
+                                type: string
+                              matchedVirtualServices:
+                                description: |-
+                                  MatchedVirtualServices is a list of the matching virtual services for
+                                  the baseline service, along with its status
+                                items:
+                                  properties:
+                                    message:
+                                      description: Status related message
+                                      type: string
+                                    name:
+                                      description: This is the virtual service name
+                                      type: string
+                                    namespace:
+                                      description: This is the virtual service namespace
+                                      type: string
+                                    status:
+                                      description: Status information about the virtual
+                                        service configuration
+                                      type: string
+                                  required:
+                                  - name
+                                  - namespace
+                                  - status
+                                  type: object
+                                type: array
+                            required:
+                            - baselineService
+                            type: object
+                          type: array
+                      type: object
+                  required:
+                  - baseline
+                  type: object
+                type: array
             type: object
         type: object
     served: true

@@ -49,8 +49,6 @@
 #       # and point the in-mesh operator components to it like so
 #       istio.io/dataplane-mode: ambient
 #       istio.io/use-waypoint: waypoint
-#   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
-#   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
 #   # Signadot Note that virtual services are only managed by Signadot when they
 #   # route to some sandbox.  For virtual services, these labels or annotations are
@@ -97,6 +95,8 @@ agent:
       memory: 2Gi
     requests:
       memory: 128Mi
+  # tokenSecret: my-cluster-agent
+  # clusterToken: myorg@xxx
   # image: my-private-registry/signadot/agent:latest
   # imagePullPolicy: Always
 
@@ -110,6 +110,7 @@ routeServer:
   # imagePullPolicy: Always
 
 ioContextServer:
+  replicas: 1
   resources:
     limits:
       memory: 1Gi
@@ -170,19 +171,14 @@ ioContextServer:
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
 
-# execpodSidecar:  # for legacy resource plugins
-#   image: my-private-registry/signadot/execpod-sidecar:latest
-#   imagePullPolicy: Always
-#   imagePullSecret: secret-execpodSidecar
-
 tunnel:
   api:
+    replicas: 1
     resources:
       limits:
         memory: 1Gi
       requests:
         memory: 128Mi
-    replicas: 1
     # image: my-private-registry/signadot/tunnel-api:latest
     # imagePullPolicy: Always
     # strategy:
@@ -191,12 +187,12 @@ tunnel:
     #     maxUnavailable: 25%
     #   type: RollingUpdate
   proxy:
+    replicas: 1
     resources:
       limits:
         memory: 2Gi
       requests:
         memory: 128Mi
-    replicas: 1
   #   image: my-private-registry/signadot/tunnel-proxy:latest
   #   imagePullPolicy: Always
   #   strategy:
@@ -255,6 +251,16 @@ tunnel:
   #   disableSSH: false
   #   disableXAP: false
 
+trafficManager:
+  replicas: 2
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      memory: 128Mi
+  # image: my-private-registry/signadot/traffic-manager:latest
+  # imagePullPolicy: Always
+
 # jobExecutorInit:
 #   resources:
 #     limits:
@@ -278,31 +284,6 @@ tunnel:
 #   image: my-private-registry/signadot/job-executor-proxy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorProxy
-
-# sandboxTrafficManager:
-#   enabled: true
-#   init:
-#     resources:
-#       limits:
-#         cpu: 2
-#         memory: 1Gi
-#       requests:
-#         cpu: 100m
-#         memory: 128Mi
-#     image: my-private-registry/signadot/sandbox-traffic-manager-init:latest
-#     imagePullPolicy: Always
-#     imagePullSecret: secret-sandboxTrafficManagerInit
-#   sidecar:
-#     resources:
-#       limits:
-#         cpu: 2
-#         memory: 1Gi
-#       requests:
-#         cpu: 100m
-#         memory: 128Mi
-#     image: my-private-registry/signadot/sandbox-traffic-manager-sidecar:latest
-#     imagePullPolicy: Always
-#     imagePullSecret: secret-sandboxTrafficManagerSidecart
 
 
 # Routing settings

@@ -10,19 +10,16 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   labels:
-    control-plane: controller-manager
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
     {{- range $key, $val := .Values.serviceLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-controller-manager-metrics-service
+  name: traffic-manager
   namespace: signadot
 spec:
   ports:
-  - name: https
-    port: 8443
-    targetPort: https
+  - port: 8080
   selector:
-    control-plane: controller-manager
+    app: traffic-manager

@@ -59,6 +59,7 @@ spec:
                       enum:
                       - ForkedWorkload
                       - SignadotExternalWorkload
+                      - VirtualWorkload
                       type: string
                     name:
                       type: string
@@ -247,6 +248,7 @@ spec:
                           enum:
                           - ForkedWorkload
                           - SignadotExternalWorkload
+                          - VirtualWorkload
                           type: string
                         name:
                           type: string
