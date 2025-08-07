@@ -80,7 +80,6 @@ spec:
             secretKeyRef:
               key: token
               name: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
-        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.0.0{{- end }}{{- else -}}signadot/agent:v1.0.0{{- end }}{{- else -}}signadot/agent:v1.0.0{{- end }}
         {{- if (hasKey .Values "dev") }}
         - name: DEV
           value: "true"
