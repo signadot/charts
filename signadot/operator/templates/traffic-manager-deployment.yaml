@@ -63,6 +63,10 @@ spec:
       - env:
         - name: AGENT_TOKEN_SECRET
           value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
+        - name: API_SERVER_URL
+          value: {{ with .Values }}{{ with .dev }}{{ with .apiURL }}{{ . }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}
+        - name: TRAFFICMODELS_API_URL
+          value: {{ with .Values }}{{ with .dev }}{{ with .trafficModelsAPIURL }}{{ . }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}
         image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .trafficManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: traffic-manager
