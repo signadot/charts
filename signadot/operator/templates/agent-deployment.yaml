@@ -68,7 +68,9 @@ spec:
         - --tunnel-addr={{ with .Values }}{{ with .dev }}{{ with .agentTunnelAddr }}{{ . }}{{- else -}}"tunnel.signadot.com:443"{{- end }}{{- else -}}"tunnel.signadot.com:443"{{- end }}{{- else -}}"tunnel.signadot.com:443"{{- end }}
         env:
         - name: DEV
-          value: {{ with .Values }}{{ with .dev }}{{ with .agentTunnelNoTLS }}{{ . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+{{- with .Values }}{{- with .dev }}{{- with .agentTunnelNoTLS }}
+          value: {{ . | quote }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
         - name: AGENT_TOKEN
           valueFrom:
             secretKeyRef:
