@@ -317,12 +317,13 @@ trafficManager:
 # controlPlane:
 #    proxy: "enabled"  # can also be "disabled"
 #
-
-# UNSUPPORTED Internal Development Settings 
-# -----------------------------------------------------------------------------
 #
+
+# UNSUPPORTED internal development settings
+# -----------------------------------------------------------------------------
 # dev:
 #   apiURL: http://apiserver.signadot-control:8080
-#   tunnelAddr: tunnel.signadot-control:2222
 #   artifactsAPIURL: http://artifactsserver.signadot-control:8180
 #   trafficModelsAPIURL: http://trafficmodelsserver.signadot-control:8280
+#   agentTunnelAddr: tunnel.signadot-control:2222
+#   agentTunnelNoTLS: "true"

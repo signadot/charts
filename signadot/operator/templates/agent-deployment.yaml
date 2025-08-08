@@ -64,17 +64,11 @@ spec:
     spec:
       containers:
       - args:
-        {{- if and (hasKey .Values "dev") (hasKey .Values.dev "apiURL") }}
-        - --api-url={{- .Values.dev.apiURL }}
-        {{- else }}
-        - --api-url=https://api.signadot.com
-        {{- end }}
-        {{- if and (hasKey .Values "dev") (hasKey .Values.dev "tunnelAddr") }}
-        -  --tunnel-addr={{- .Values.dev.tunnelAddr }}
-        {{- else }}
-        - --tunnel-addr=tunnel.signadot.com:443
-        {{- end }}
+        - --api-url={{ with .Values }}{{ with .dev }}{{ with .apiURL }}{{ . }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}
+        - --tunnel-addr={{ with .Values }}{{ with .dev }}{{ with .agentTunnelAddr }}{{ . }}{{- else -}}"tunnel.signadot.com:443"{{- end }}{{- else -}}"tunnel.signadot.com:443"{{- end }}{{- else -}}"tunnel.signadot.com:443"{{- end }}
         env:
+        - name: DEV
+          value: {{ with .Values }}{{ with .dev }}{{ with .agentTunnelNoTLS }}{{ . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
         - name: AGENT_TOKEN
           valueFrom:
             secretKeyRef:
