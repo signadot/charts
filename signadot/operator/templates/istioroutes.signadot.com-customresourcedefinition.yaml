@@ -61,11 +61,20 @@ spec:
                           as seen by the controller
                         format: int64
                         type: integer
+                      kind:
+                        type: string
+                      name:
+                        type: string
+                      namespace:
+                        type: string
                       workloadID:
                         description: WorkloadID is the UID of the underlying baseline
                           workload.
                         type: string
                     required:
+                    - kind
+                    - name
+                    - namespace
                     - workloadID
                     type: object
                   mappings:
@@ -94,6 +103,28 @@ spec:
                   namespace:
                     description: Namespace of this managed route
                     type: string
+                  sandboxedWorkload:
+                    description: |-
+                      SandboxedWorkload is a reference to the sandboxed workload originator of
+                      this route
+                    properties:
+                      kind:
+                        enum:
+                        - ForkedWorkload
+                        - SignadotExternalWorkload
+                        - VirtualWorkload
+                        type: string
+                      name:
+                        type: string
+                      namespace:
+                        type: string
+                      sandboxName:
+                        type: string
+                    required:
+                    - kind
+                    - name
+                    - namespace
+                    type: object
                   targetService:
                     description: Route target
                     type: string
@@ -101,6 +132,7 @@ spec:
                 - baseline
                 - mappings
                 - namespace
+                - sandboxedWorkload
                 - targetService
                 type: object
               routingKey:
