@@ -1,8 +1,4 @@
 # This file is generated. Do not edit.
-{{- $istioEnabled := false -}}
-{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
-{{- $linkerdEnabled := false -}}
-{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,15 +28,6 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        {{- if $linkerdEnabled }}
-        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
-        {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
-        {{ $key | quote }}: {{ $val | quote }}
-        {{- end }}
-        {{- else }}
-        linkerd.io/inject: "enabled"
-        {{- end }}
-        {{- end }}
       labels:
         app: traffic-manager
         {{- range $key, $val := .Values.commonLabels }}
@@ -49,21 +36,9 @@ spec:
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        {{- if $istioEnabled }}
-        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
-        {{- range $key, $val := .Values.istio.operator.podLabels }}
-        {{ $key | quote }}: {{ $val | quote }}
-        {{- end }}
-        {{- else }}
-        sidecar.istio.io/inject: "true"
-        {{- end }}
-        {{- end }}
     spec:
       containers:
-      - env:
-        - name: AGENT_TOKEN_SECRET
-          value: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
-        image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}
+      - image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}{{- else -}}signadot/traffic-manager:v1.1.0{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .trafficManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: traffic-manager
         ports:
@@ -79,4 +54,26 @@ spec:
         resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+        volumeMounts:
+        - mountPath: /etc/signadot/token
+          name: cluster-token
+          readOnly: true
+          subPath: token
+        - mountPath: /etc/signadot/cluster_config.yaml
+          name: cluster-config
+          readOnly: true
+          subPath: cluster_config.yaml
       serviceAccountName: traffic-manager
+      volumes:
+      - name: cluster-token
+        secret:
+          items:
+          - key: token
+            path: token
+          secretName: {{ with .Values }}{{ with .controlPlane }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-token"{{- end }}{{- else -}}"cluster-token"{{- end }}{{- else -}}"cluster-token"{{- end }}
+      - configMap:
+          items:
+          - key: cluster_config.yaml
+            path: cluster_config.yaml
+          name: cluster-config
+        name: cluster-config
