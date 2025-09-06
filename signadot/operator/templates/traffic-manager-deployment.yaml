@@ -1,4 +1,8 @@
 # This file is generated. Do not edit.
+{{- $istioEnabled := false -}}
+{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
+{{- $linkerdEnabled := false -}}
+{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,6 +32,15 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        {{- if $linkerdEnabled }}
+        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
+        {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- else }}
+        linkerd.io/inject: "enabled"
+        {{- end }}
+        {{- end }}
       labels:
         app: traffic-manager
         {{- range $key, $val := .Values.commonLabels }}
@@ -35,6 +48,15 @@ spec:
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- if $istioEnabled }}
+        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
+        {{- range $key, $val := .Values.istio.operator.podLabels }}
+        {{ $key | quote }}: {{ $val | quote }}
+        {{- end }}
+        {{- else }}
+        sidecar.istio.io/inject: "true"
+        {{- end }}
         {{- end }}
     spec:
       containers:
