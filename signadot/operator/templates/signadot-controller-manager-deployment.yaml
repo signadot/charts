@@ -126,9 +126,14 @@ spec:
         volumeMounts:
         - mountPath: /etc/podinfo
           name: podinfo
-        - mountPath: /etc/signadot
+        - mountPath: /etc/signadot/token
+          name: cluster-token
+          readOnly: true
+          subPath: token
+        - mountPath: /etc/signadot/cluster_config.yaml
           name: cluster-config
           readOnly: true
+          subPath: cluster_config.yaml
       securityContext:
         runAsNonRoot: true
       serviceAccountName: signadot-controller-manager
