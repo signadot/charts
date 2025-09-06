@@ -92,6 +92,11 @@ spec:
                     description: List of ports to be forwarded to the workstation
                     items:
                       properties:
+                        appProtocol:
+                          description: |-
+                            Optional appProtocol for free revtuns.  Setting this has no effect
+                            when associated with an ExternalWorkload with a non-nil baseline.
+                          type: string
                         baselinePort:
                           description: Baseline container port
                           format: int32
@@ -110,7 +115,6 @@ spec:
                 description: 'DEPRECATED: this field is no longer needed.'
                 type: string
             required:
-            - baseline
             - name
             - routingKey
             - workloadID

@@ -29,6 +29,7 @@ rules:
   - istioroutes
   - jobrunnergroups
   - jobs
+  - requestmiddlewares
   - resources
   - routingconfigs
   - signadotexternalworkloads

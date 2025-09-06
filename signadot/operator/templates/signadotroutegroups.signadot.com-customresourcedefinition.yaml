@@ -67,6 +67,82 @@ spec:
                   routegroup specification as hosted by Signadot.
                 format: int64
                 type: integer
+              trafficManagerMatches:
+                description: |-
+                  TrafficManagerMatches specifies what TrafficManagerPolicy to use
+                  for what sandboxed workloads in the routegroup in place of any
+                  TrafficManagerPolicies specified by the sandbox itself, which is
+                  the default.
+                items:
+                  description: |-
+                    RequestMiddlewareMatch associates an instantiated middleware
+                    against workloads in a Sandbox or RouteGroup.
+                  properties:
+                    instance:
+                      description: |-
+                        RequestMiddlewareInstance specifies the name of a request middleware
+                        and a set of arguments passed to parameters for the request middleware.
+                        A list of RequestMiddlewareInstances are associated with workloads in
+                        a sandbox or route group, providing the definition of the programmatic
+                        treatment of requests sent to that workload.
+                      properties:
+                        args:
+                          description: Arguments used to instantiate Parameters in
+                            the named middleware.
+                          items:
+                            description: |-
+                              Argument is a generic api struct representing arguments to
+                              Parameters which are used to instantiate a set of parameters.
+                            properties:
+                              name:
+                                description: Name indicates the name of the associated
+                                  parameter.
+                                type: string
+                              value:
+                                description: |-
+                                  Value indicates the value passed to the parameter of
+                                  the same name.
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        middleware:
+                          description: Kubernetes resource name of the middleware
+                            to instantiate.
+                          type: string
+                      required:
+                      - middleware
+                      type: object
+                    workload:
+                      description: ForkTarget specifies what object a given patch
+                        applies to.
+                      properties:
+                        apiVersion:
+                          description: APIVersion specifies the API Version (e.g.
+                            "apps/v1") of the object to patch.
+                          type: string
+                        kind:
+                          description: Kind specifies the Kind (e.g. "Deployment")
+                            of the object to patch.
+                          type: string
+                        name:
+                          description: Name specifies the name of the object to patch.
+                          type: string
+                        namespace:
+                          description: Namespace optionally specifies which namespace
+                            will be searched.
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      - name
+                      type: object
+                  required:
+                  - instance
+                  type: object
+                type: array
             required:
             - routingKey
             type: object

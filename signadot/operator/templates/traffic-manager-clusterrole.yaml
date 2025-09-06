@@ -1,6 +1,6 @@
 # This file is generated. Do not edit.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   annotations:
     {{- range $key, $val := .Values.commonAnnotations }}
@@ -16,7 +16,7 @@ rules:
 - apiGroups:
   - ""
   resourceNames:
-  - {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
+  - cluster-agent
   resources:
   - secrets
   verbs:
@@ -26,9 +26,18 @@ rules:
 - apiGroups:
   - ""
   resourceNames:
-  - signadot-cluster-config
+  - cluster-config
   resources:
   - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - routingconfigs
+  - requestmiddlewares
   verbs:
   - get
   - list

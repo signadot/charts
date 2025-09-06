@@ -261,6 +261,11 @@ spec:
                           description: List of ports to be forwarded to the workstation
                           items:
                             properties:
+                              appProtocol:
+                                description: |-
+                                  Optional appProtocol for free revtuns.  Setting this has no effect
+                                  when associated with an ExternalWorkload with a non-nil baseline.
+                                type: string
                               baselinePort:
                                 description: Baseline container port
                                 format: int32
@@ -276,7 +281,6 @@ spec:
                           type: array
                       type: object
                   required:
-                  - baseline
                   - name
                   type: object
                 type: array
@@ -1073,6 +1077,8 @@ spec:
                                                           - port
                                                           type: object
                                                       type: object
+                                                    stopSignal:
+                                                      type: string
                                                   type: object
                                                 livenessProbe:
                                                   properties:
@@ -1783,6 +1789,8 @@ spec:
                                                           - port
                                                           type: object
                                                       type: object
+                                                    stopSignal:
+                                                      type: string
                                                   type: object
                                                 livenessProbe:
                                                   properties:
@@ -2507,6 +2515,8 @@ spec:
                                                           - port
                                                           type: object
                                                       type: object
+                                                    stopSignal:
+                                                      type: string
                                                   type: object
                                                 livenessProbe:
                                                   properties:
@@ -4874,6 +4884,8 @@ spec:
                                                           - port
                                                           type: object
                                                       type: object
+                                                    stopSignal:
+                                                      type: string
                                                   type: object
                                                 livenessProbe:
                                                   properties:
@@ -5584,6 +5596,8 @@ spec:
                                                           - port
                                                           type: object
                                                       type: object
+                                                    stopSignal:
+                                                      type: string
                                                   type: object
                                                 livenessProbe:
                                                   properties:
@@ -6308,6 +6322,8 @@ spec:
                                                           - port
                                                           type: object
                                                       type: object
+                                                    stopSignal:
+                                                      type: string
                                                   type: object
                                                 livenessProbe:
                                                   properties:
@@ -7940,6 +7956,80 @@ spec:
                 maxLength: 30
                 pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
                 type: string
+              requestMiddlewares:
+                description: |-
+                  RequestMiddlewares specifies what request middlewares apply
+                  to what workloads in what order.
+                items:
+                  description: |-
+                    RequestMiddlewareMatch associates an instantiated middleware
+                    against workloads in a Sandbox or RouteGroup.
+                  properties:
+                    instance:
+                      description: |-
+                        RequestMiddlewareInstance specifies the name of a request middleware
+                        and a set of arguments passed to parameters for the request middleware.
+                        A list of RequestMiddlewareInstances are associated with workloads in
+                        a sandbox or route group, providing the definition of the programmatic
+                        treatment of requests sent to that workload.
+                      properties:
+                        args:
+                          description: Arguments used to instantiate Parameters in
+                            the named middleware.
+                          items:
+                            description: |-
+                              Argument is a generic api struct representing arguments to
+                              Parameters which are used to instantiate a set of parameters.
+                            properties:
+                              name:
+                                description: Name indicates the name of the associated
+                                  parameter.
+                                type: string
+                              value:
+                                description: |-
+                                  Value indicates the value passed to the parameter of
+                                  the same name.
+                                type: string
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        middleware:
+                          description: Kubernetes resource name of the middleware
+                            to instantiate.
+                          type: string
+                      required:
+                      - middleware
+                      type: object
+                    workload:
+                      description: ForkTarget specifies what object a given patch
+                        applies to.
+                      properties:
+                        apiVersion:
+                          description: APIVersion specifies the API Version (e.g.
+                            "apps/v1") of the object to patch.
+                          type: string
+                        kind:
+                          description: Kind specifies the Kind (e.g. "Deployment")
+                            of the object to patch.
+                          type: string
+                        name:
+                          description: Name specifies the name of the object to patch.
+                          type: string
+                        namespace:
+                          description: Namespace optionally specifies which namespace
+                            will be searched.
+                          type: string
+                      required:
+                      - apiVersion
+                      - kind
+                      - name
+                      type: object
+                  required:
+                  - instance
+                  type: object
+                type: array
               sdRevision:
                 description: |-
                   SDRevision indicates the number of updates to the Signadot
@@ -8264,6 +8354,9 @@ spec:
                 description: Status of each of the managed resources
                 items:
                   properties:
+                    failed:
+                      description: Whether the resource has permanently failed
+                      type: boolean
                     name:
                       description: Name of the resource
                       type: string
@@ -8271,6 +8364,7 @@ spec:
                       description: Readiness of the resource
                       type: boolean
                   required:
+                  - failed
                   - name
                   - ready
                   type: object

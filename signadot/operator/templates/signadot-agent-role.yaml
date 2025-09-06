@@ -17,7 +17,7 @@ rules:
 - apiGroups:
   - ""
   resourceNames:
-  - signadot-cluster-config
+  - cluster-config
   resources:
   - configmaps
   verbs:

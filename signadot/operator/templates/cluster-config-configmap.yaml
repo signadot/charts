@@ -10,7 +10,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: signadot-cluster-config
+  name: cluster-config
   namespace: signadot
 data:
   cluster_config.yaml: |

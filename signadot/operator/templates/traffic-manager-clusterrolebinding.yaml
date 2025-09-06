@@ -1,6 +1,6 @@
 # This file is generated. Do not edit.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   annotations:
     {{- range $key, $val := .Values.commonAnnotations }}
@@ -11,10 +11,9 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: traffic-manager
-  namespace: signadot
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
+  kind: ClusterRole
   name: traffic-manager
 subjects:
 - kind: ServiceAccount

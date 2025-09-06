@@ -95,8 +95,6 @@ agent:
       memory: 2Gi
     requests:
       memory: 128Mi
-  # tokenSecret: my-cluster-agent
-  # clusterToken: myorg@xxx
   # image: my-private-registry/signadot/agent:latest
   # imagePullPolicy: Always
 
@@ -315,4 +313,6 @@ trafficManager:
 # Control Plane Settings for this cluster
 # -----------------------------------------------------------------------------
 # controlPlane:
-#    proxy: "enabled"  # can also be "disabled"
+#   proxy: "enabled"  # can also be "disabled"
+#   tokenSecret: my-cluster-agent
+#   clusterToken: myorg@xxx
