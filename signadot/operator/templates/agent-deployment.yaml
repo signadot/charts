@@ -33,8 +33,6 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        cluster-config-checksum: '{{ include (print $.Template.BasePath "/signadot-cluster-config-configmap.yaml")
-          . | sha256sum }}'
         {{- if $linkerdEnabled }}
         {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
         {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
@@ -63,16 +61,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - args:
-        - --api-url=https://api.signadot.com
-        - --tunnel-addr=tunnel.signadot.com:443
-        env:
-        - name: AGENT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              key: token
-              name: {{ with .Values }}{{ with .agent }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}{{- else -}}"cluster-agent"{{- end }}
-        image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.1.0{{- end }}{{- else -}}signadot/agent:v1.1.0{{- end }}{{- else -}}signadot/agent:v1.1.0{{- end }}
+      - image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.1.0{{- end }}{{- else -}}signadot/agent:v1.1.0{{- end }}{{- else -}}signadot/agent:v1.1.0{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
@@ -89,5 +78,27 @@ spec:
         resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+        volumeMounts:
+        - mountPath: /etc/signadot/token
+          name: cluster-token
+          readOnly: true
+          subPath: token
+        - mountPath: /etc/signadot/cluster_config.yaml
+          name: cluster-config
+          readOnly: true
+          subPath: cluster_config.yaml
       serviceAccountName: agent
+      volumes:
+      - name: cluster-token
+        secret:
+          items:
+          - key: token
+            path: token
+          secretName: {{ with .Values }}{{ with .controlPlane }}{{ with .tokenSecret }}{{ . }}{{- else -}}"cluster-token"{{- end }}{{- else -}}"cluster-token"{{- end }}{{- else -}}"cluster-token"{{- end }}
+      - configMap:
+          items:
+          - key: cluster_config.yaml
+            path: cluster_config.yaml
+          name: cluster-config
+        name: cluster-config
 {{ end }}
