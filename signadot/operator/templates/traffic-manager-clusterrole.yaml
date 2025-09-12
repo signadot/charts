@@ -16,7 +16,11 @@ rules:
 - apiGroups:
   - ""
   resourceNames:
-  - cluster-agent
+  - '{{ $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent") }} {{- with
+    .Values }} {{- with .controlPlane }} {{- with .tokenSecret }} {{- . }} {{- else
+    }} {{- if $oldSecret }}{{- $oldSecret.metadata.name }} {{- else }}cluster-token
+    {{- end }} {{- end }} {{- else }}cluster-token {{- end }} {{- else }}cluster-token
+    {{- end }}'
   resources:
   - secrets
   verbs:
