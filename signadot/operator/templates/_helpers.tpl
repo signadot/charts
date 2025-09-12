@@ -5,18 +5,23 @@ cluster config template
 {{- define "compileClusterConfig" -}}
 {{- $allowedNamespaces := (include "getAllowedNamespaces" . | fromJsonArray) -}}
 allowedNamespaces: {{ if gt (len $allowedNamespaces) 0 }}{{ printf "\n" }}{{ toYaml $allowedNamespaces | indent 2}}{{- else -}}[]{{- end }}
+{{- if (hasKey .Values "controlPlane") }}
 controlPlane:
-  proxy: {{ if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "proxy") -}}{{ .Values.controlPlane.proxy }}{{- else -}}enabled{{- end }}
-  controlAPI: {{ if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "controlAPI") -}}{{ .Values.controlPlane.controlAPI }}{{- else -}}https://api.signadot.com{{- end}}
-  tunnelAddr: {{ if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "tunnelAddr") -}}{{ .Values.controlPlane.tunnelAddr }}{{- else -}}tunnel.signadot.com:443{{- end}}
-{{- if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "tunnelTLS") }}
+  proxy: {{ if (hasKey .Values.controlPlane "proxy") -}}{{ .Values.controlPlane.proxy }}{{- else -}}enabled{{- end }}
+  controlAPI: {{ if (hasKey .Values.controlPlane "controlAPI") -}}{{ .Values.controlPlane.controlAPI }}{{- else -}}https://api.signadot.com{{- end}}
+  tunnelAddr: {{ if (hasKey .Values.controlPlane "tunnelAddr") -}}{{ .Values.controlPlane.tunnelAddr }}{{- else -}}tunnel.signadot.com:443{{- end}}
+{{- if (hasKey .Values.controlPlane "tunnelTLS") }}
   tunnelTLS: {{ .Values.controlPlane.tunnelTLS }}
 {{- end }}
-{{- if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "artifactsAPI") }}
+{{- if (hasKey .Values.controlPlane "artifactsAPI") }}
   artifactsAPI: {{ .Values.controlPlane.artifactsAPI }}
 {{- end }}
-{{- if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "trafficmodelsAPI") }}
+{{- if (hasKey .Values.controlPlane "trafficmodelsAPI") }}
   trafficmodelsAPI: {{ .Values.controlPlane.trafficmodelsAPI }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "tokenSecret") }}
+  tokenSecret: {{ .Values.controlPlane.tokenSecret }}
+{{- end }}
 {{- end }}
 allowOrphanedResources: {{ if hasKey .Values "allowOrphanedResources" -}}{{ toString .Values.allowOrphanedResources }}{{- else -}}false{{- end }}
 routing:
