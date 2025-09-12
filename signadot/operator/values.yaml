@@ -313,6 +313,7 @@ trafficManager:
 # Control Plane Settings for this cluster
 # -----------------------------------------------------------------------------
 # controlPlane:
+#   controlAPI: https://api.signadot.com
 #   proxy: "enabled"  # can also be "disabled"
 #   tokenSecret: my-cluster-agent
 #   clusterToken: myorg@xxx
