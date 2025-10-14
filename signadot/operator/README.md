@@ -546,8 +546,14 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | `routing.customHeaders` | List of custom headers used for sandbox routing                                       | `[]`     |
 
 
+### Traffic Manager parameters
 
-### Traffic capture parameters
+| Name                     | Description            | Default |
+| ------------------------ | ---------------------- | ------- |
+| `trafficManager.enabled` | Enable traffic manager | `true`  |
+
+
+### Traffic Capture parameters
 
 | Name                                  | Description                                                 | Default |
 | ------------------------------------- | ----------------------------------------------------------- | ------- |
@@ -555,7 +561,7 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | `trafficCapture.requestHeadersElide`  | List of request headers to be elided from traffic captures  | `[]`    |
 | `trafficCapture.responseHeadersElide` | List of response headers to be elided from traffic captures | `[]`    |
 
-### Control plane parameters
+### Control Plane parameters
 
 | Name                                  | Description                                                 | Default |
 | ------------------------------------- | ----------------------------------------------------------- | ------- |
