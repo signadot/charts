@@ -127,6 +127,13 @@ spec:
                                   Value indicates the value passed to the parameter of
                                   the same name.
                                 type: string
+                              valueFrom:
+                                properties:
+                                  forward:
+                                    type: string
+                                required:
+                                - forward
+                                type: object
                             required:
                             - name
                             - value
