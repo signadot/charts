@@ -58,10 +58,6 @@ spec:
           value: {{ with .Values }}{{ with .jobExecutorInit }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: JOB_EXECUTOR_PROXY_CONTAINER_RESOURCES
           value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .resources }}{{ mustToJson . | quote}}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
-        - name: ARTIFACTS_API_URL
-          value: {{ with .Values }}{{ with .dev }}{{ with .artifactsAPIURL }}{{ . }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}
-        - name: TRAFFICMODELS_API_URL
-          value: {{ with .Values }}{{ with .dev }}{{ with .trafficModelsAPIURL }}{{ . }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}{{- else -}}"https://api.signadot.com"{{- end }}
         - name: SIDECAR_INIT_IMAGE_PULL_POLICY
           value: {{ with .Values }}{{ with .routeInit }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
         - name: SIDECAR_INIT_IMAGE_PULL_SECRET

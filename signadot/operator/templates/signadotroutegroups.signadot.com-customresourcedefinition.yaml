@@ -103,6 +103,13 @@ spec:
                                   Value indicates the value passed to the parameter of
                                   the same name.
                                 type: string
+                              valueFrom:
+                                properties:
+                                  forward:
+                                    type: string
+                                required:
+                                - forward
+                                type: object
                             required:
                             - name
                             - value
@@ -116,28 +123,21 @@ spec:
                       - middleware
                       type: object
                     workload:
-                      description: ForkTarget specifies what object a given patch
-                        applies to.
                       properties:
-                        apiVersion:
-                          description: APIVersion specifies the API Version (e.g.
-                            "apps/v1") of the object to patch.
-                          type: string
                         kind:
-                          description: Kind specifies the Kind (e.g. "Deployment")
-                            of the object to patch.
+                          description: Kind of the baseline workload.
                           type: string
                         name:
-                          description: Name specifies the name of the object to patch.
+                          description: Name of the entity within the Kubernetes cluster.
                           type: string
                         namespace:
-                          description: Namespace optionally specifies which namespace
-                            will be searched.
+                          description: Namespace within which the entity lives in
+                            the Kubernetes cluster.
                           type: string
                       required:
-                      - apiVersion
                       - kind
                       - name
+                      - namespace
                       type: object
                   required:
                   - instance
