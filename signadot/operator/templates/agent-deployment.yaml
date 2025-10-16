@@ -61,7 +61,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.1.0{{- end }}{{- else -}}signadot/agent:v1.1.0{{- end }}{{- else -}}signadot/agent:v1.1.0{{- end }}
+      - image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.2.0-xrc.1{{- end }}{{- else -}}signadot/agent:v1.2.0-xrc.1{{- end }}{{- else -}}signadot/agent:v1.2.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:

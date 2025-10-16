@@ -49,7 +49,7 @@ spec:
 {{- with .Values }}{{- with .tunnel }}{{- with .config }}{{- with .externalDNS }}{{- with .syncInterval }}
         - --external-dns-resync-interval={{ . }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v1.1.0{{- end }}{{- else -}}signadot/tunnel-api:v1.1.0{{- end }}{{- else -}}signadot/tunnel-api:v1.1.0{{- end }}{{- else -}}signadot/tunnel-api:v1.1.0{{- end }}
+        image: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-api:v1.2.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v1.2.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v1.2.0-xrc.1{{- end }}{{- else -}}signadot/tunnel-api:v1.2.0-xrc.1{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .api }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: tunnel-api
         ports:
