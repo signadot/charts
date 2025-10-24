@@ -317,7 +317,24 @@ trafficManager:
 # Control Plane Settings for this cluster
 # -----------------------------------------------------------------------------
 # controlPlane:
-#   controlAPI: https://api.signadot.com
-#   proxy: "enabled"  # can also be "disabled"
-#   tokenSecret: my-cluster-agent
+#   tokenSecret: my-cluster-token
 #   clusterToken: myorg@xxx
+#   proxy: "enabled"  # can also be "disabled"
+#   #
+#   # development settings:
+#   #
+#   # In cluster:
+#   controlAPI: http://apiserver.signadot-control.svc:8080
+#   tunnelAddr: tunnel.signadot-control.svc:2222
+#   tunnelTLS: false
+#   proxyURL: http://proxy.signadot-control.svc:8087
+#   artifactsAPI: http://artifactsserver.signadot-control.svc:8180
+#   trafficmodelsAPI: http://trafficmodelsserver.signadot-control.svc:8280
+#   #
+#   # In host:
+#   controlAPI: http://host.minikube.internal:8080
+#   tunnelAddr: host.minikube.internal:2222
+#   tunnelTLS: false
+#   proxyURL: http://host.minikube.internal:8087
+#   artifactsAPI: http://host.minikube.internal:8180
+#   trafficmodelsAPI: http://host.minikube.internal:8280

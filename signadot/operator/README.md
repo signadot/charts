@@ -20,9 +20,11 @@ kubectl create ns signadot
 
 # Install
 helm repo add signadot https://charts.signadot.com
-helm install signadot-operator signadot/operator --set agent.clusterToken=$CLUSTER_TOKEN
+helm install signadot-operator signadot/operator --set controlPlane.clusterToken=$CLUSTER_TOKEN
 ```
-The command deploys Signadot Operator on the Kubernetes cluster with default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys Signadot Operator on the Kubernetes cluster with default
+configuration. The [Parameters](#parameters) section lists the parameters that
+can be configured during installation.
 
 
 ## Cluster Tokens
@@ -31,20 +33,16 @@ If you installed the chart without a cluster token or would like to rotate the c
 token, you can create the associated secret with
 
 ```sh
-kubectl -n signadot create secret generic cluster-agent --from-literal=token=$CLUSTER_TOKEN
+kubectl -n signadot create secret generic cluster-token --from-literal=token=$CLUSTER_TOKEN
 ```
 
-Note that to rotate the secret, you will need to delete the secret first and
-also restart the agent deployment afterwards.
+To rotate the secret, update the existing secret with the new value. Running
+services will automatically detect the change and begin using the updated
+secret.
 
-```sh
-kubectl -n signadot delete secret cluster-agent
-kubectl -n signadot create secret generic cluster-agent --from-literal=token=$CLUSTER_TOKEN
-kubectl -n signadot rollout restart deploy agent
-```
-
-If you have specified a custom secret name via the `agent.tokenSecret` values, then
-you should replace `cluster-agent` above with the value of `agent.tokenSecret`.
+If you have specified a custom secret name via the `controlPlane.tokenSecret`
+values, then you should replace `cluster-token` above with the value of
+`controlPlane.tokenSecret`.
 
 ## Upgrading the Chart
 
@@ -487,15 +485,6 @@ requests:
 | `allowOrphanedResources` | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
 
 
-### Agent parameters
-
-| Name                                  | Description                                                 | Default |
-| ------------------------------------- | ----------------------------------------------------------- | ------- |
-| `agent.tokenSecret`              | Name of the Secret in the signadot namespace which contains the agent token                              | `cluster-agent`  |
-| `agent.clusterToken`              | Cluster token for connecting the agent to Signadot              | unspecified  |
-
-
-
 ### Tunnel parameters
 
 | Name                                     | Description                                                                                                                                                                                                                                                                  | Default |
@@ -564,6 +553,8 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 
 ### Control Plane parameters
 
-| Name                                  | Description                                                 | Default |
-| ------------------------------------- | ----------------------------------------------------------- | ------- |
-| `controlPlane.proxy`              | Enable [control plane proxy](https://www.signadot.com/docs/concepts/architecture/control-plane#proxy-server)                                      | `enabled`  |
+| Name                        | Description                                                                                                  | Default                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `controlPlane.tokenSecret`  | Name of the Secret in the signadot namespace which contains the cluster token                                | `cluster-token` (or `cluster-agent` for existing installations) |
+| `controlPlane.clusterToken` | Cluster token for connecting the operator to the Signadot Control Plane                                                           | unspecified                                                     |
+| `controlPlane.proxy`        | Enable [control plane proxy](https://www.signadot.com/docs/concepts/architecture/control-plane#proxy-server) | `enabled`                                                       |
