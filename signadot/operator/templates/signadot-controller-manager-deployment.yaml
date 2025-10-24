@@ -87,18 +87,18 @@ spec:
         - name: JOB_EXECUTOR_PROXY_IMAGE_PULL_SECRET
           value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .imagePullSecret }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
         - name: SIDECAR_INIT_IMAGE
-          value: {{ with .Values }}{{ with .routeInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-init:v1.1.0{{- end }}{{- else -}}signadot/route-sidecar-init:v1.1.0{{- end }}{{- else -}}signadot/route-sidecar-init:v1.1.0{{- end }}
+          value: {{ with .Values }}{{ with .routeInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar-init:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/route-sidecar-init:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/route-sidecar-init:v1.2.0-xrc.2{{- end }}
         - name: ROUTE_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar:v1.1.0{{- end }}{{- else -}}signadot/route-sidecar:v1.1.0{{- end }}{{- else -}}signadot/route-sidecar:v1.1.0{{- end }}
+          value: {{ with .Values }}{{ with .routeSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-sidecar:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/route-sidecar:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/route-sidecar:v1.2.0-xrc.2{{- end }}
         - name: IO_INIT_IMAGE
-          value: {{ with .Values }}{{ with .ioInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-init:v1.1.0{{- end }}{{- else -}}signadot/io-init:v1.1.0{{- end }}{{- else -}}signadot/io-init:v1.1.0{{- end }}
+          value: {{ with .Values }}{{ with .ioInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-init:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/io-init:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/io-init:v1.2.0-xrc.2{{- end }}
         - name: IO_SIDECAR_IMAGE
-          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-sidecar:v1.1.0{{- end }}{{- else -}}signadot/io-sidecar:v1.1.0{{- end }}{{- else -}}signadot/io-sidecar:v1.1.0{{- end }}
+          value: {{ with .Values }}{{ with .ioSidecar }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-sidecar:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/io-sidecar:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/io-sidecar:v1.2.0-xrc.2{{- end }}
         - name: JOB_EXECUTOR_INIT_IMAGE
-          value: {{ with .Values }}{{ with .jobExecutorInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/job-executor-init:v1.1.0{{- end }}{{- else -}}signadot/job-executor-init:v1.1.0{{- end }}{{- else -}}signadot/job-executor-init:v1.1.0{{- end }}
+          value: {{ with .Values }}{{ with .jobExecutorInit }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/job-executor-init:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/job-executor-init:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/job-executor-init:v1.2.0-xrc.2{{- end }}
         - name: JOB_EXECUTOR_PROXY_IMAGE
-          value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/job-executor-proxy:v1.1.0{{- end }}{{- else -}}signadot/job-executor-proxy:v1.1.0{{- end }}{{- else -}}signadot/job-executor-proxy:v1.1.0{{- end }}
-        image: {{ with .Values }}{{ with .controllerManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/controller-manager:v1.1.0{{- end }}{{- else -}}signadot/controller-manager:v1.1.0{{- end }}{{- else -}}signadot/controller-manager:v1.1.0{{- end }}
+          value: {{ with .Values }}{{ with .jobExecutorProxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/job-executor-proxy:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/job-executor-proxy:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/job-executor-proxy:v1.2.0-xrc.2{{- end }}
+        image: {{ with .Values }}{{ with .controllerManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/controller-manager:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/controller-manager:v1.2.0-xrc.2{{- end }}{{- else -}}signadot/controller-manager:v1.2.0-xrc.2{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .controllerManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         livenessProbe:
           httpGet:
