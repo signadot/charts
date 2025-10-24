@@ -199,6 +199,10 @@ tunnel:
   #       maxUnavailable: 25%
   #     type: RollingUpdate
   auditor:
+    # Enable the tunnel auditor (Envoy-based sidecar for auditing and filtering tunnel traffic).
+    # Automatically disabled when Istio or Linkerd is enabled, as they provide their own proxy sidecars.
+    # Set to false to disable the auditor for reduced resource usage or when auditing is not needed.
+    # enabled: true
     init:
       resources:
         limits:
