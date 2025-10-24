@@ -38,10 +38,15 @@ kubectl -n signadot create secret generic cluster-token --from-literal=token=$CL
 
 To rotate the secret, update the existing secret with the new value. Running
 services will automatically detect the change and begin using the updated
-secret.
+secret. E.g.:
+
+```sh
+kubectl -n signadot patch secret cluster-token \
+  --type=merge -p '{"stringData":{"token":"'"$CLUSTER_TOKEN"'"}}'
+```
 
 If you have specified a custom secret name via the `controlPlane.tokenSecret`
-values, then you should replace `cluster-token` above with the value of
+value, then you should replace `cluster-token` above with the value of
 `controlPlane.tokenSecret`.
 
 ## Upgrading the Chart
