@@ -20,6 +20,8 @@ spec:
   template:
     metadata:
       annotations:
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml")
+          . | sha256sum }}'
         {{- range $key, $val := .Values.commonAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -53,15 +55,16 @@ spec:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
         volumeMounts:
-        - mountPath: /etc/signadot/cluster_config.yaml
-          name: cluster-config
+        - mountPath: /etc/signadot/
+          name: signadot-config
           readOnly: true
-          subPath: cluster_config.yaml
       serviceAccountName: routeserver
       volumes:
-      - configMap:
-          items:
-          - key: cluster_config.yaml
-            path: cluster_config.yaml
-          name: cluster-config
-        name: cluster-config
+      - name: signadot-config
+        projected:
+          sources:
+          - configMap:
+              items:
+              - key: cluster_config.yaml
+                path: cluster_config.yaml
+              name: cluster-config

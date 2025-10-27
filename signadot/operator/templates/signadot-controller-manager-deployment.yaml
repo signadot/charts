@@ -126,35 +126,31 @@ spec:
         volumeMounts:
         - mountPath: /etc/podinfo
           name: podinfo
-        - mountPath: /etc/signadot/token
-          name: cluster-token
+        - mountPath: /etc/signadot/
+          name: signadot-config
           readOnly: true
-          subPath: token
-        - mountPath: /etc/signadot/cluster_config.yaml
-          name: cluster-config
-          readOnly: true
-          subPath: cluster_config.yaml
       securityContext:
         runAsNonRoot: true
       serviceAccountName: signadot-controller-manager
       terminationGracePeriodSeconds: 10
       volumes:
-      - name: cluster-token
-        secret:
-          items:
-          - key: token
-            path: token
-          secretName: '{{ $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent")
-            }} {{- with .Values }} {{- with .controlPlane }} {{- with .tokenSecret
-            }} {{- . }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
-            }} {{- else }}cluster-token {{- end }} {{- end }} {{- else }}cluster-token
-            {{- end }} {{- else }}cluster-token {{- end }}'
-      - configMap:
-          items:
-          - key: cluster_config.yaml
-            path: cluster_config.yaml
-          name: cluster-config
-        name: cluster-config
+      - name: signadot-config
+        projected:
+          sources:
+          - secret:
+              items:
+              - key: token
+                path: token
+              name: '{{ $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent")
+                }} {{- with .Values }} {{- with .controlPlane }} {{- with .tokenSecret
+                }} {{- . }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
+                }} {{- else }}cluster-token {{- end }} {{- end }} {{- else }}cluster-token
+                {{- end }} {{- else }}cluster-token {{- end }}'
+          - configMap:
+              items:
+              - key: cluster_config.yaml
+                path: cluster_config.yaml
+              name: cluster-config
       - downwardAPI:
           items:
           - fieldRef:
