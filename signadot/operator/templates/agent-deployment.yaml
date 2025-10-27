@@ -27,6 +27,8 @@ spec:
   template:
     metadata:
       annotations:
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml")
+          . | sha256sum }}'
         {{- range $key, $val := .Values.commonAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
