@@ -13,14 +13,14 @@ controlPlane:
 {{- if (hasKey .Values.controlPlane "tunnelTLS") }}
   tunnelTLS: {{ .Values.controlPlane.tunnelTLS }}
 {{- end }}
+{{- if (hasKey .Values.controlPlane "proxyURL") }}
+  proxyURL: {{ .Values.controlPlane.proxyURL }}
+{{- end }}
 {{- if (hasKey .Values.controlPlane "artifactsAPI") }}
   artifactsAPI: {{ .Values.controlPlane.artifactsAPI }}
 {{- end }}
 {{- if (hasKey .Values.controlPlane "trafficmodelsAPI") }}
   trafficmodelsAPI: {{ .Values.controlPlane.trafficmodelsAPI }}
-{{- end }}
-{{- if (hasKey .Values.controlPlane "tokenSecret") }}
-  tokenSecret: {{ .Values.controlPlane.tokenSecret }}
 {{- end }}
 {{- end }}
 allowOrphanedResources: {{ if hasKey .Values "allowOrphanedResources" -}}{{ toString .Values.allowOrphanedResources }}{{- else -}}false{{- end }}
