@@ -10,7 +10,7 @@ controlPlane:
   proxy: {{ if (hasKey .Values.controlPlane "proxy") -}}{{ .Values.controlPlane.proxy }}{{- else -}}enabled{{- end }}
   controlAPI: {{ if (hasKey .Values.controlPlane "controlAPI") -}}{{ .Values.controlPlane.controlAPI }}{{- else -}}https://api.signadot.com{{- end}}
   tunnelAddr: {{ if (hasKey .Values.controlPlane "tunnelAddr") -}}{{ .Values.controlPlane.tunnelAddr }}{{- else -}}tunnel.signadot.com:443{{- end}}
-  tunnelTLS: {{- if (hasKey .Values.controlPlane "tunnelTLS") }}{{ .Values.controlPlane.tunnelTLS }}{{- else -}}true{{- end}}
+  tunnelTLS: {{ if (hasKey .Values.controlPlane "tunnelTLS") }}{{ .Values.controlPlane.tunnelTLS }}{{- else -}}true{{- end}}
 {{- if (hasKey .Values.controlPlane "proxyURL") }}
   proxyURL: {{ .Values.controlPlane.proxyURL }}
 {{- end }}
