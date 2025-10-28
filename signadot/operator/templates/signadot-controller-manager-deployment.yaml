@@ -144,8 +144,10 @@ spec:
               name: '{{ $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent")
                 }} {{- with .Values }} {{- with .controlPlane }} {{- with .tokenSecret
                 }} {{- . }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
-                }} {{- else }}cluster-token {{- end }} {{- end }} {{- else }}cluster-token
-                {{- end }} {{- else }}cluster-token {{- end }}'
+                }} {{- else }}cluster-token {{- end }} {{- end }} {{- else }} {{-
+                if $oldSecret }}{{- $oldSecret.metadata.name }} {{- else }}cluster-token
+                {{- end }} {{- end }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
+                }} {{- else }}cluster-token {{- end }} {{- end }}'
           - configMap:
               items:
               - key: cluster_config.yaml

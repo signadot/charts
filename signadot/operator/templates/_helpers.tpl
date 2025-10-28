@@ -7,10 +7,18 @@ cluster config template
 allowedNamespaces: {{ if gt (len $allowedNamespaces) 0 }}{{ printf "\n" }}{{ toYaml $allowedNamespaces | indent 2}}{{- else -}}[]{{- end }}
 {{- if (hasKey .Values "controlPlane") }}
 controlPlane:
-  proxy: {{ if (hasKey .Values.controlPlane "proxy") -}}{{ .Values.controlPlane.proxy }}{{- else -}}enabled{{- end }}
-  controlAPI: {{ if (hasKey .Values.controlPlane "controlAPI") -}}{{ .Values.controlPlane.controlAPI }}{{- else -}}https://api.signadot.com{{- end}}
-  tunnelAddr: {{ if (hasKey .Values.controlPlane "tunnelAddr") -}}{{ .Values.controlPlane.tunnelAddr }}{{- else -}}tunnel.signadot.com:443{{- end}}
-  tunnelTLS: {{ if (hasKey .Values.controlPlane "tunnelTLS") }}{{ .Values.controlPlane.tunnelTLS }}{{- else -}}true{{- end}}
+{{- if (hasKey .Values.controlPlane "proxy") }}
+  proxy: {{ .Values.controlPlane.proxy }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "controlAPI") }}
+  controlAPI: {{ .Values.controlPlane.controlAPI }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "tunnelAddr") }}
+  tunnelAddr: {{ .Values.controlPlane.tunnelAddr }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "tunnelTLS") }}
+  tunnelTLS: {{ .Values.controlPlane.tunnelTLS }}
+{{- end }}
 {{- if (hasKey .Values.controlPlane "proxyURL") }}
   proxyURL: {{ .Values.controlPlane.proxyURL }}
 {{- end }}
