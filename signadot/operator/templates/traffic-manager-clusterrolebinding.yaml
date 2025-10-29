@@ -1,6 +1,6 @@
 # This file is generated. Do not edit.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: ClusterRoleBinding
 metadata:
   annotations:
     {{- range $key, $val := .Values.commonAnnotations }}
@@ -10,13 +10,12 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-routeserver
-rules:
-- apiGroups:
-  - signadot.com
-  resources:
-  - signadotroutes
-  verbs:
-  - get
-  - list
-  - watch
+  name: traffic-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traffic-manager
+subjects:
+- kind: ServiceAccount
+  name: traffic-manager
+  namespace: signadot

@@ -29,6 +29,7 @@ rules:
   - istioroutes
   - jobrunnergroups
   - jobs
+  - requestmiddlewares
   - resources
   - routingconfigs
   - signadotexternalworkloads
@@ -36,6 +37,7 @@ rules:
   - signadotroutegroups
   - signadotroutes
   - signadotsandboxes
+  - virtualworkloads
   verbs:
   - create
   - delete
@@ -57,6 +59,7 @@ rules:
   - signadotobjectlifecyclemethods/finalizers
   - signadotroutegroups/finalizers
   - signadotsandboxes/finalizers
+  - virtualworkloads/finalizers
   verbs:
   - update
 - apiGroups:
@@ -72,6 +75,7 @@ rules:
   - signadotobjectlifecyclemethods/status
   - signadotroutegroups/status
   - signadotsandboxes/status
+  - virtualworkloads/status
   verbs:
   - get
   - patch

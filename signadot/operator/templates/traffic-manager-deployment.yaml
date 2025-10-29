@@ -3,7 +3,6 @@
 {{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
 {{- $linkerdEnabled := false -}}
 {{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
-{{ if not .Values.disableAgent }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,15 +14,15 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: agent
+  name: traffic-manager
   namespace: signadot
 spec:
-  replicas: 1
+{{- with .Values }}{{- with .trafficManager }}{{- with .replicas }}
+  replicas: {{ . }}
+{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
   selector:
     matchLabels:
-      app: signadot-agent
-  strategy:
-    type: Recreate
+      app: traffic-manager
   template:
     metadata:
       annotations:
@@ -45,7 +44,7 @@ spec:
         {{- end }}
         {{- end }}
       labels:
-        app: signadot-agent
+        app: traffic-manager
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -63,20 +62,19 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.2.0{{- end }}{{- else -}}signadot/agent:v1.2.0{{- end }}{{- else -}}signadot/agent:v1.2.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
-        livenessProbe:
-          httpGet:
-            path: /nullz
-            port: 8088
-        name: agent
+      - image: {{ with .Values }}{{ with .trafficManager }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/traffic-manager:v1.2.0{{- end }}{{- else -}}signadot/traffic-manager:v1.2.0{{- end }}{{- else -}}signadot/traffic-manager:v1.2.0{{- end }}
+        imagePullPolicy: {{ with .Values }}{{ with .trafficManager }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        name: traffic-manager
         ports:
-        - containerPort: 8088
+        - containerPort: 8080
+          name: proxy
+        - containerPort: 16001
+          name: healthz
         readinessProbe:
           httpGet:
             path: /healthz
-            port: 8088
-{{- with .Values }}{{- with .agent }}{{- with .resources }}
+            port: 16001
+{{- with .Values }}{{- with .trafficManager }}{{- with .resources }}
         resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
@@ -84,7 +82,7 @@ spec:
         - mountPath: /etc/signadot/
           name: signadot-config
           readOnly: true
-      serviceAccountName: agent
+      serviceAccountName: traffic-manager
       volumes:
       - name: signadot-config
         projected:
@@ -105,4 +103,3 @@ spec:
               - key: cluster_config.yaml
                 path: cluster_config.yaml
               name: cluster-config
-{{ end }}

@@ -1,0 +1,50 @@
+# This file is generated. Do not edit.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: traffic-manager
+  namespace: signadot
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - '{{ $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent") }} {{- with
+    .Values }} {{- with .controlPlane }} {{- with .tokenSecret }} {{- . }} {{- else
+    }} {{- if $oldSecret }}{{- $oldSecret.metadata.name }} {{- else }}cluster-token
+    {{- end }} {{- end }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
+    }} {{- else }}cluster-token {{- end }} {{- end }} {{- else }} {{- if $oldSecret
+    }}{{- $oldSecret.metadata.name }} {{- else }}cluster-token {{- end }} {{- end
+    }}'
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resourceNames:
+  - cluster-config
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - signadot.com
+  resources:
+  - routingconfigs
+  - requestmiddlewares
+  verbs:
+  - get
+  - list
+  - watch

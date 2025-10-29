@@ -5,8 +5,30 @@ cluster config template
 {{- define "compileClusterConfig" -}}
 {{- $allowedNamespaces := (include "getAllowedNamespaces" . | fromJsonArray) -}}
 allowedNamespaces: {{ if gt (len $allowedNamespaces) 0 }}{{ printf "\n" }}{{ toYaml $allowedNamespaces | indent 2}}{{- else -}}[]{{- end }}
+{{- if (hasKey .Values "controlPlane") }}
 controlPlane:
-  proxy: {{ if and (hasKey .Values "controlPlane") (hasKey .Values.controlPlane "proxy") -}}{{ .Values.controlPlane.proxy }}{{- else -}}enabled{{- end }}
+{{- if (hasKey .Values.controlPlane "proxy") }}
+  proxy: {{ .Values.controlPlane.proxy }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "controlAPI") }}
+  controlAPI: {{ .Values.controlPlane.controlAPI }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "tunnelAddr") }}
+  tunnelAddr: {{ .Values.controlPlane.tunnelAddr }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "tunnelTLS") }}
+  tunnelTLS: {{ .Values.controlPlane.tunnelTLS }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "proxyURL") }}
+  proxyURL: {{ .Values.controlPlane.proxyURL }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "artifactsAPI") }}
+  artifactsAPI: {{ .Values.controlPlane.artifactsAPI }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "trafficmodelsAPI") }}
+  trafficmodelsAPI: {{ .Values.controlPlane.trafficmodelsAPI }}
+{{- end }}
+{{- end }}
 allowOrphanedResources: {{ if hasKey .Values "allowOrphanedResources" -}}{{ toString .Values.allowOrphanedResources }}{{- else -}}false{{- end }}
 routing:
   istio:
@@ -26,8 +48,8 @@ routing:
     {{- end}}
   iptablesMode: {{ if and (hasKey .Values "routing") (hasKey .Values.routing "iptablesMode") -}}{{ .Values.routing.iptablesMode }}{{- else -}}legacy{{- end }}
   customHeaders: {{ with .Values }}{{ with .routing }}{{ with .customHeaders }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
-sandboxTrafficManager:
-  enabled: {{ if and (hasKey .Values "sandboxTrafficManager") (hasKey .Values.sandboxTrafficManager "enabled") -}}{{ toString .Values.sandboxTrafficManager.enabled }}{{- else -}}true{{- end }}
+trafficManager:
+  enabled: {{ if and (hasKey .Values "trafficManager") (hasKey .Values.trafficManager "enabled") -}}{{ toString .Values.trafficManager.enabled }}{{- else -}}true{{- end }}
 trafficCapture:
   enabled: {{ if and (hasKey .Values "trafficCapture") (hasKey .Values.trafficCapture "enabled") -}}{{ toString .Values.trafficCapture.enabled }}{{- else -}}true{{- end }}
   requestHeadersElide: {{ with .Values }}{{ with .trafficCapture }}{{ with .requestHeadersElide }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}

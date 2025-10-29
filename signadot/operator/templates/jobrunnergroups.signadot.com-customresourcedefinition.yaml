@@ -762,6 +762,8 @@ spec:
                                       - port
                                       type: object
                                   type: object
+                                stopSignal:
+                                  type: string
                               type: object
                             livenessProbe:
                               properties:
@@ -1472,6 +1474,8 @@ spec:
                                       - port
                                       type: object
                                   type: object
+                                stopSignal:
+                                  type: string
                               type: object
                             livenessProbe:
                               properties:
@@ -2196,6 +2200,8 @@ spec:
                                       - port
                                       type: object
                                   type: object
+                                stopSignal:
+                                  type: string
                               type: object
                             livenessProbe:
                               properties:
@@ -3729,6 +3735,11 @@ spec:
                   zero and not specified. Defaults to 1.
                 format: int32
                 type: integer
+              reusePods:
+                description: |-
+                  ReusePods specifies whether JRG pods are reused after job executions.
+                  If false (default), JRG pods are always recreated after each job.
+                type: boolean
             required:
             - image
             type: object

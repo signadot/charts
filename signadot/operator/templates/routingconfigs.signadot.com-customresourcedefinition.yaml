@@ -59,7 +59,58 @@ spec:
                       enum:
                       - ForkedWorkload
                       - SignadotExternalWorkload
+                      - VirtualWorkload
                       type: string
+                    middlewares:
+                      description: |-
+                        RequestMiddlewares specifies what RequestMiddlewares to use
+                        for what sandboxed workloads associated with the routing key.  The request
+                        middlewares used to process messages destined for .Workloads[i] is .RequestMiddlewares[i].
+                      items:
+                        description: |-
+                          RequestMiddlewareInstance specifies the name of a request middleware
+                          and a set of arguments passed to parameters for the request middleware.
+                          A list of RequestMiddlewareInstances are associated with workloads in
+                          a sandbox or route group, providing the definition of the programmatic
+                          treatment of requests sent to that workload.
+                        properties:
+                          args:
+                            description: Arguments used to instantiate Parameters
+                              in the named middleware.
+                            items:
+                              description: |-
+                                Argument is a generic api struct representing arguments to
+                                Parameters which are used to instantiate a set of parameters.
+                              properties:
+                                name:
+                                  description: Name indicates the name of the associated
+                                    parameter.
+                                  type: string
+                                value:
+                                  description: |-
+                                    Value indicates the value passed to the parameter of
+                                    the same name.
+                                  type: string
+                                valueFrom:
+                                  properties:
+                                    forward:
+                                      type: string
+                                  required:
+                                  - forward
+                                  type: object
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          middleware:
+                            description: Kubernetes resource name of the middleware
+                              to instantiate.
+                            type: string
+                        required:
+                        - middleware
+                        type: object
+                      type: array
                     name:
                       type: string
                     namespace:
@@ -140,6 +191,55 @@ spec:
                       - namespace
                       - uid
                       type: object
+                    middlewares:
+                      description: |-
+                        middlewares indicates what middlewares should receive
+                        traffic destined for this sandboxed workload.
+                      items:
+                        description: |-
+                          RequestMiddlewareInstance specifies the name of a request middleware
+                          and a set of arguments passed to parameters for the request middleware.
+                          A list of RequestMiddlewareInstances are associated with workloads in
+                          a sandbox or route group, providing the definition of the programmatic
+                          treatment of requests sent to that workload.
+                        properties:
+                          args:
+                            description: Arguments used to instantiate Parameters
+                              in the named middleware.
+                            items:
+                              description: |-
+                                Argument is a generic api struct representing arguments to
+                                Parameters which are used to instantiate a set of parameters.
+                              properties:
+                                name:
+                                  description: Name indicates the name of the associated
+                                    parameter.
+                                  type: string
+                                value:
+                                  description: |-
+                                    Value indicates the value passed to the parameter of
+                                    the same name.
+                                  type: string
+                                valueFrom:
+                                  properties:
+                                    forward:
+                                      type: string
+                                  required:
+                                  - forward
+                                  type: object
+                              required:
+                              - name
+                              - value
+                              type: object
+                            type: array
+                          middleware:
+                            description: Kubernetes resource name of the middleware
+                              to instantiate.
+                            type: string
+                        required:
+                        - middleware
+                        type: object
+                      type: array
                     routes:
                       description: |-
                         Routes is the list of the configured routes per service mesh (including
@@ -247,6 +347,7 @@ spec:
                           enum:
                           - ForkedWorkload
                           - SignadotExternalWorkload
+                          - VirtualWorkload
                           type: string
                         name:
                           type: string

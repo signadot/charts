@@ -20,6 +20,8 @@ spec:
   template:
     metadata:
       annotations:
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml")
+          . | sha256sum }}'
         {{- range $key, $val := .Values.commonAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -36,7 +38,7 @@ spec:
         {{- end }}
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v1.0.0{{- end }}{{- else -}}signadot/route-server:v1.0.0{{- end }}{{- else -}}signadot/route-server:v1.0.0{{- end }}
+      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v1.2.0{{- end }}{{- else -}}signadot/route-server:v1.2.0{{- end }}{{- else -}}signadot/route-server:v1.2.0{{- end }}
         imagePullPolicy: {{ with .Values }}{{ with .routeServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
         name: routeserver
         ports:
@@ -52,4 +54,17 @@ spec:
         resources:
 {{ toYaml . | indent 10 }}
 {{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+        volumeMounts:
+        - mountPath: /etc/signadot/
+          name: signadot-config
+          readOnly: true
       serviceAccountName: routeserver
+      volumes:
+      - name: signadot-config
+        projected:
+          sources:
+          - configMap:
+              items:
+              - key: cluster_config.yaml
+                path: cluster_config.yaml
+              name: cluster-config

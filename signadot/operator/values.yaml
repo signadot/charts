@@ -49,8 +49,6 @@
 #       # and point the in-mesh operator components to it like so
 #       istio.io/dataplane-mode: ambient
 #       istio.io/use-waypoint: waypoint
-#   # Enable sandbox routing by matching the VirtualService.host field (deprecated)
-#   enableDeprecatedHostRouting: false
 #   # Add these labels or annotations to all istio objects when they are managed by
 #   # Signadot Note that virtual services are only managed by Signadot when they
 #   # route to some sandbox.  For virtual services, these labels or annotations are
@@ -110,6 +108,7 @@ routeServer:
   # imagePullPolicy: Always
 
 ioContextServer:
+  replicas: 1
   resources:
     limits:
       memory: 1Gi
@@ -170,19 +169,14 @@ ioContextServer:
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
 
-# execpodSidecar:  # for legacy resource plugins
-#   image: my-private-registry/signadot/execpod-sidecar:latest
-#   imagePullPolicy: Always
-#   imagePullSecret: secret-execpodSidecar
-
 tunnel:
   api:
+    replicas: 1
     resources:
       limits:
         memory: 1Gi
       requests:
         memory: 128Mi
-    replicas: 1
     # image: my-private-registry/signadot/tunnel-api:latest
     # imagePullPolicy: Always
     # strategy:
@@ -191,12 +185,12 @@ tunnel:
     #     maxUnavailable: 25%
     #   type: RollingUpdate
   proxy:
+    replicas: 1
     resources:
       limits:
         memory: 2Gi
       requests:
         memory: 128Mi
-    replicas: 1
   #   image: my-private-registry/signadot/tunnel-proxy:latest
   #   imagePullPolicy: Always
   #   strategy:
@@ -205,6 +199,10 @@ tunnel:
   #       maxUnavailable: 25%
   #     type: RollingUpdate
   auditor:
+    # Enable the tunnel auditor (Envoy-based sidecar for auditing and filtering tunnel traffic).
+    # Automatically disabled when Istio or Linkerd is enabled, as they provide their own proxy sidecars.
+    # Set to false to disable the auditor for reduced resource usage or when auditing is not needed.
+    # enabled: true
     init:
       resources:
         limits:
@@ -255,6 +253,16 @@ tunnel:
   #   disableSSH: false
   #   disableXAP: false
 
+trafficManager:
+  replicas: 2
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      memory: 128Mi
+  # image: my-private-registry/signadot/traffic-manager:latest
+  # imagePullPolicy: Always
+
 # jobExecutorInit:
 #   resources:
 #     limits:
@@ -278,31 +286,6 @@ tunnel:
 #   image: my-private-registry/signadot/job-executor-proxy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorProxy
-
-# sandboxTrafficManager:
-#   enabled: true
-#   init:
-#     resources:
-#       limits:
-#         cpu: 2
-#         memory: 1Gi
-#       requests:
-#         cpu: 100m
-#         memory: 128Mi
-#     image: my-private-registry/signadot/sandbox-traffic-manager-init:latest
-#     imagePullPolicy: Always
-#     imagePullSecret: secret-sandboxTrafficManagerInit
-#   sidecar:
-#     resources:
-#       limits:
-#         cpu: 2
-#         memory: 1Gi
-#       requests:
-#         cpu: 100m
-#         memory: 128Mi
-#     image: my-private-registry/signadot/sandbox-traffic-manager-sidecar:latest
-#     imagePullPolicy: Always
-#     imagePullSecret: secret-sandboxTrafficManagerSidecart
 
 
 # Routing settings
@@ -334,4 +317,24 @@ tunnel:
 # Control Plane Settings for this cluster
 # -----------------------------------------------------------------------------
 # controlPlane:
-#    proxy: "enabled"  # can also be "disabled"
+#   tokenSecret: my-cluster-token
+#   clusterToken: myorg@xxx
+#   proxy: "enabled"  # can also be "disabled"
+#   #
+#   # development settings:
+#   #
+#   # In cluster:
+#   controlAPI: http://apiserver.signadot-control.svc:8080
+#   tunnelAddr: tunnel.signadot-control.svc:2222
+#   tunnelTLS: false
+#   proxyURL: http://proxy.signadot-control.svc:8087
+#   artifactsAPI: http://artifactsserver.signadot-control.svc:8180
+#   trafficmodelsAPI: http://trafficmodelsserver.signadot-control.svc:8280
+#   #
+#   # In host:
+#   controlAPI: http://host.minikube.internal:8080
+#   tunnelAddr: host.minikube.internal:2222
+#   tunnelTLS: false
+#   proxyURL: http://host.minikube.internal:8087
+#   artifactsAPI: http://host.minikube.internal:8180
+#   trafficmodelsAPI: http://host.minikube.internal:8280

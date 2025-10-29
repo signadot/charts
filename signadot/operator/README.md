@@ -6,6 +6,12 @@ components for Signadot.
 
 ## Installing the Chart
 
+To install this chart, the cluster should also be connected
+in the [Signadot dashboard](https://app.signadot.com/settings/clusters) by
+clicking "Connect Cluster".  This will provide you with a cluster token,
+referred to below by `$CLUSTER_TOKEN`.
+
+
 To install the chart with the release name `signadot-operator`:
 
 ```sh
@@ -14,23 +20,34 @@ kubectl create ns signadot
 
 # Install
 helm repo add signadot https://charts.signadot.com
-helm install signadot-operator signadot/operator
+helm install signadot-operator signadot/operator --set controlPlane.clusterToken=$CLUSTER_TOKEN
 ```
-The command deploys Signadot Operator on the Kubernetes cluster with default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys Signadot Operator on the Kubernetes cluster with default
+configuration. The [Parameters](#parameters) section lists the parameters that
+can be configured during installation.
 
 
-## Cluster Registration
+## Cluster Tokens
 
-In addition to installing this chart, the cluster must also be registered
-in the [Signadot dashboard](https://app.signadot.com).
-
-After generating a cluster token, complete the registration by populating a Secret
-called `cluster-agent` in the `signadot` namespace:
+If you installed the chart without a cluster token or would like to rotate the cluster
+token, you can create the associated secret with
 
 ```sh
-# Replace "..." with the token value.
-kubectl -n signadot create secret generic cluster-agent --from-literal=token=...
+kubectl -n signadot create secret generic cluster-token --from-literal=token=$CLUSTER_TOKEN
 ```
+
+To rotate the secret, update the existing secret with the new value. Running
+services will automatically detect the change and begin using the updated
+secret. E.g.:
+
+```sh
+kubectl -n signadot patch secret cluster-token \
+  --type=merge -p '{"stringData":{"token":"'"$CLUSTER_TOKEN"'"}}'
+```
+
+If you have specified a custom secret name via the `controlPlane.tokenSecret`
+value, then you should replace `cluster-token` above with the value of
+`controlPlane.tokenSecret`.
 
 ## Upgrading the Chart
 
@@ -68,80 +85,67 @@ kubectl delete ns signadot
 | `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
 
 
-### Controller Manager parameters
-
-| Name                            | Description                                                                                               | Default |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
-| `allowedNamespaces`             | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
-| `controllerManager.replicas`             | Number of replicas for `signadot-controller-manager` deployment                                           | `2`     |
-| `sandboxTrafficManager.enabled` | Whether to enable the Sandbox Traffic Manager Sidecar on forked workloads                                 | `true`  |
-| `allowOrphanedResources`        | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
-
-ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend  
-running the controller manager with `controllerManager.replicas = 1` to minimize resource  
-usage. Note that increasing replicas (`replicas > 1`) does not replicate most  
-controller functionality in parallel; only one replica is active at a time, and  
-high availability operates in an active-passive manner, primarily benefiting  
-sidecar injection.
-
-### Image customization parameters
+### Image and replicas customization parameters
 
 The parameters in the table below allow one to specify image names for the
-images used in our operator.  For each image, the image label `vX.Y.Z` refers
-to the [operator
-version](https://www.signadot.com/docs/operator-version-policy).  Some images
-are sleighted for deprecation, in particular those with the suffix `-legacy` in
-their name.  Additionally, the `execpod-` images are for compatibility with old
-style resources and are not needed in an installation which uses the new
-[resource plugins](https://www.signadot.com/docs/resourceplugins).
+images used in our operator.  For each image, the image label `vX.Y.Z` refers to
+the [operator version](https://www.signadot.com/docs/operator-version-policy).
+Some images are sleighted for deprecation, in particular those with the suffix
+`-legacy` in their name.
 
-| Name                                            | Description                                             | Default                                           |
-| ----------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
-| `controllerManager.image`                                | Controller Manager image override                                 | `signadot/controller-manager:vX.Y.Z`                        |
-| `controllerManager.imagePullPolicy`                      | Controller Manager image pull policy                              | `IfNotPresent`                                    |
-| `agent.image`                                   | Agent image override                                    | `signadot/agent:vX.Y.Z`                           |
-| `agent.imagePullPolicy`                         | Agent image pull policy                                 | `IfNotPresent`                                    |
-| `routeServer.image`                             | Route Server image override                             | `signadot/route-server:vX.Y.Z`                    |
-| `routeServer.imagePullPolicy`                   | Route Server image pull policy                          | `IfNotPresent`                                    |
-| `ioContextServer.image`                         | IO Context Server image override                        | `signadot/io-context-server:vX.Y.Z`               |
-| `ioContextServer.imagePullPolicy`               | IO Context Server image pull policy                     | `IfNotPresent`                                    |
-| `routeInit.image`                               | Route Init container image override                     | `signadot/route-sidecar-init:vX.Y.Z`              |
-| `routeInit.legacy.image`                        | Route Init container image override (legacy version)    | `signadot/sd-init-networking:latest`              |
-| `routeInit.imagePullPolicy`                     | Route Init container image pull policy                  | `IfNotPresent`                                    |
-| `routeInit.imagePullSecret`                     | Route Init container image pull secret                  | `""`                                              |
-| `routeSidecar.image`                            | Route Sidecar container image override                  | `signadot/route-sidecar:vX.Y.Z`                   |
-| `routeSidecar.legacy.image`                     | Route Sidecar container image override (legacy version) | `signadot/route-sidecar-legacy:vX.Y.Z`            |
-| `routeSidecar.imagePullPolicy`                  | Route Sidecar container image pull policy               | `IfNotPresent`                                    |
-| `routeSidecar.imagePullSecret`                  | Route Sidecar container image pull secret               | `""`                                              |
-| `ioInit.image`                                  | IO Init container image override                        | `signadot/io-init:vX.Y.Z`                         |
-| `ioInit.imagePullPolicy`                        | IO Init container image pull policy                     | `IfNotPresent`                                    |
-| `ioInit.imagePullSecret`                        | IO Init container image pull secret                     | `""`                                              |
-| `ioSidecar.image`                               | IO Sidecar container image override                     | `signadot/io-sidecar:vX.Y.Z`                      |
-| `ioSidecar.imagePullPolicy`                     | IO Sidecar container image pull policy                  | `IfNotPresent`                                    |
-| `ioSidecar.imagePullSecret`                     | IO Sidecar container image pull secret                  | `""`                                              |
-| `execpodSidecar.image`                          | ExecPod Sidecar container image override                | `signadot/execpod-sidecar:vX.Y.Z`                 |
-| `execpodSidecar.imagePullPolicy`                | ExecPod Sidecar container image pull policy             | `IfNotPresent`                                    |
-| `execpodSidecar.imagePullSecret`                | ExecPod Sidecar container image pull secret             | `""`                                              |
-| `tunnel.api.image`                              | Tunnel API image override                               | `signadot/tunnel-api:vX.Y.Z`                      |
-| `tunnel.api.imagePullPolicy`                    | Tunnel API image pull policy                            | `IfNotPresent`                                    |
-| `tunnel.proxy.image`                            | Tunnel Proxy image override                             | `signadot/tunnel-proxy:vX.Y.Z`                    |
-| `tunnel.proxy.imagePullPolicy`                  | Tunnel Proxy image pull policy                          | `IfNotPresent`                                    |
-| `tunnel.auditor.image`                          | Tunnel Auditor image override                           | `envoyproxy/envoy:v1.26.1`                        |
-| `tunnel.auditor.imagePullPolicy`                | Tunnel Auditor image pull policy                        | `IfNotPresent`                                    |
-| `tunnel.auditor.init.image`                     | Tunnel Auditor Init image override                      | `signadot/tunnel-auditor-init:vX.Y.Z`             |
-| `tunnel.auditor.init.imagePullPolicy`           | Tunnel Auditor Init image pull policy                   | `IfNotPresent`                                    |
-| `jobExecutorInit.image`                         | Job Executor Init container image override              | `signadot/job-executor-init:vX.Y.Z`               |
-| `jobExecutorInit.imagePullPolicy`               | Job Executor Init container image pull policy           | `IfNotPresent`                                    |
-| `jobExecutorInit.imagePullSecret`               | Job Executor Init container image pull secret           | `""`                                              |
-| `jobExecutorProxy.image`                        | Job Executor Proxy container image override             | `signadot/job-executor-proxy:vX.Y.Z`              |
-| `jobExecutorProxy.imagePullPolicy`              | Job Executor Proxy container image pull policy          | `IfNotPresent`                                    |
-| `jobExecutorProxy.imagePullSecret`              | Job Executor Proxy container image pull secret          | `""`                                              |
-| `sandboxTrafficManager.init.Image`              | Sandbox Traffic Manager Init image override             | `signadot/sandbox-traffic-manager-init:vX.Y.Z`    |
-| `sandboxTrafficManager.init.ImagePullPolicy`    | Sandbox Traffic Manager Init image pull policy          | `IfNotPresent`                                    |
-| `sandboxTrafficManager.init.ImagePullSecret`    | Sandbox Traffic Manager Init image pull secret          | `""`                                              |
-| `sandboxTrafficManager.sidecar.Image`           | Sandbox Traffic Manager Sidecar image override          | `signadot/sandbox-traffic-manager-sidecar:vX.Y.Z` |
-| `sandboxTrafficManager.sidecar.ImagePullPolicy` | Sandbox Traffic Manager Sidecar image pull policy       | `IfNotPresent`                                    |
-| `sandboxTrafficManager.sidecar.ImagePullSecret` | Sandbox Traffic Manager Sidecar image pull secret       | `""`                                              |
+| Name                                  | Description                                              | Default                                |
+| ------------------------------------- | -------------------------------------------------------- | -------------------------------------- |
+| `controllerManager.replicas`          | Number of replicas for the Controller Manager deployment | `2`                                    |
+| `controllerManager.image`             | Controller Manager image override                        | `signadot/controller-manager:vX.Y.Z`   |
+| `controllerManager.imagePullPolicy`   | Controller Manager image pull policy                     | `IfNotPresent`                         |
+| `agent.image`                         | Agent image override                                     | `signadot/agent:vX.Y.Z`                |
+| `agent.imagePullPolicy`               | Agent image pull policy                                  | `IfNotPresent`                         |
+| `routeServer.image`                   | Route Server image override                              | `signadot/route-server:vX.Y.Z`         |
+| `routeServer.imagePullPolicy`         | Route Server image pull policy                           | `IfNotPresent`                         |
+| `ioContextServer.replicas`            | Number of replicas for the IO Context Server deployment  | `1`                                    |
+| `ioContextServer.image`               | IO Context Server image override                         | `signadot/io-context-server:vX.Y.Z`    |
+| `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy                      | `IfNotPresent`                         |
+| `routeInit.image`                     | Route Init container image override                      | `signadot/route-sidecar-init:vX.Y.Z`   |
+| `routeInit.legacy.image`              | Route Init container image override (legacy version)     | `signadot/sd-init-networking:latest`   |
+| `routeInit.imagePullPolicy`           | Route Init container image pull policy                   | `IfNotPresent`                         |
+| `routeInit.imagePullSecret`           | Route Init container image pull secret                   | `""`                                   |
+| `routeSidecar.image`                  | Route Sidecar container image override                   | `signadot/route-sidecar:vX.Y.Z`        |
+| `routeSidecar.legacy.image`           | Route Sidecar container image override (legacy version)  | `signadot/route-sidecar-legacy:vX.Y.Z` |
+| `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy                | `IfNotPresent`                         |
+| `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret                | `""`                                   |
+| `ioInit.image`                        | IO Init container image override                         | `signadot/io-init:vX.Y.Z`              |
+| `ioInit.imagePullPolicy`              | IO Init container image pull policy                      | `IfNotPresent`                         |
+| `ioInit.imagePullSecret`              | IO Init container image pull secret                      | `""`                                   |
+| `ioSidecar.image`                     | IO Sidecar container image override                      | `signadot/io-sidecar:vX.Y.Z`           |
+| `ioSidecar.imagePullPolicy`           | IO Sidecar container image pull policy                   | `IfNotPresent`                         |
+| `ioSidecar.imagePullSecret`           | IO Sidecar container image pull secret                   | `""`                                   |
+| `tunnel.api.replicas`                 | Number of replicas for the Tunnel API deployment         | `1`                                    |
+| `tunnel.api.image`                    | Tunnel API image override                                | `signadot/tunnel-api:vX.Y.Z`           |
+| `tunnel.api.imagePullPolicy`          | Tunnel API image pull policy                             | `IfNotPresent`                         |
+| `tunnel.proxy.replicas`               | Number of replicas for the Tunnel Proxy deployment       | `1`                                    |
+| `tunnel.proxy.image`                  | Tunnel Proxy image override                              | `signadot/tunnel-proxy:vX.Y.Z`         |
+| `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                           | `IfNotPresent`                         |
+| `tunnel.auditor.image`                | Tunnel Auditor image override                            | `envoyproxy/envoy:v1.26.1`             |
+| `tunnel.auditor.imagePullPolicy`      | Tunnel Auditor image pull policy                         | `IfNotPresent`                         |
+| `tunnel.auditor.init.image`           | Tunnel Auditor Init image override                       | `signadot/tunnel-auditor-init:vX.Y.Z`  |
+| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor Init image pull policy                    | `IfNotPresent`                         |
+| `trafficManager.replicas`             | Number of replicas for the Traffic Manager deployment    | `2`                                    |
+| `trafficManager.image`                | Traffic Manager image override                           | `signadot/traffic-manager:vX.Y.Z`      |
+| `trafficManager.imagePullPolicy`      | Traffic Manager image pull policy                        | `IfNotPresent`                         |
+| `jobExecutorInit.image`               | Job Executor Init container image override               | `signadot/job-executor-init:vX.Y.Z`    |
+| `jobExecutorInit.imagePullPolicy`     | Job Executor Init container image pull policy            | `IfNotPresent`                         |
+| `jobExecutorInit.imagePullSecret`     | Job Executor Init container image pull secret            | `""`                                   |
+| `jobExecutorProxy.image`              | Job Executor Proxy container image override              | `signadot/job-executor-proxy:vX.Y.Z`   |
+| `jobExecutorProxy.imagePullPolicy`    | Job Executor Proxy container image pull policy           | `IfNotPresent`                         |
+| `jobExecutorProxy.imagePullSecret`    | Job Executor Proxy container image pull secret           | `""`                                   |
+
+ℹ️ For development clusters (such as Minikube, MicroK8s, or K3s), we recommend
+running the controller manager with `controllerManager.replicas = 1` and the
+traffic manager with `trafficManager.replicas = 1` to minimize resource usage.
+Note that in the case of controller manager, increasing replicas (`replicas >
+1`) does not replicate most controller functionality in parallel; only one
+replica is active at a time, and high availability operates in an active-passive
+manner, primarily benefiting sidecar injection.
 
 
 ### Resource customization parameters
@@ -325,6 +329,26 @@ requests:
 <tr>
 <td>
 
+`trafficManager.resources`
+
+</td>
+<td>
+Traffic Manager resources
+</td>
+<td>
+
+```yaml
+limits:
+  memory: 2Gi
+requests:
+  memory: 128Mi
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
 `routeInit.resources`
 
 </td>
@@ -365,51 +389,6 @@ requests:
 ```
 
 </td>
-</tr>
-<tr>
-<td>
-
-`sandboxTrafficManager.init.resources`
-
-</td>
-<td>
-Sandbox Traffic Manager Init container resources
-</td>
-<td>
-
-```yaml
-limits:
-  cpu: "2"
-  memory: 1Gi
-requests:
-  cpu: 100m
-  memory: 128Mi
-```
-
-</td>
-</tr>
-<tr>
-<td>
-
-`sandboxTrafficManager.sidecar.resources`
-
-</td>
-<td>
-Sandbox Traffic Manager Sidecar resources
-</td>
-<td>
-
-```yaml
-limits:
-  cpu: "2"
-  memory: 1Gi
-requests:
-  cpu: 100m
-  memory: 128Mi
-```
-
-</td>
-</tr>
 </tr>
 <tr>
 <td>
@@ -503,19 +482,26 @@ requests:
 </table>
 
 
+### Controller Manager parameters
+
+| Name                     | Description                                                                                               | Default |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- | ------- |
+| `allowedNamespaces`      | Restrict the namespaces in which `signadot-controller-manager` will operate                               | `[]`    |
+| `allowOrphanedResources` | Allow Signadot Custom Resources to exist in the cluster when not created or managed via the control plane | `false` |
+
+
 ### Tunnel parameters
 
 | Name                                     | Description                                                                                                                                                                                                                                                                  | Default |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| `tunnel.api.replicas`                    | Number of replicas for the Tunnel API deployment                                                                                                                                                                                                                             | `1`     |
 | `tunnel.api.strategy`                    | Strategy to be used for the Tunnel API deployment                                                                                                                                                                                                                            | `{}`    |
-| `tunnel.proxy.replicas`                  | Number of replicas for the Tunnel Proxy deployment                                                                                                                                                                                                                           | `1`     |
 | `tunnel.proxy.strategy`                  | Strategy to be used for the Tunnel Proxy deployment                                                                                                                                                                                                                          | `{}`    |
 | `tunnel.config.cidrs`                    | Default CIDRs configuration to be used for connected clients                                                                                                                                                                                                                 | `""`    |
 | `tunnel.config.externalDNS.server`       | If configured, the Tunnel API will pull this server to fetch domains which will be added to the `/etc/hosts` of the connected clients                                                                                                                                        | `""`    |
 | `tunnel.config.externalDNS.syncInterval` | Time interval, in seconds, for pulling the configured `externalDNS.server`                                                                                                                                                                                                   | `30`    |
 | `tunnel.config.disableSSH`               | Disable the SSH reverse tunnel endpoint in Tunnel Proxy                                                                                                                                                                                                                      | `false` |
 | `tunnel.config.disableXAP`               | Disable the XAP reverse tunnel endpoint in Tunnel Proxy                                                                                                                                                                                                                      | `false` |
+| `tunnel.auditor.enabled`                 | Enable the tunnel auditor (Envoy-based sidecar for auditing and filtering tunnel traffic). Automatically disabled when Istio or Linkerd is enabled. Set to false to disable the auditor for reduced resource usage or when auditing is not needed.                           | `true`  |
 | `tunnel.auditor.luaRocks`                | This is an optional, space-separated list of Lua packages (called rocks) to install in the Envoy auditor Lua environment.                                                                                                                                                    | `""`    |
 | `tunnel.auditor.inboundRulesLuaScript`   | All inbound traffic (from cluster to workstation) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details  | `""`    |
 | `tunnel.auditor.outboundRulesLuaScript`  | All outbound traffic (from workstation to cluster) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details | `""`    |
@@ -555,8 +541,14 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | `routing.customHeaders` | List of custom headers used for sandbox routing                                       | `[]`     |
 
 
+### Traffic Manager parameters
 
-### Traffic capture parameters
+| Name                     | Description            | Default |
+| ------------------------ | ---------------------- | ------- |
+| `trafficManager.enabled` | Enable traffic manager | `true`  |
+
+
+### Traffic Capture parameters
 
 | Name                                  | Description                                                 | Default |
 | ------------------------------------- | ----------------------------------------------------------- | ------- |
@@ -564,8 +556,10 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | `trafficCapture.requestHeadersElide`  | List of request headers to be elided from traffic captures  | `[]`    |
 | `trafficCapture.responseHeadersElide` | List of response headers to be elided from traffic captures | `[]`    |
 
-### Control plane parameters
+### Control Plane parameters
 
-| Name                                  | Description                                                 | Default |
-| ------------------------------------- | ----------------------------------------------------------- | ------- |
-| `controlPlane.proxy`              | Enable [control plane proxy](https://www.signadot.com/docs/concepts/architecture/control-plane#proxy-server)                                      | `enabled`  |
+| Name                        | Description                                                                                                  | Default                                                         |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `controlPlane.tokenSecret`  | Name of the Secret in the signadot namespace which contains the cluster token                                | `cluster-token` (or `cluster-agent` for existing installations) |
+| `controlPlane.clusterToken` | Cluster token for connecting the operator to the Signadot Control Plane                                                           | unspecified                                                     |
+| `controlPlane.proxy`        | Enable [control plane proxy](https://www.signadot.com/docs/concepts/architecture/control-plane#proxy-server) | `enabled`                                                       |

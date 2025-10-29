@@ -67,6 +67,82 @@ spec:
                   routegroup specification as hosted by Signadot.
                 format: int64
                 type: integer
+              trafficManagerMatches:
+                description: |-
+                  TrafficManagerMatches specifies what TrafficManagerPolicy to use
+                  for what sandboxed workloads in the routegroup in place of any
+                  TrafficManagerPolicies specified by the sandbox itself, which is
+                  the default.
+                items:
+                  description: |-
+                    RequestMiddlewareMatch associates an instantiated middleware
+                    against workloads in a Sandbox or RouteGroup.
+                  properties:
+                    instance:
+                      description: |-
+                        RequestMiddlewareInstance specifies the name of a request middleware
+                        and a set of arguments passed to parameters for the request middleware.
+                        A list of RequestMiddlewareInstances are associated with workloads in
+                        a sandbox or route group, providing the definition of the programmatic
+                        treatment of requests sent to that workload.
+                      properties:
+                        args:
+                          description: Arguments used to instantiate Parameters in
+                            the named middleware.
+                          items:
+                            description: |-
+                              Argument is a generic api struct representing arguments to
+                              Parameters which are used to instantiate a set of parameters.
+                            properties:
+                              name:
+                                description: Name indicates the name of the associated
+                                  parameter.
+                                type: string
+                              value:
+                                description: |-
+                                  Value indicates the value passed to the parameter of
+                                  the same name.
+                                type: string
+                              valueFrom:
+                                properties:
+                                  forward:
+                                    type: string
+                                required:
+                                - forward
+                                type: object
+                            required:
+                            - name
+                            - value
+                            type: object
+                          type: array
+                        middleware:
+                          description: Kubernetes resource name of the middleware
+                            to instantiate.
+                          type: string
+                      required:
+                      - middleware
+                      type: object
+                    workload:
+                      properties:
+                        kind:
+                          description: Kind of the baseline workload.
+                          type: string
+                        name:
+                          description: Name of the entity within the Kubernetes cluster.
+                          type: string
+                        namespace:
+                          description: Namespace within which the entity lives in
+                            the Kubernetes cluster.
+                          type: string
+                      required:
+                      - kind
+                      - name
+                      - namespace
+                      type: object
+                  required:
+                  - instance
+                  type: object
+                type: array
             required:
             - routingKey
             type: object
