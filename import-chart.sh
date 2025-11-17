@@ -15,7 +15,10 @@ chartDir=$(basename $(dirname $srcDir))
 
 # clean up old chart
 rm -rf $chartDir/$chartName
-mkdir -p $chartDir/$chartName
+
+# NB on linux this breaks the copy below and tar alternative
+# is not so easy, so we assume the dest dir exists
+#mkdir -p $chartDir/$chartName
 # copy new one here (include dot-files)
 # (include / in src to preserve dot files etc)
 cp -pRP $srcDir/ $chartDir/$chartName
