@@ -3,10 +3,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
@@ -50,11 +50,10 @@ spec:
           metadata:
             type: object
           spec:
-            description: SignadotSandboxSpec defines the desired state of SignadotSandbox
+            description: "SignadotSandboxSpec defines the desired state of SignadotSandbox"
             properties:
               clusterName:
-                description: ClusterName should be the name of the cluster this sandbox
-                  lives in.
+                description: "ClusterName should be the name of the cluster this sandbox lives in."
                 type: string
               customization:
                 description: |-
@@ -66,31 +65,29 @@ spec:
                       DEPRECATED: this feature has been deprecated, image replacement commands
                       will be ignored.
                     items:
-                      description: ImageReplacement describes a rule for replacing
-                        images in cloned containers.
+                      description: "ImageReplacement describes a rule for replacing images in cloned containers."
                       properties:
                         name:
                           description: |-
                             Name specifies which image name in live workloads will be replaced.
-
+                            
                             Example: us.gcr.io/my-staging-registry/widget
                           type: string
                         namespace:
-                          description: Namespace optionally specifies which namespace
-                            will be searched.
+                          description: "Namespace optionally specifies which namespace will be searched."
                           type: string
                         newName:
                           description: |-
                             NewName provides a replacement for the image name (the part before the tag).
                             If this is left unset, the image name will not be changed.
-
+                            
                             Example: us.gcr.io/my-dev-registry/username/widget
                           type: string
                         newTag:
                           description: |-
                             NewTag provides a replacement tag for the image.
                             If this is left unset, the image tag will not be changed.
-
+                            
                             Example: v1.0.0-snapshot-abc123
                           type: string
                       required:
@@ -100,76 +97,68 @@ spec:
                   patches:
                     description: |-
                       Patches to apply when cloning workloads (e.g. Deployments) for this sandbox.
-
+                      
                       Each patch describes which object it applies to. If a matching object is
                       found, a clone of that object will be created for this sandbox and the
                       patch will be applied to the clone.
-
+                      
                       If multiple patches and/or image replacement rules match a given object,
                       only one clone of that object will be created, and then all matching
                       patches and image replacements will be applied on top of one another to
                       the clone. Patches will be applied last, in the order listed here, so
                       they take precedence over image replacements.
-
+                      
                       Each patch can be defined in any one of the formats supported by
                       `kubectl patch`. See: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
-
+                      
                       Only one of the following fields should be set for each patch in the list:
-
+                      
                         strategic - Define the patch in Kubernetes strategic merge patch format.
                         merge - Define the patch in JSON Merge Patch format (RFC 7386).
                         json - Define the patch in JSON Patch format (RFC 6902).
                     items:
-                      description: Patch describes a set of changes to apply to a
-                        given object.
+                      description: "Patch describes a set of changes to apply to a given object."
                       properties:
                         json:
-                          description: JSON specifies the patch in JSON Patch format
-                            (RFC 6902).
+                          description: "JSON specifies the patch in JSON Patch format (RFC 6902)."
                           items:
                             description: |-
                               RawExtension is a wrapper around runtime.RawExtension.
-
+                              
                               It exists so we can add the PreserveUnknownFields directive on the items in
                               a []RawExtension list, rather than to the list itself.
                               Adding PreserveUnknownFields to the list itself works in the latest patch
                               releases of k8s v1.18+, but the fix was never backported to v1.17 or older:
-
+                              
                               https://github.com/kubernetes/kubernetes/pull/94888
                             type: object
                             x-kubernetes-preserve-unknown-fields: true
                           type: array
                         merge:
-                          description: Merge specifies the patch in JSON Merge Patch
-                            format (RFC 7396).
+                          description: "Merge specifies the patch in JSON Merge Patch format (RFC 7396)."
                           type: object
                           x-kubernetes-preserve-unknown-fields: true
                         strategic:
                           description: |-
                             Strategic specifies the patch in Kubernetes strategic merge patch format.
-
+                            
                             See: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/
                           type: object
                           x-kubernetes-preserve-unknown-fields: true
                         target:
-                          description: Target specifies what object this patch applies
-                            to.
+                          description: "Target specifies what object this patch applies to."
                           properties:
                             apiVersion:
-                              description: APIVersion specifies the API Version (e.g.
-                                "apps/v1") of the object to patch.
+                              description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
                               type: string
                             kind:
-                              description: Kind specifies the Kind (e.g. "Deployment")
-                                of the object to patch.
+                              description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
                               type: string
                             name:
-                              description: Name specifies the name of the object to
-                                patch.
+                              description: "Name specifies the name of the object to patch."
                               type: string
                             namespace:
-                              description: Namespace optionally specifies which namespace
-                                will be searched.
+                              description: "Namespace optionally specifies which namespace will be searched."
                               type: string
                           required:
                           - apiVersion
@@ -183,7 +172,7 @@ spec:
                             to refer to information that will only become available after the
                             operator processes a sandbox spec, such as the names of
                             SignadotResource plugin output objects.
-
+                            
                             Default: false
                           type: boolean
                       required:
@@ -196,12 +185,12 @@ spec:
                       label keys on the original baseline Pod template. The expression can
                       match any substring within the key, so use anchors if you want to require
                       a full match.
-
+                      
                       Normally, all baseline labels are stripped from the cloned Pod template
                       to ensure it can't match any existing Services. Labels from the baseline
                       Pod that match any of these regular expressions will be preserved on the
                       cloned Pod instead.
-
+                      
                       If preserving these labels would cause the cloned Pods to match a baseline
                       Service, the sandbox controller will pause and report an error to avoid
                       interference.
@@ -210,7 +199,7 @@ spec:
                     type: array
                 type: object
               disableSandboxTrafficManager:
-                description: 'DEPRECATED: this field is no longer needed.'
+                description: "DEPRECATED: this field is no longer needed."
                 type: boolean
               externalWorkloads:
                 description: |-
@@ -224,21 +213,18 @@ spec:
                         workload applies.
                       properties:
                         apiVersion:
-                          description: APIVersion specifies the API Version (e.g.
-                            "apps/v1") of the object to patch.
+                          description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
                           type: string
                         fake:
                           type: boolean
                         kind:
-                          description: Kind specifies the Kind (e.g. "Deployment")
-                            of the object to patch.
+                          description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
                           type: string
                         name:
-                          description: Name specifies the name of the object to patch.
+                          description: "Name specifies the name of the object to patch."
                           type: string
                         namespace:
-                          description: Namespace optionally specifies which namespace
-                            will be searched.
+                          description: "Namespace optionally specifies which namespace will be searched."
                           type: string
                       required:
                       - apiVersion
@@ -250,7 +236,7 @@ spec:
                         Name of the external workload, this is an arbitrary string defined by
                         the user (eg: "apiserver" or "playground-api")
                       maxLength: 30
-                      pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
+                      pattern: "^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$"
                       type: string
                     tunnel:
                       description: |-
@@ -258,7 +244,7 @@ spec:
                         via a reverse tunnel, in Tunnel Proxy.
                       properties:
                         baselineToLocals:
-                          description: List of ports to be forwarded to the workstation
+                          description: "List of ports to be forwarded to the workstation"
                           items:
                             properties:
                               appProtocol:
@@ -267,12 +253,11 @@ spec:
                                   when associated with an ExternalWorkload with a non-nil baseline.
                                 type: string
                               baselinePort:
-                                description: Baseline container port
+                                description: "Baseline container port"
                                 format: int32
                                 type: integer
                               localAddress:
-                                description: TCP Address to which it is to be routed,
-                                  for example "localhost:8080"
+                                description: "TCP Address to which it is to be routed, for example \"localhost:8080\""
                                 type: string
                             required:
                             - baselinePort
@@ -287,13 +272,13 @@ spec:
               id:
                 description: |-
                   ID should be a unique identifier for the sandbox.
-
+                  
                   It can be up to 32 characters, consisting of lowercase alphanumeric
                   characters or '-', but it must both start and end with an alphanumeric
                   character.
                 maxLength: 32
                 minLength: 1
-                pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
+                pattern: "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
                 type: string
               managedResources:
                 description: |-
@@ -302,10 +287,10 @@ spec:
                 items:
                   properties:
                     name:
-                      description: Name of the resource within the sandbox.
+                      description: "Name of the resource within the sandbox."
                       type: string
                     olm:
-                      description: Definition of the OLM to be executed
+                      description: "Definition of the OLM to be executed"
                       properties:
                         postStop:
                           description: |-
@@ -314,7 +299,7 @@ spec:
                           items:
                             properties:
                               execUnitTemplate:
-                                description: Definition of the pod to be executed
+                                description: "Definition of the pod to be executed"
                                 properties:
                                   inputInjects:
                                     description: |-
@@ -323,8 +308,7 @@ spec:
                                     items:
                                       properties:
                                         dst:
-                                          description: Destination of the input inside
-                                            the exec unit pod
+                                          description: "Destination of the input inside the exec unit pod"
                                           properties:
                                             env:
                                               description: |-
@@ -332,13 +316,11 @@ spec:
                                                 main container
                                               type: string
                                             localPath:
-                                              description: Expose the input as a file
-                                                at LocalPath inside the main container
+                                              description: "Expose the input as a file at LocalPath inside the main container"
                                               type: string
                                           type: object
                                         inputName:
-                                          description: InputName is the name of the
-                                            io input to inject into the exec unit.
+                                          description: "InputName is the name of the io input to inject into the exec unit."
                                           type: string
                                       required:
                                       - dst
@@ -346,8 +328,7 @@ spec:
                                       type: object
                                     type: array
                                   outputExports:
-                                    description: OutputExports provides a mapping
-                                      from local files to io outputs.
+                                    description: "OutputExports provides a mapping from local files to io outputs."
                                     items:
                                       properties:
                                         fromPath:
@@ -356,8 +337,7 @@ spec:
                                             output with name OutputName.
                                           type: string
                                         outputName:
-                                          description: OutputName is the name of the
-                                            io output.
+                                          description: "OutputName is the name of the io output."
                                           type: string
                                       required:
                                       - fromPath
@@ -365,18 +345,6 @@ spec:
                                       type: object
                                     type: array
                                   podTemplate:
-                                    description: |-
-                                      PodTemplate gives the starting values for the Pod fields (defined as a
-                                      corev1.PodTemplateSpec object).
-
-                                      The following requirements are enforced for this Pod template:
-
-                                      - The Pod Name must be left empty, since it will be filled in by this package.
-                                      - The RestartPolicy must be left empty or set to Never.
-                                      - There must not be any Pod Volume named signadot-execunit-io
-                                      - There must not be any Init Container named signadot-execunit-input-manager.
-                                      - There must not be any Pod Container named signadot-execunit-output-manager.
-                                      - There must be at least one Pod Container defined.
                                     properties:
                                       metadata:
                                         properties:
@@ -384,6 +352,10 @@ spec:
                                             additionalProperties:
                                               type: string
                                             type: object
+                                          creationTimestamp:
+                                            format: date-time
+                                            nullable: true
+                                            type: string
                                           finalizers:
                                             items:
                                               type: string
@@ -896,7 +868,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -1302,7 +1274,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                     requests:
@@ -1310,7 +1282,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                   type: object
@@ -1608,7 +1580,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -2014,7 +1986,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                     requests:
@@ -2022,7 +1994,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                   type: object
@@ -2334,7 +2306,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -2740,7 +2712,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                     requests:
@@ -2748,7 +2720,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                   type: object
@@ -2985,7 +2957,7 @@ spec:
                                               anyOf:
                                               - type: integer
                                               - type: string
-                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                              pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                               x-kubernetes-int-or-string: true
                                             type: object
                                           preemptionPolicy:
@@ -3042,7 +3014,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -3050,7 +3022,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -3412,7 +3384,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -3434,7 +3406,7 @@ spec:
                                                       anyOf:
                                                       - type: integer
                                                       - type: string
-                                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                      pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                       x-kubernetes-int-or-string: true
                                                   type: object
                                                 ephemeral:
@@ -3501,7 +3473,7 @@ spec:
                                                                     anyOf:
                                                                     - type: integer
                                                                     - type: string
-                                                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                    pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                     x-kubernetes-int-or-string: true
                                                                   type: object
                                                                 requests:
@@ -3509,7 +3481,7 @@ spec:
                                                                     anyOf:
                                                                     - type: integer
                                                                     - type: string
-                                                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                    pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                     x-kubernetes-int-or-string: true
                                                                   type: object
                                                               type: object
@@ -3836,7 +3808,7 @@ spec:
                                                                           anyOf:
                                                                           - type: integer
                                                                           - type: string
-                                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                           x-kubernetes-int-or-string: true
                                                                         resource:
                                                                           type: string
@@ -4053,7 +4025,7 @@ spec:
                                 - podTemplate
                                 type: object
                               inputs:
-                                description: Definition of the workflow unit inputs
+                                description: "Definition of the workflow unit inputs"
                                 items:
                                   properties:
                                     iocontext:
@@ -4072,20 +4044,18 @@ spec:
                                             Name provides the name of a context, which may house several
                                             keys.
                                           maxLength: 60
-                                          pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                          pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                           type: string
                                       required:
                                       - key
                                       type: object
                                     name:
-                                      description: Name is the parameter name of an
-                                        input to an OLMWorkUnit.
+                                      description: "Name is the parameter name of an input to an OLMWorkUnit."
                                       maxLength: 30
-                                      pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                      pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                       type: string
                                     value:
-                                      description: Value provides an optional constant
-                                        value for the parameter.
+                                      description: "Value provides an optional constant value for the parameter."
                                       type: string
                                   required:
                                   - name
@@ -4094,30 +4064,28 @@ spec:
                               name:
                                 description: |-
                                   Name should be a unique inside the OLM
-
+                                  
                                   It can be up to 30 characters, consisting of alphanumeric
                                   characters or '-', but it must both start and end with an alphanumeric
                                   character.
                                 maxLength: 30
-                                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                 type: string
                               outputs:
-                                description: Definition of the workflow unit outputs
+                                description: "Definition of the workflow unit outputs"
                                 items:
                                   properties:
                                     name:
-                                      description: Name provides the name of the output
-                                        of an OLMWorkUnit.
+                                      description: "Name provides the name of the output of an OLMWorkUnit."
                                       maxLength: 30
-                                      pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                      pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                       type: string
                                   required:
                                   - name
                                   type: object
                                 type: array
                               type:
-                                description: Type represents the type of the OLM workflow
-                                  unit.
+                                description: "Type represents the type of the OLM workflow unit."
                                 enum:
                                 - ExecUnit
                                 type: string
@@ -4133,7 +4101,7 @@ spec:
                           items:
                             properties:
                               execUnitTemplate:
-                                description: Definition of the pod to be executed
+                                description: "Definition of the pod to be executed"
                                 properties:
                                   inputInjects:
                                     description: |-
@@ -4142,8 +4110,7 @@ spec:
                                     items:
                                       properties:
                                         dst:
-                                          description: Destination of the input inside
-                                            the exec unit pod
+                                          description: "Destination of the input inside the exec unit pod"
                                           properties:
                                             env:
                                               description: |-
@@ -4151,13 +4118,11 @@ spec:
                                                 main container
                                               type: string
                                             localPath:
-                                              description: Expose the input as a file
-                                                at LocalPath inside the main container
+                                              description: "Expose the input as a file at LocalPath inside the main container"
                                               type: string
                                           type: object
                                         inputName:
-                                          description: InputName is the name of the
-                                            io input to inject into the exec unit.
+                                          description: "InputName is the name of the io input to inject into the exec unit."
                                           type: string
                                       required:
                                       - dst
@@ -4165,8 +4130,7 @@ spec:
                                       type: object
                                     type: array
                                   outputExports:
-                                    description: OutputExports provides a mapping
-                                      from local files to io outputs.
+                                    description: "OutputExports provides a mapping from local files to io outputs."
                                     items:
                                       properties:
                                         fromPath:
@@ -4175,8 +4139,7 @@ spec:
                                             output with name OutputName.
                                           type: string
                                         outputName:
-                                          description: OutputName is the name of the
-                                            io output.
+                                          description: "OutputName is the name of the io output."
                                           type: string
                                       required:
                                       - fromPath
@@ -4191,6 +4154,10 @@ spec:
                                             additionalProperties:
                                               type: string
                                             type: object
+                                          creationTimestamp:
+                                            format: date-time
+                                            nullable: true
+                                            type: string
                                           finalizers:
                                             items:
                                               type: string
@@ -4703,7 +4670,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -5109,7 +5076,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                     requests:
@@ -5117,7 +5084,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                   type: object
@@ -5415,7 +5382,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -5821,7 +5788,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                     requests:
@@ -5829,7 +5796,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                   type: object
@@ -6141,7 +6108,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -6547,7 +6514,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                     requests:
@@ -6555,7 +6522,7 @@ spec:
                                                         anyOf:
                                                         - type: integer
                                                         - type: string
-                                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                         x-kubernetes-int-or-string: true
                                                       type: object
                                                   type: object
@@ -6792,7 +6759,7 @@ spec:
                                               anyOf:
                                               - type: integer
                                               - type: string
-                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                              pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                               x-kubernetes-int-or-string: true
                                             type: object
                                           preemptionPolicy:
@@ -6849,7 +6816,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -6857,7 +6824,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -7219,7 +7186,7 @@ spec:
                                                                 anyOf:
                                                                 - type: integer
                                                                 - type: string
-                                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                 x-kubernetes-int-or-string: true
                                                               resource:
                                                                 type: string
@@ -7241,7 +7208,7 @@ spec:
                                                       anyOf:
                                                       - type: integer
                                                       - type: string
-                                                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                      pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                       x-kubernetes-int-or-string: true
                                                   type: object
                                                 ephemeral:
@@ -7308,7 +7275,7 @@ spec:
                                                                     anyOf:
                                                                     - type: integer
                                                                     - type: string
-                                                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                    pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                     x-kubernetes-int-or-string: true
                                                                   type: object
                                                                 requests:
@@ -7316,7 +7283,7 @@ spec:
                                                                     anyOf:
                                                                     - type: integer
                                                                     - type: string
-                                                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                    pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                     x-kubernetes-int-or-string: true
                                                                   type: object
                                                               type: object
@@ -7643,7 +7610,7 @@ spec:
                                                                           anyOf:
                                                                           - type: integer
                                                                           - type: string
-                                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                           x-kubernetes-int-or-string: true
                                                                         resource:
                                                                           type: string
@@ -7860,7 +7827,7 @@ spec:
                                 - podTemplate
                                 type: object
                               inputs:
-                                description: Definition of the workflow unit inputs
+                                description: "Definition of the workflow unit inputs"
                                 items:
                                   properties:
                                     iocontext:
@@ -7879,20 +7846,18 @@ spec:
                                             Name provides the name of a context, which may house several
                                             keys.
                                           maxLength: 60
-                                          pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                          pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                           type: string
                                       required:
                                       - key
                                       type: object
                                     name:
-                                      description: Name is the parameter name of an
-                                        input to an OLMWorkUnit.
+                                      description: "Name is the parameter name of an input to an OLMWorkUnit."
                                       maxLength: 30
-                                      pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                      pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                       type: string
                                     value:
-                                      description: Value provides an optional constant
-                                        value for the parameter.
+                                      description: "Value provides an optional constant value for the parameter."
                                       type: string
                                   required:
                                   - name
@@ -7901,30 +7866,28 @@ spec:
                               name:
                                 description: |-
                                   Name should be a unique inside the OLM
-
+                                  
                                   It can be up to 30 characters, consisting of alphanumeric
                                   characters or '-', but it must both start and end with an alphanumeric
                                   character.
                                 maxLength: 30
-                                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                 type: string
                               outputs:
-                                description: Definition of the workflow unit outputs
+                                description: "Definition of the workflow unit outputs"
                                 items:
                                   properties:
                                     name:
-                                      description: Name provides the name of the output
-                                        of an OLMWorkUnit.
+                                      description: "Name provides the name of the output of an OLMWorkUnit."
                                       maxLength: 30
-                                      pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                      pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                       type: string
                                   required:
                                   - name
                                   type: object
                                 type: array
                               type:
-                                description: Type represents the type of the OLM workflow
-                                  unit.
+                                description: "Type represents the type of the OLM workflow unit."
                                 enum:
                                 - ExecUnit
                                 type: string
@@ -7935,8 +7898,7 @@ spec:
                           type: array
                       type: object
                     pluginName:
-                      description: Name of the resource plugin which generated this
-                        template.
+                      description: "Name of the resource plugin which generated this template."
                       type: string
                   required:
                   - name
@@ -7949,12 +7911,12 @@ spec:
                   Name should be a unique value in the organization that easily
                   allows any user to identify what the sandbox is being used for
                   when reading it.
-
+                  
                   It can be up to 30 characters, consisting of alphanumeric
                   characters or '-', but it must both start and end with an alphanumeric
                   character.
                 maxLength: 30
-                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                 type: string
               requestMiddlewares:
                 description: |-
@@ -7974,16 +7936,14 @@ spec:
                         treatment of requests sent to that workload.
                       properties:
                         args:
-                          description: Arguments used to instantiate Parameters in
-                            the named middleware.
+                          description: "Arguments used to instantiate Parameters in the named middleware."
                           items:
                             description: |-
                               Argument is a generic api struct representing arguments to
                               Parameters which are used to instantiate a set of parameters.
                             properties:
                               name:
-                                description: Name indicates the name of the associated
-                                  parameter.
+                                description: "Name indicates the name of the associated parameter."
                                 type: string
                               value:
                                 description: |-
@@ -8003,8 +7963,7 @@ spec:
                             type: object
                           type: array
                         middleware:
-                          description: Kubernetes resource name of the middleware
-                            to instantiate.
+                          description: "Kubernetes resource name of the middleware to instantiate."
                           type: string
                       required:
                       - middleware
@@ -8012,14 +7971,13 @@ spec:
                     workload:
                       properties:
                         kind:
-                          description: Kind of the baseline workload.
+                          description: "Kind of the baseline workload."
                           type: string
                         name:
-                          description: Name of the entity within the Kubernetes cluster.
+                          description: "Name of the entity within the Kubernetes cluster."
                           type: string
                         namespace:
-                          description: Namespace within which the entity lives in
-                            the Kubernetes cluster.
+                          description: "Namespace within which the entity lives in the Kubernetes cluster."
                           type: string
                       required:
                       - kind
@@ -8050,19 +8008,16 @@ spec:
                         workload applies.
                       properties:
                         apiVersion:
-                          description: APIVersion specifies the API Version (e.g.
-                            "apps/v1") of the object to patch.
+                          description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
                           type: string
                         kind:
-                          description: Kind specifies the Kind (e.g. "Deployment")
-                            of the object to patch.
+                          description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
                           type: string
                         name:
-                          description: Name specifies the name of the object to patch.
+                          description: "Name specifies the name of the object to patch."
                           type: string
                         namespace:
-                          description: Namespace optionally specifies which namespace
-                            will be searched.
+                          description: "Namespace optionally specifies which namespace will be searched."
                           type: string
                       required:
                       - apiVersion
@@ -8074,7 +8029,7 @@ spec:
                         Name of the virtual workload, this is an arbitrary string defined by
                         the user (eg: "apiserver" or "playground-api")
                       maxLength: 30
-                      pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
+                      pattern: "^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$"
                       type: string
                   required:
                   - baseline
@@ -8085,7 +8040,7 @@ spec:
             - id
             type: object
           status:
-            description: SignadotSandboxStatus defines the observed state of SignadotSandbox
+            description: "SignadotSandboxStatus defines the observed state of SignadotSandbox"
             properties:
               conditions:
                 description: |-
@@ -8095,7 +8050,7 @@ spec:
                   description: |-
                     StatusCondition is a condition struct that matches the conventions expected
                     by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
-
+                    
                     StatusConditions must follow the following discipline in reconciliation:
                     The operator MUST always populate all the condition types in a
                     SignadotSandboxStatus struct, irrespective of whether
@@ -8119,16 +8074,15 @@ spec:
                   type: object
                 type: array
               customizedDeployments:
-                description: CustomizedDeployments is the number of Deployments that
-                  have been cloned and customized.
+                description: "CustomizedDeployments is the number of Deployments that have been cloned and customized."
                 format: int32
                 type: integer
               externalWorkloads:
-                description: Status of each of the external workloads
+                description: "Status of each of the external workloads"
                 items:
                   properties:
                     name:
-                      description: Name of the external workload
+                      description: "Name of the external workload"
                       type: string
                     routing:
                       description: |-
@@ -8148,6 +8102,76 @@ spec:
                           required:
                           - enabled
                           type: object
+                        gatewayAPI:
+                          description: |-
+                            GatewayAPI provides information about the Gateway API HTTPRoutes and
+                            GRPCRoutes configuration for each of the baseline services
+                          items:
+                            properties:
+                              baselineService:
+                                description: "Baseline service name that includes the target workload"
+                                type: string
+                              matchedRoutes:
+                                description: |-
+                                  MatchedRoutes is the list of Gateway API HTTPRoutes and GRPCRoutes that
+                                  match this route, along with their current status.
+                                items:
+                                  properties:
+                                    baseline:
+                                      description: "Baseline specifies the baseline version of the matched route"
+                                      properties:
+                                        kind:
+                                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                                          enum:
+                                          - HTTPRoute
+                                          - GRPCRoute
+                                          type: string
+                                        name:
+                                          description: "Name specifies the name of the matched route"
+                                          type: string
+                                        namespace:
+                                          description: "Namespace specifies the namespace of the matched route"
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      - namespace
+                                      type: object
+                                    derived:
+                                      description: "Derived specifies the derived version of the matched route"
+                                      properties:
+                                        kind:
+                                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                                          enum:
+                                          - HTTPRoute
+                                          - GRPCRoute
+                                          type: string
+                                        name:
+                                          description: "Name specifies the name of the matched route"
+                                          type: string
+                                        namespace:
+                                          description: "Namespace specifies the namespace of the matched route"
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      - namespace
+                                      type: object
+                                    message:
+                                      description: "Status related message"
+                                      type: string
+                                    status:
+                                      description: "Status information about the route configuration"
+                                      type: string
+                                  required:
+                                  - baseline
+                                  - status
+                                  type: object
+                                type: array
+                            required:
+                            - baselineService
+                            type: object
+                          type: array
                         istio:
                           description: |-
                             Istio provides information about the Virtual Service configuration for
@@ -8155,8 +8179,7 @@ spec:
                           items:
                             properties:
                               baselineService:
-                                description: Baseline service name that includes the
-                                  target workload
+                                description: "Baseline service name that includes the target workload"
                                 type: string
                               matchedVirtualServices:
                                 description: |-
@@ -8165,17 +8188,16 @@ spec:
                                 items:
                                   properties:
                                     message:
-                                      description: Status related message
+                                      description: "Status related message"
                                       type: string
                                     name:
-                                      description: This is the virtual service name
+                                      description: "This is the virtual service name"
                                       type: string
                                     namespace:
-                                      description: This is the virtual service namespace
+                                      description: "This is the virtual service namespace"
                                       type: string
                                     status:
-                                      description: Status information about the virtual
-                                        service configuration
+                                      description: "Status information about the virtual service configuration"
                                       type: string
                                   required:
                                   - name
@@ -8194,56 +8216,53 @@ spec:
                         workload
                       properties:
                         health:
-                          description: Is there an active tunnel to the workstation?
+                          description: "Is there an active tunnel to the workstation?"
                           properties:
                             connected:
-                              description: Is there an active reverse tunnel to the
-                                workstation?
+                              description: "Is there an active reverse tunnel to the workstation?"
                               type: boolean
                             lastCheckTime:
-                              description: Last time we performed a health check
+                              description: "Last time we performed a health check"
                               format: date-time
                               type: string
                             lastConnectedTime:
-                              description: Last time we got a successful health check
+                              description: "Last time we got a successful health check"
                               format: date-time
                               type: string
                           required:
                           - connected
                           type: object
                         info:
-                          description: Reference to reverse tunnel exposing the workload
+                          description: "Reference to reverse tunnel exposing the workload"
                           properties:
                             controlPort:
-                              description: This is the control port for this tunnel,
-                                used for health check control
+                              description: "This is the control port for this tunnel, used for health check control"
                               format: int32
                               type: integer
                             labels:
                               additionalProperties:
                                 type: string
-                              description: Tunnel labels (information about the connected
-                                client)
+                              description: "Tunnel labels (information about the connected client)"
                               type: object
                             tunnelProxyPodIP:
-                              description: Tunnel proxy pod ip
+                              description: "Tunnel proxy pod ip"
                               type: string
                             tunnelProxyPodName:
-                              description: Tunnel proxy pod name
+                              description: "Tunnel proxy pod name"
                               type: string
                             workloadPorts:
                               description: |-
                                 This is a map from the workload source port as a string to the port in which it is
                                 exposed in the Tunnel proxy.
                               items:
-                                description: Baseline port mapping to proxy port
+                                description: "Baseline port mapping to proxy port"
                                 properties:
                                   baseline:
-                                    description: An exposed port on the baseline
+                                    description: "An exposed port on the baseline"
                                     format: int32
                                     type: integer
                                   proxy:
-                                    description: The corresponding proxy port
+                                    description: "The corresponding proxy port"
                                     format: int32
                                     type: integer
                                 required:
@@ -8262,26 +8281,23 @@ spec:
                   type: object
                 type: array
               forkedWorkloads:
-                description: Status of each of the forked workloads
+                description: "Status of each of the forked workloads"
                 items:
                   properties:
                     forkTarget:
-                      description: ForkTarget specifies the workload being forked
+                      description: "ForkTarget specifies the workload being forked"
                       properties:
                         apiVersion:
-                          description: APIVersion specifies the API Version (e.g.
-                            "apps/v1") of the object to patch.
+                          description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
                           type: string
                         kind:
-                          description: Kind specifies the Kind (e.g. "Deployment")
-                            of the object to patch.
+                          description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
                           type: string
                         name:
-                          description: Name specifies the name of the object to patch.
+                          description: "Name specifies the name of the object to patch."
                           type: string
                         namespace:
-                          description: Namespace optionally specifies which namespace
-                            will be searched.
+                          description: "Namespace optionally specifies which namespace will be searched."
                           type: string
                       required:
                       - apiVersion
@@ -8306,6 +8322,76 @@ spec:
                           required:
                           - enabled
                           type: object
+                        gatewayAPI:
+                          description: |-
+                            GatewayAPI provides information about the Gateway API HTTPRoutes and
+                            GRPCRoutes configuration for each of the baseline services
+                          items:
+                            properties:
+                              baselineService:
+                                description: "Baseline service name that includes the target workload"
+                                type: string
+                              matchedRoutes:
+                                description: |-
+                                  MatchedRoutes is the list of Gateway API HTTPRoutes and GRPCRoutes that
+                                  match this route, along with their current status.
+                                items:
+                                  properties:
+                                    baseline:
+                                      description: "Baseline specifies the baseline version of the matched route"
+                                      properties:
+                                        kind:
+                                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                                          enum:
+                                          - HTTPRoute
+                                          - GRPCRoute
+                                          type: string
+                                        name:
+                                          description: "Name specifies the name of the matched route"
+                                          type: string
+                                        namespace:
+                                          description: "Namespace specifies the namespace of the matched route"
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      - namespace
+                                      type: object
+                                    derived:
+                                      description: "Derived specifies the derived version of the matched route"
+                                      properties:
+                                        kind:
+                                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                                          enum:
+                                          - HTTPRoute
+                                          - GRPCRoute
+                                          type: string
+                                        name:
+                                          description: "Name specifies the name of the matched route"
+                                          type: string
+                                        namespace:
+                                          description: "Namespace specifies the namespace of the matched route"
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      - namespace
+                                      type: object
+                                    message:
+                                      description: "Status related message"
+                                      type: string
+                                    status:
+                                      description: "Status information about the route configuration"
+                                      type: string
+                                  required:
+                                  - baseline
+                                  - status
+                                  type: object
+                                type: array
+                            required:
+                            - baselineService
+                            type: object
+                          type: array
                         istio:
                           description: |-
                             Istio provides information about the Virtual Service configuration for
@@ -8313,8 +8399,7 @@ spec:
                           items:
                             properties:
                               baselineService:
-                                description: Baseline service name that includes the
-                                  target workload
+                                description: "Baseline service name that includes the target workload"
                                 type: string
                               matchedVirtualServices:
                                 description: |-
@@ -8323,17 +8408,16 @@ spec:
                                 items:
                                   properties:
                                     message:
-                                      description: Status related message
+                                      description: "Status related message"
                                       type: string
                                     name:
-                                      description: This is the virtual service name
+                                      description: "This is the virtual service name"
                                       type: string
                                     namespace:
-                                      description: This is the virtual service namespace
+                                      description: "This is the virtual service namespace"
                                       type: string
                                     status:
-                                      description: Status information about the virtual
-                                        service configuration
+                                      description: "Status information about the virtual service configuration"
                                       type: string
                                   required:
                                   - name
@@ -8351,17 +8435,17 @@ spec:
                   type: object
                 type: array
               managedResources:
-                description: Status of each of the managed resources
+                description: "Status of each of the managed resources"
                 items:
                   properties:
                     failed:
-                      description: Whether the resource has permanently failed
+                      description: "Whether the resource has permanently failed"
                       type: boolean
                     name:
-                      description: Name of the resource
+                      description: "Name of the resource"
                       type: string
                     ready:
-                      description: Readiness of the resource
+                      description: "Readiness of the resource"
                       type: boolean
                   required:
                   - failed
@@ -8381,29 +8465,26 @@ spec:
               readyManagedResources:
                 additionalProperties:
                   type: boolean
-                description: 'DEPRECATED: use ManagedResources instead.'
+                description: "DEPRECATED: use ManagedResources instead."
                 type: object
               virtualWorkloads:
-                description: Status of each of the external workloads
+                description: "Status of each of the external workloads"
                 items:
                   properties:
                     baseline:
-                      description: ForkTarget specifies the workload being forked
+                      description: "ForkTarget specifies the workload being forked"
                       properties:
                         apiVersion:
-                          description: APIVersion specifies the API Version (e.g.
-                            "apps/v1") of the object to patch.
+                          description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
                           type: string
                         kind:
-                          description: Kind specifies the Kind (e.g. "Deployment")
-                            of the object to patch.
+                          description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
                           type: string
                         name:
-                          description: Name specifies the name of the object to patch.
+                          description: "Name specifies the name of the object to patch."
                           type: string
                         namespace:
-                          description: Namespace optionally specifies which namespace
-                            will be searched.
+                          description: "Namespace optionally specifies which namespace will be searched."
                           type: string
                       required:
                       - apiVersion
@@ -8428,6 +8509,76 @@ spec:
                           required:
                           - enabled
                           type: object
+                        gatewayAPI:
+                          description: |-
+                            GatewayAPI provides information about the Gateway API HTTPRoutes and
+                            GRPCRoutes configuration for each of the baseline services
+                          items:
+                            properties:
+                              baselineService:
+                                description: "Baseline service name that includes the target workload"
+                                type: string
+                              matchedRoutes:
+                                description: |-
+                                  MatchedRoutes is the list of Gateway API HTTPRoutes and GRPCRoutes that
+                                  match this route, along with their current status.
+                                items:
+                                  properties:
+                                    baseline:
+                                      description: "Baseline specifies the baseline version of the matched route"
+                                      properties:
+                                        kind:
+                                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                                          enum:
+                                          - HTTPRoute
+                                          - GRPCRoute
+                                          type: string
+                                        name:
+                                          description: "Name specifies the name of the matched route"
+                                          type: string
+                                        namespace:
+                                          description: "Namespace specifies the namespace of the matched route"
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      - namespace
+                                      type: object
+                                    derived:
+                                      description: "Derived specifies the derived version of the matched route"
+                                      properties:
+                                        kind:
+                                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                                          enum:
+                                          - HTTPRoute
+                                          - GRPCRoute
+                                          type: string
+                                        name:
+                                          description: "Name specifies the name of the matched route"
+                                          type: string
+                                        namespace:
+                                          description: "Namespace specifies the namespace of the matched route"
+                                          type: string
+                                      required:
+                                      - kind
+                                      - name
+                                      - namespace
+                                      type: object
+                                    message:
+                                      description: "Status related message"
+                                      type: string
+                                    status:
+                                      description: "Status information about the route configuration"
+                                      type: string
+                                  required:
+                                  - baseline
+                                  - status
+                                  type: object
+                                type: array
+                            required:
+                            - baselineService
+                            type: object
+                          type: array
                         istio:
                           description: |-
                             Istio provides information about the Virtual Service configuration for
@@ -8435,8 +8586,7 @@ spec:
                           items:
                             properties:
                               baselineService:
-                                description: Baseline service name that includes the
-                                  target workload
+                                description: "Baseline service name that includes the target workload"
                                 type: string
                               matchedVirtualServices:
                                 description: |-
@@ -8445,17 +8595,16 @@ spec:
                                 items:
                                   properties:
                                     message:
-                                      description: Status related message
+                                      description: "Status related message"
                                       type: string
                                     name:
-                                      description: This is the virtual service name
+                                      description: "This is the virtual service name"
                                       type: string
                                     namespace:
-                                      description: This is the virtual service namespace
+                                      description: "This is the virtual service namespace"
                                       type: string
                                     status:
-                                      description: Status information about the virtual
-                                        service configuration
+                                      description: "Status information about the virtual service configuration"
                                       type: string
                                   required:
                                   - name

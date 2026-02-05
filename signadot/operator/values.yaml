@@ -1,3 +1,6 @@
+# Default values for signadot operator
+# All values are optional - defaults are embedded in templates
+
 # Common settings
 # -----------------------------------------------------------------------------
 
@@ -15,7 +18,7 @@
 
 # Add these annotations to all Pods deployed by this chart.
 # podAnnotations:
-#   examplePodLAnnotation: examplePodLAnnotationValue
+#   examplePodAnnotation: examplePodAnnotationValue
 
 # Add these labels to all Services deployed by this chart.
 # serviceLabels:
@@ -23,16 +26,19 @@
 
 # Add these annotations to all Services deployed by this chart.
 # serviceAnnotations:
-#   exampleServiceLAnnotation: exampleServiceLAnnotationValue
+#   exampleServiceAnnotation: exampleServiceAnnotationValue
+
+# Image pull secrets for all deployments
+# imagePullSecrets:
+#   - my-registry-secret
 
 # By default, this chart will install the operator in
 # cluster-wide mode, where it watches all namespaces.
-
 # Uncomment the following to configure the operator to
 # only watch specific namespaces.
 # allowedNamespaces:
-# - ns1
-# - ns2
+#   - ns1
+#   - ns2
 
 
 # Istio settings
@@ -41,34 +47,30 @@
 #   # Enable the integration with Istio
 #   enabled: true
 #   operator:
-#     # Specify custom pod labels for operator workloads placed on the Istio mesh. 
-#     # If the field does not exist, or no labels are specified, then it will default to 
-#     # sidecar.istio.io/inject: "true"
+#     # Pod labels for operator workloads on the Istio mesh
+#     # Defaults to: sidecar.istio.io/inject: "true"
 #     podLabels:
-#       # For ambient mode, you should have a waypoint installed in the signadot namespace 
-#       # and point the in-mesh operator components to it like so
+#       # For ambient mode with waypoint:
 #       istio.io/dataplane-mode: ambient
 #       istio.io/use-waypoint: waypoint
 #   # Add these labels or annotations to all istio objects when they are managed by
-#   # Signadot Note that virtual services are only managed by Signadot when they
-#   # route to some sandbox.  For virtual services, these labels or annotations are
+#   # Signadot. Note that virtual services are only managed by Signadot when they
+#   # route to some sandbox. For virtual services, these labels or annotations are
 #   # only added if they were not present before becoming managed by signadot.
 #   additionalLabels:
 #     exampleLabel: exampleLabelValue
 #   additionalAnnotations:
-#     exampleAnnotatonKey: exampleAnnotationValue
+#     exampleAnnotationKey: exampleAnnotationValue
 
 
 # Linkerd settings
 # -----------------------------------------------------------------------------
-
 # linkerd:
 #   # Enable the integration with Linkerd
 #   enabled: true
 #   operator:
-#     # Specify custom pod annotations for operator workloads placed on the Linkerd mesh. 
-#     # If the field does not exist, or no annotations are specified, then it will default to 
-#     # linkerd.io/inject: "enabled"
+#     # Pod annotations for operator workloads on the Linkerd mesh
+#     # Defaults to: linkerd.io/inject: "enabled"
 #     podAnnotations:
 #       linkerd.io/inject: enabled
 #       config.linkerd.io/proxy-await: enabled
@@ -86,7 +88,7 @@ controllerManager:
     requests:
       cpu: 100m
       memory: 512Mi
-  # image: my-private-registry/signadot/operator:latest
+  # image: my-private-registry/signadot/controller-manager:latest
   # imagePullPolicy: Always
 
 agent:
@@ -117,6 +119,59 @@ ioContextServer:
   # image: my-private-registry/signadot/io-context-server:latest
   # imagePullPolicy: Always
 
+tunnel:
+  api:
+    replicas: 1
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        memory: 128Mi
+    # image: my-private-registry/signadot/tunnel-api:latest
+    # imagePullPolicy: Always
+    # strategy:
+    #   rollingUpdate:
+    #     maxSurge: 25%
+    #     maxUnavailable: 25%
+    #   type: RollingUpdate
+  proxy:
+    replicas: 1
+    resources:
+      limits:
+        memory: 2Gi
+      requests:
+        memory: 128Mi
+    # image: my-private-registry/signadot/tunnel-proxy:latest
+    # imagePullPolicy: Always
+    # strategy:
+    #   rollingUpdate:
+    #     maxSurge: 25%
+    #     maxUnavailable: 25%
+    #   type: RollingUpdate
+  # config:
+  #   cidrs: |
+  #     outboundIPs:
+  #     - name: foo
+  #       cidr: 10.80.0.0/12
+  #       exclude: true
+  #     version: 1
+  #   externalDNS:
+  #     server: http://10.20.10.2:8083
+  #     syncInterval: 60
+  #   disableSSH: false
+  #   disableXAP: false
+
+trafficManager:
+  replicas: 2
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      memory: 128Mi
+  # image: my-private-registry/signadot/traffic-manager:latest
+  # imagePullPolicy: Always
+
+# Sidecar images (injected by controller-manager)
 # routeInit:
 #   resources:
 #     limits:
@@ -126,8 +181,6 @@ ioContextServer:
 #       cpu: 100m
 #       memory: 128Mi
 #   image: my-private-registry/signadot/route-sidecar-init:latest
-#   legacy:
-#     image: my-private-registry/signadot/sd-init-networking:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-routeInit
 
@@ -140,8 +193,6 @@ ioContextServer:
 #       cpu: 100m
 #       memory: 128Mi
 #   image: my-private-registry/signadot/route-sidecar:latest
-#   legacy:
-#     image: my-private-registry/signadot/route-sidecar-legacy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-routeSidecar
 
@@ -168,100 +219,6 @@ ioContextServer:
 #   image: my-private-registry/signadot/io-sidecar:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
-
-tunnel:
-  api:
-    replicas: 1
-    resources:
-      limits:
-        memory: 1Gi
-      requests:
-        memory: 128Mi
-    # image: my-private-registry/signadot/tunnel-api:latest
-    # imagePullPolicy: Always
-    # strategy:
-    #   rollingUpdate:
-    #     maxSurge: 25%
-    #     maxUnavailable: 25%
-    #   type: RollingUpdate
-  proxy:
-    replicas: 1
-    resources:
-      limits:
-        memory: 2Gi
-      requests:
-        memory: 128Mi
-  #   image: my-private-registry/signadot/tunnel-proxy:latest
-  #   imagePullPolicy: Always
-  #   strategy:
-  #     rollingUpdate:
-  #       maxSurge: 25%
-  #       maxUnavailable: 25%
-  #     type: RollingUpdate
-  auditor:
-    # Enable the tunnel auditor (Envoy-based sidecar for auditing and filtering tunnel traffic).
-    # Automatically disabled when Istio or Linkerd is enabled, as they provide their own proxy sidecars.
-    # Set to false to disable the auditor for reduced resource usage or when auditing is not needed.
-    # enabled: true
-    init:
-      resources:
-        limits:
-          memory: 2Gi
-        requests:
-          memory: 128Mi
-  #     image: my-private-registry/signadot/tunnel-auditor-init:latest
-  #     imagePullPolicy: Always
-    resources:
-      limits:
-        memory: 2Gi
-      requests:
-        memory: 128Mi
-  #   image: my-private-registry/signadot/tunnel-auditor:latest
-  #   imagePullPolicy: Always
-  #   # luaRocks is an optional, space-separated list of Lua packages (called rocks)
-  #   # to install in the Envoy auditor Lua environment.
-  #   # These packages' modules can then be required from inboundRulesLuaScript and
-  #   # outputRulesLuaScript.
-  #   # See luarocks.org for available packages.
-  #   luaRocks: "date"
-  #   inboundRulesLuaScript: |
-  #     function envoy_on_request(request_handle)
-  #       -- sample code (read one custom header and print it)
-  #       local auditKey = request_handle:headers():get("inbound-audit-key")
-  #       if auditKey ~= nil and auditKey ~= '' then
-  #         request_handle:logInfo(auditKey)
-  #       end
-  #     end
-  #   outboundRulesLuaScript: |
-  #     function envoy_on_request(request_handle)
-  #       -- sample code (read one custom header and print it)
-  #       local auditKey = request_handle:headers():get("outbound-audit-key")
-  #       if auditKey ~= nil and auditKey ~= '' then
-  #         request_handle:logInfo(auditKey)
-  #       end
-  #     end
-  # config:
-  #   cidrs: |
-  #     outboundIPs:
-  #     - name: foo
-  #       cidr: 10.80.0.0/12
-  #       exclude: true
-  #     version: 1
-  #   externalDNS:
-  #     server: http://10.20.10.2:8083
-  #     syncInterval: 60
-  #   disableSSH: false
-  #   disableXAP: false
-
-trafficManager:
-  replicas: 2
-  resources:
-    limits:
-      memory: 2Gi
-    requests:
-      memory: 128Mi
-  # image: my-private-registry/signadot/traffic-manager:latest
-  # imagePullPolicy: Always
 
 # jobExecutorInit:
 #   resources:
@@ -314,8 +271,17 @@ trafficManager:
 #     - header2
 #
 
-# Control Plane Settings for this cluster
+
+# Traffic manager settings
 # -----------------------------------------------------------------------------
+
+# trafficManager:
+#   enabled: true
+
+
+# Control Plane settings
+# -----------------------------------------------------------------------------
+
 # controlPlane:
 #   tokenSecret: my-cluster-token
 #   clusterToken: myorg@xxx
@@ -338,3 +304,8 @@ trafficManager:
 #   proxyURL: http://host.minikube.internal:8087
 #   artifactsAPI: http://host.minikube.internal:8180
 #   trafficmodelsAPI: http://host.minikube.internal:8280
+
+# Allow orphaned resources
+# -----------------------------------------------------------------------------
+
+# allowOrphanedResources: false

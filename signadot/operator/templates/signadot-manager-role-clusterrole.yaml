@@ -23,9 +23,23 @@ rules:
   - patch
   - update
 - apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - grpcroutes
+  - httproutes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - signadot.com
   resources:
   - forkedworkloads
+  - gatewayapiroutes
   - istioroutes
   - jobrunnergroups
   - jobs
@@ -66,6 +80,7 @@ rules:
   - signadot.com
   resources:
   - forkedworkloads/status
+  - gatewayapiroutes/status
   - istioroutes/status
   - jobrunnergroups/status
   - jobs/status

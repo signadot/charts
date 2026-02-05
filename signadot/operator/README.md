@@ -83,6 +83,7 @@ kubectl delete ns signadot
 | `podAnnotations`     | Annotations to add to all deployed `Pod` objects          | `{}`     |
 | `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`     |
 | `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
+| `imagePullSecrets`   | List of image pull secret names for all deployments       | `[]`     |
 
 
 ### Image and replicas customization parameters
@@ -90,7 +91,7 @@ kubectl delete ns signadot
 The parameters in the table below allow one to specify image names for the
 images used in our operator.  For each image, the image label `vX.Y.Z` refers to
 the [operator version](https://www.signadot.com/docs/operator-version-policy).
-Some images are sleighted for deprecation, in particular those with the suffix
+Some images may be slated for deprecation, in particular those with the suffix
 `-legacy` in their name.
 
 | Name                                  | Description                                              | Default                                |
@@ -106,11 +107,9 @@ Some images are sleighted for deprecation, in particular those with the suffix
 | `ioContextServer.image`               | IO Context Server image override                         | `signadot/io-context-server:vX.Y.Z`    |
 | `ioContextServer.imagePullPolicy`     | IO Context Server image pull policy                      | `IfNotPresent`                         |
 | `routeInit.image`                     | Route Init container image override                      | `signadot/route-sidecar-init:vX.Y.Z`   |
-| `routeInit.legacy.image`              | Route Init container image override (legacy version)     | `signadot/sd-init-networking:latest`   |
 | `routeInit.imagePullPolicy`           | Route Init container image pull policy                   | `IfNotPresent`                         |
 | `routeInit.imagePullSecret`           | Route Init container image pull secret                   | `""`                                   |
 | `routeSidecar.image`                  | Route Sidecar container image override                   | `signadot/route-sidecar:vX.Y.Z`        |
-| `routeSidecar.legacy.image`           | Route Sidecar container image override (legacy version)  | `signadot/route-sidecar-legacy:vX.Y.Z` |
 | `routeSidecar.imagePullPolicy`        | Route Sidecar container image pull policy                | `IfNotPresent`                         |
 | `routeSidecar.imagePullSecret`        | Route Sidecar container image pull secret                | `""`                                   |
 | `ioInit.image`                        | IO Init container image override                         | `signadot/io-init:vX.Y.Z`              |
@@ -125,10 +124,6 @@ Some images are sleighted for deprecation, in particular those with the suffix
 | `tunnel.proxy.replicas`               | Number of replicas for the Tunnel Proxy deployment       | `1`                                    |
 | `tunnel.proxy.image`                  | Tunnel Proxy image override                              | `signadot/tunnel-proxy:vX.Y.Z`         |
 | `tunnel.proxy.imagePullPolicy`        | Tunnel Proxy image pull policy                           | `IfNotPresent`                         |
-| `tunnel.auditor.image`                | Tunnel Auditor image override                            | `envoyproxy/envoy:v1.26.1`             |
-| `tunnel.auditor.imagePullPolicy`      | Tunnel Auditor image pull policy                         | `IfNotPresent`                         |
-| `tunnel.auditor.init.image`           | Tunnel Auditor Init image override                       | `signadot/tunnel-auditor-init:vX.Y.Z`  |
-| `tunnel.auditor.init.imagePullPolicy` | Tunnel Auditor Init image pull policy                    | `IfNotPresent`                         |
 | `trafficManager.replicas`             | Number of replicas for the Traffic Manager deployment    | `2`                                    |
 | `trafficManager.image`                | Traffic Manager image override                           | `signadot/traffic-manager:vX.Y.Z`      |
 | `trafficManager.imagePullPolicy`      | Traffic Manager image pull policy                        | `IfNotPresent`                         |
@@ -219,7 +214,7 @@ IO Context Server resources
 
 ```yaml
 limits:
-  memory: 2Gi
+  memory: 1Gi
 requests:
   memory: 128Mi
 ```
@@ -229,7 +224,7 @@ requests:
 <tr>
 <td>
 
-`routeserver.resources`
+`routeServer.resources`
 
 </td>
 <td>
@@ -274,46 +269,6 @@ requests:
 </td>
 <td>
 Tunnel Proxy resources
-</td>
-<td>
-
-```yaml
-limits:
-  memory: 2Gi
-requests:
-  memory: 128Mi
-```
-
-</td>
-</tr>
-<tr>
-<td>
-
-`tunnel.auditor.init.resources`
-
-</td>
-<td>
-Tunnel Auditor Init container resources
-</td>
-<td>
-
-```yaml
-limits:
-  memory: 2Gi
-requests:
-  memory: 128Mi
-```
-
-</td>
-</tr>
-<tr>
-<td>
-
-`tunnel.auditor.resources`
-
-</td>
-<td>
-Tunnel Auditor resources
 </td>
 <td>
 
@@ -434,7 +389,6 @@ requests:
 
 </td>
 </tr>
-</tr>
 <tr>
 <td>
 
@@ -501,11 +455,7 @@ requests:
 | `tunnel.config.externalDNS.syncInterval` | Time interval, in seconds, for pulling the configured `externalDNS.server`                                                                                                                                                                                                   | `30`    |
 | `tunnel.config.disableSSH`               | Disable the SSH reverse tunnel endpoint in Tunnel Proxy                                                                                                                                                                                                                      | `false` |
 | `tunnel.config.disableXAP`               | Disable the XAP reverse tunnel endpoint in Tunnel Proxy                                                                                                                                                                                                                      | `false` |
-| `tunnel.auditor.enabled`                 | Enable the tunnel auditor (Envoy-based sidecar for auditing and filtering tunnel traffic). Automatically disabled when Istio or Linkerd is enabled. Set to false to disable the auditor for reduced resource usage or when auditing is not needed.                           | `true`  |
-| `tunnel.auditor.luaRocks`                | This is an optional, space-separated list of Lua packages (called rocks) to install in the Envoy auditor Lua environment.                                                                                                                                                    | `""`    |
-| `tunnel.auditor.inboundRulesLuaScript`   | All inbound traffic (from cluster to workstation) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details  | `""`    |
-| `tunnel.auditor.outboundRulesLuaScript`  | All outbound traffic (from workstation to cluster) will pass thru this script (if defined) in the Envoy auditor, check [HTTP Lua filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/lua_filter#stream-handle-api) documentation for details | `""`    |
-|                                          |                                                                                                                                                                                                                                                                              |         |
+
 ### Istio parameters
 
 When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates Istio VirtualServices by applying new HTTPRoutes where appropriate to direct traffic to sandboxed workloads. You can configure the operator to add labels and annotations to these objects when they are in use by the operator.  Note that these labels and annotations are only added when the object comes into use. This can be useful for temporarily disabling CI sync, amongst other possibilities.
@@ -515,10 +465,10 @@ Enabling Istio will activate the Istio proxy in the following components: in Sig
 | Name                                | Description                                                                                               | Default |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
 | `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
+| `istio.gatewayAPI.enabled`          | Enable Gateway API with Istio           | `false` |
 | `istio.operator.podLabels`      | Pod Labels to add to signadot components which should use Istio | `{"sidecar.istio.io/inject": "true"}`  |
 | `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
 | `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
-| `istio.enableDeprecatedHostRouting` | Enable sandbox routing by matching the `VirtualService.host` field. **This feature has been deprecated**. | `false` |
 
 
 ### Linkerd parameters
@@ -530,6 +480,7 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 | Name              | Description              | Default |
 | ----------------- | ------------------------ | ------- |
 | `linkerd.enabled` | Enable Linkerd integration | `false` |
+| `linkerd.gatewayAPI.enabled` | Enable Gateway API with Linkerd | `false` |
 | `linkerd.operator.podAnnotations`      | Pod Annotations to add to signadot components which should use Linkerd |`{"linkerd.io/inject": "enabled"}`  |
 
 

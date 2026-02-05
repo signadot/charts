@@ -3,10 +3,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
@@ -26,8 +26,7 @@ spec:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: SignadotRouteGroup is the Schema for the signadotroutegroups
-          API
+        description: "SignadotRouteGroup is the Schema for the signadotroutegroups API"
         properties:
           apiVersion:
             description: |-
@@ -47,7 +46,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: RouteGroupSpec defines the desired state of a RouteGroup.
+            description: "RouteGroupSpec defines the desired state of a RouteGroup."
             properties:
               routingKey:
                 description: |-
@@ -87,16 +86,14 @@ spec:
                         treatment of requests sent to that workload.
                       properties:
                         args:
-                          description: Arguments used to instantiate Parameters in
-                            the named middleware.
+                          description: "Arguments used to instantiate Parameters in the named middleware."
                           items:
                             description: |-
                               Argument is a generic api struct representing arguments to
                               Parameters which are used to instantiate a set of parameters.
                             properties:
                               name:
-                                description: Name indicates the name of the associated
-                                  parameter.
+                                description: "Name indicates the name of the associated parameter."
                                 type: string
                               value:
                                 description: |-
@@ -116,8 +113,7 @@ spec:
                             type: object
                           type: array
                         middleware:
-                          description: Kubernetes resource name of the middleware
-                            to instantiate.
+                          description: "Kubernetes resource name of the middleware to instantiate."
                           type: string
                       required:
                       - middleware
@@ -125,14 +121,13 @@ spec:
                     workload:
                       properties:
                         kind:
-                          description: Kind of the baseline workload.
+                          description: "Kind of the baseline workload."
                           type: string
                         name:
-                          description: Name of the entity within the Kubernetes cluster.
+                          description: "Name of the entity within the Kubernetes cluster."
                           type: string
                         namespace:
-                          description: Namespace within which the entity lives in
-                            the Kubernetes cluster.
+                          description: "Namespace within which the entity lives in the Kubernetes cluster."
                           type: string
                       required:
                       - kind
@@ -147,7 +142,7 @@ spec:
             - routingKey
             type: object
           status:
-            description: RouteGroupStatus defines status of a RouteGroup
+            description: "RouteGroupStatus defines status of a RouteGroup"
             properties:
               conditions:
                 description: |-
@@ -157,7 +152,7 @@ spec:
                   description: |-
                     StatusCondition is a condition struct that matches the conventions expected
                     by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
-
+                    
                     StatusConditions must follow the following discipline in reconciliation:
                     The operator MUST always populate all the condition types in a
                     SignadotSandboxStatus struct, irrespective of whether

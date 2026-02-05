@@ -3,10 +3,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
@@ -52,19 +52,16 @@ spec:
                   workload applies.
                 properties:
                   apiVersion:
-                    description: APIVersion specifies the API Version (e.g. "apps/v1")
-                      of the object to patch.
+                    description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
                     type: string
                   kind:
-                    description: Kind specifies the Kind (e.g. "Deployment") of the
-                      object to patch.
+                    description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
                     type: string
                   name:
-                    description: Name specifies the name of the object to patch.
+                    description: "Name specifies the name of the object to patch."
                     type: string
                   namespace:
-                    description: Namespace optionally specifies which namespace will
-                      be searched.
+                    description: "Namespace optionally specifies which namespace will be searched."
                     type: string
                 required:
                 - apiVersion
@@ -76,17 +73,17 @@ spec:
                   Name of the virtual workload, this is an arbitrary string defined by
                   the user (eg: "apiserver" or "playground-api")
                 maxLength: 30
-                pattern: ^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$
+                pattern: "^$|^[a-z]([a-z0-9-]*[a-zA-Z0-9])?$"
                 type: string
             required:
             - baseline
             - name
             type: object
           status:
-            description: VirtualWorkloadStatus defines status of an virtual workload
+            description: "VirtualWorkloadStatus defines status of an virtual workload"
             properties:
               baseline:
-                description: Baseline provides information about the baseline workload
+                description: "Baseline provides information about the baseline workload"
                 properties:
                   generation:
                     description: |-
@@ -95,8 +92,7 @@ spec:
                     format: int64
                     type: integer
                   workloadID:
-                    description: WorkloadID is the UID of the underlying baseline
-                      workload.
+                    description: "WorkloadID is the UID of the underlying baseline workload."
                     type: string
                 required:
                 - workloadID
@@ -109,7 +105,7 @@ spec:
                   description: |-
                     StatusCondition is a condition struct that matches the conventions expected
                     by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
-
+                    
                     StatusConditions must follow the following discipline in reconciliation:
                     The operator MUST always populate all the condition types in a
                     SignadotSandboxStatus struct, irrespective of whether
@@ -149,12 +145,11 @@ spec:
                       baseline workload
                     type: boolean
                   services:
-                    description: Services provides the list of matching services for
-                      the baseline
+                    description: "Services provides the list of matching services for the baseline"
                     items:
                       properties:
                         from:
-                          description: Name of the baseline service
+                          description: "Name of the baseline service"
                           type: string
                         missingPorts:
                           description: |-
@@ -165,15 +160,15 @@ spec:
                             type: integer
                           type: array
                         ports:
-                          description: List of ports included in the service
+                          description: "List of ports included in the service"
                           items:
                             properties:
                               port:
-                                description: Service port
+                                description: "Service port"
                                 format: int32
                                 type: integer
                               targetPort:
-                                description: Service target port (container port)
+                                description: "Service target port (container port)"
                                 format: int32
                                 type: integer
                             required:

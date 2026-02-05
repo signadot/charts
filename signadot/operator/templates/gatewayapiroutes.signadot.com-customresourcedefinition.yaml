@@ -11,16 +11,16 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: istioroutes.signadot.com
+  name: gatewayapiroutes.signadot.com
 spec:
   group: signadot.com
   names:
-    kind: IstioRoute
-    listKind: IstioRouteList
-    plural: istioroutes
+    kind: GatewayAPIRoute
+    listKind: GatewayAPIRouteList
+    plural: gatewayapiroutes
     shortNames:
-    - sdir
-    singular: istioroute
+    - sdgar
+    singular: gatewayapiroute
   scope: Cluster
   versions:
   - name: v1
@@ -45,7 +45,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: "IstioRouteSpec defines the desired state of an istio route"
+            description: "GatewayAPIRouteSpec defines the desired state of an gateway api route"
             properties:
               managed:
                 description: |-
@@ -185,7 +185,7 @@ spec:
             - routingKey
             type: object
           status:
-            description: "IstioRouteStatus defines the status of an istio route"
+            description: "GatewayAPIRouteStatus defines the status of an istio route"
             properties:
               conditions:
                 description: |-
@@ -218,33 +218,66 @@ spec:
                   - type
                   type: object
                 type: array
-              matchedVirtualServices:
+              matchedObjects:
                 description: |-
-                  MatchedVirtualServices is a list of the matching virtual services for
-                  this route, along with its status
+                  MatchedObjects is the list of Gateway API HTTPRoutes and GRPCRoutes that
+                  match this route, along with their current status.
                 items:
                   properties:
+                    baseline:
+                      description: "Baseline specifies the baseline version of the matched route"
+                      properties:
+                        kind:
+                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                          enum:
+                          - HTTPRoute
+                          - GRPCRoute
+                          type: string
+                        name:
+                          description: "Name specifies the name of the matched route"
+                          type: string
+                        namespace:
+                          description: "Namespace specifies the namespace of the matched route"
+                          type: string
+                      required:
+                      - kind
+                      - name
+                      - namespace
+                      type: object
+                    derived:
+                      description: "Derived specifies the derived version of the matched route"
+                      properties:
+                        kind:
+                          description: "Kind specifies the Kind of the matched route (HTTPRoute or GRPCRoute)."
+                          enum:
+                          - HTTPRoute
+                          - GRPCRoute
+                          type: string
+                        name:
+                          description: "Name specifies the name of the matched route"
+                          type: string
+                        namespace:
+                          description: "Namespace specifies the namespace of the matched route"
+                          type: string
+                      required:
+                      - kind
+                      - name
+                      - namespace
+                      type: object
                     message:
                       description: "Status related message"
                       type: string
-                    name:
-                      description: "This is the virtual service name"
-                      type: string
-                    namespace:
-                      description: "This is the virtual service namespace"
-                      type: string
                     status:
-                      description: "Status information about the virtual service configuration"
+                      description: "Status information about the route configuration"
                       type: string
                   required:
-                  - name
-                  - namespace
+                  - baseline
                   - status
                   type: object
                 type: array
               observedGeneration:
                 description: |-
-                  ObservedGeneration provides the Generation of the last IstioRoute seen by
+                  ObservedGeneration provides the Generation of the last GatewayAPIRoute seen by
                   the controller.
                 format: int64
                 type: integer

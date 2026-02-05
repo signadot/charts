@@ -3,10 +3,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
@@ -26,7 +26,7 @@ spec:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: SignadotRoute is the Schema for the signadotroutes API
+        description: "SignadotRoute is the Schema for the signadotroutes API"
         properties:
           apiVersion:
             description: |-
@@ -46,17 +46,16 @@ spec:
           metadata:
             type: object
           spec:
-            description: SignadotRouteSpec defines the desired state of SignadotRoute
+            description: "SignadotRouteSpec defines the desired state of SignadotRoute"
             properties:
               containerPorts:
                 description: |-
                   ContainerPorts are all the ports declared by all containers in the underlying workload.
-
+                  
                   This is optional for routes specified with the "static" field,
                   but is required for all other routes.
                 items:
-                  description: ContainerPort represents a network port in a single
-                    container.
+                  description: "ContainerPort represents a network port in a single container."
                   properties:
                     containerPort:
                       description: |-
@@ -65,7 +64,7 @@ spec:
                       format: int32
                       type: integer
                     hostIP:
-                      description: What host IP to bind the external port to.
+                      description: "What host IP to bind the external port to."
                       type: string
                     hostPort:
                       description: |-
@@ -113,7 +112,7 @@ spec:
                   list of endpoints rather than relying on the default behavior of
                   selecting forked Pods with a label selector.  Static may not be specified
                   if RouteGroupName is non-empty.
-
+                  
                   If this is specified, the SignadotRoute will not create a child Service
                   to select forked Pods.
                 properties:
@@ -123,14 +122,13 @@ spec:
                       allowing you to statically specify the exact list of endpoints that will
                       be used for the route.
                     items:
-                      description: RouteEndpoint is one endpoint that can be used
-                        to satisfy a given route.
+                      description: "RouteEndpoint is one endpoint that can be used to satisfy a given route."
                       properties:
                         address:
-                          description: Address is the IP or host (no port).
+                          description: "Address is the IP or host (no port)."
                           type: string
                         port:
-                          description: Port is the port number.
+                          description: "Port is the port number."
                           format: int32
                           type: integer
                       required:
@@ -151,20 +149,18 @@ spec:
             - workloadID
             type: object
           status:
-            description: SignadotRouteStatus defines the observed state of SignadotRoute
+            description: "SignadotRouteStatus defines the observed state of SignadotRoute"
             properties:
               endpoints:
-                description: Endpoints are the currently-available (Ready) endpoints
-                  for this route, if any.
+                description: "Endpoints are the currently-available (Ready) endpoints for this route, if any."
                 items:
-                  description: RouteEndpoint is one endpoint that can be used to satisfy
-                    a given route.
+                  description: "RouteEndpoint is one endpoint that can be used to satisfy a given route."
                   properties:
                     address:
-                      description: Address is the IP or host (no port).
+                      description: "Address is the IP or host (no port)."
                       type: string
                     port:
-                      description: Port is the port number.
+                      description: "Port is the port number."
                       format: int32
                       type: integer
                   required:

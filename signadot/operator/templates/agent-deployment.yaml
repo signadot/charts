@@ -1,9 +1,4 @@
 # This file is generated. Do not edit.
-{{- $istioEnabled := false -}}
-{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
-{{- $linkerdEnabled := false -}}
-{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
-{{ if not .Values.disableAgent }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -27,16 +22,14 @@ spec:
   template:
     metadata:
       annotations:
-        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml")
-          . | sha256sum }}'
         {{- range $key, $val := .Values.commonAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        {{- if $linkerdEnabled }}
-        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
+        {{- if and (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") .Values.linkerd.enabled }}
+        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") .Values.linkerd.operator.podAnnotations }}
         {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -44,16 +37,16 @@ spec:
         linkerd.io/inject: "enabled"
         {{- end }}
         {{- end }}
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml") . | sha256sum }}'
       labels:
-        app: signadot-agent
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        {{- if $istioEnabled }}
-        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
+        {{- if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") .Values.istio.enabled }}
+        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") .Values.istio.operator.podLabels }}
         {{- range $key, $val := .Values.istio.operator.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -61,10 +54,13 @@ spec:
         sidecar.istio.io/inject: "true"
         {{- end }}
         {{- end }}
+        app: signadot-agent
     spec:
       containers:
-      - image: {{ with .Values }}{{ with .agent }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/agent:v1.2.0{{- end }}{{- else -}}signadot/agent:v1.2.0{{- end }}{{- else -}}signadot/agent:v1.2.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .agent }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+      - image: |-
+          {{ include "valuesDefault" (list .Values "signadot/agent:v1.3.0" "agent" "image") }}
+        imagePullPolicy: |-
+          {{ include "valuesDefault" (list .Values "IfNotPresent" "agent" "imagePullPolicy") }}
         livenessProbe:
           httpGet:
             path: /nullz
@@ -76,14 +72,25 @@ spec:
           httpGet:
             path: /healthz
             port: 8088
-{{- with .Values }}{{- with .agent }}{{- with .resources }}
         resources:
-{{ toYaml . | indent 10 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+          {{- $r := include "valuesDefault" (list .Values "" "agent" "resources") }}{{- if $r }}
+          {{- $r | nindent 10 }}
+          {{- else }}
+          limits:
+            memory: "2Gi"
+          requests:
+            memory: "128Mi"
+          {{- end }}
         volumeMounts:
-        - mountPath: /etc/signadot/
-          name: signadot-config
+        - name: signadot-config
+          mountPath: /etc/signadot/
           readOnly: true
+      imagePullSecrets:
+        {{- if .Values.imagePullSecrets }}
+        {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- else }} []{{- end }}
       serviceAccountName: agent
       volumes:
       - name: signadot-config
@@ -93,16 +100,10 @@ spec:
               items:
               - key: token
                 path: token
-              name: '{{ $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent")
-                }} {{- with .Values }} {{- with .controlPlane }} {{- with .tokenSecret
-                }} {{- . }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
-                }} {{- else }}cluster-token {{- end }} {{- end }} {{- else }} {{-
-                if $oldSecret }}{{- $oldSecret.metadata.name }} {{- else }}cluster-token
-                {{- end }} {{- end }} {{- else }} {{- if $oldSecret }}{{- $oldSecret.metadata.name
-                }} {{- else }}cluster-token {{- end }} {{- end }}'
+              name: |-
+                {{ include "tokenSecretName" . }}
           - configMap:
               items:
               - key: cluster_config.yaml
                 path: cluster_config.yaml
               name: cluster-config
-{{ end }}
