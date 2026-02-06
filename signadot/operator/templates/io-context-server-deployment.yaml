@@ -37,6 +37,11 @@ spec:
         {{- end }}
         app: io-context-server
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "ioContextServer" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - command:
         - /app/io-context-server
@@ -65,3 +70,7 @@ spec:
         {{- end }}
         {{- else }} []{{- end }}
       serviceAccountName: io-context-server
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "ioContextServer" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}

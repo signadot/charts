@@ -41,6 +41,11 @@ spec:
         {{- end }}
         app: tunnel-api
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "tunnel" "api" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - env:
         - name: EXTERNAL_DNS_SERVER
@@ -78,3 +83,7 @@ spec:
         {{- end }}
         {{- else }} []{{- end }}
       serviceAccountName: tunnel-api
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "tunnel" "api" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}

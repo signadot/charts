@@ -36,6 +36,11 @@ spec:
         {{- end }}
         app: routeserver
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "routeServer" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - image: |-
           {{ include "valuesDefault" (list .Values "signadot/route-server:v1.3.0" "routeServer" "image") }}
@@ -71,6 +76,10 @@ spec:
         {{- end }}
         {{- else }} []{{- end }}
       serviceAccountName: routeserver
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "routeServer" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}
       volumes:
       - name: signadot-config
         projected:

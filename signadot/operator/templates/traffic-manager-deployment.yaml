@@ -56,6 +56,11 @@ spec:
         {{- end }}
         app: traffic-manager
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "trafficManager" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - image: |-
           {{ include "valuesDefault" (list .Values "signadot/traffic-manager:v1.3.0" "trafficManager" "image") }}
@@ -91,6 +96,10 @@ spec:
         {{- end }}
         {{- else }} []{{- end }}
       serviceAccountName: traffic-manager
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "trafficManager" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}
       volumes:
       - name: signadot-config
         projected:

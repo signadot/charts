@@ -59,6 +59,11 @@ spec:
         {{- end }}
         app: tunnel-proxy
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "tunnel" "proxy" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - env:
         - name: POD_IP
@@ -107,3 +112,7 @@ spec:
         {{- end }}
         {{- else }} []{{- end }}
       serviceAccountName: tunnel-proxy
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "tunnel" "proxy" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}

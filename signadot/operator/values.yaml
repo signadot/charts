@@ -1,6 +1,7 @@
 # Default values for signadot operator
 # All values are optional - defaults are embedded in templates
 
+
 # Common settings
 # -----------------------------------------------------------------------------
 
@@ -46,6 +47,8 @@
 # istio:
 #   # Enable the integration with Istio
 #   enabled: true
+#   gatewayAPI:
+#     enabled: false
 #   operator:
 #     # Pod labels for operator workloads on the Istio mesh
 #     # Defaults to: sidecar.istio.io/inject: "true"
@@ -68,6 +71,8 @@
 # linkerd:
 #   # Enable the integration with Linkerd
 #   enabled: true
+#   gatewayAPI:
+#     enabled: false
 #   operator:
 #     # Pod annotations for operator workloads on the Linkerd mesh
 #     # Defaults to: linkerd.io/inject: "enabled"
@@ -90,6 +95,8 @@ controllerManager:
       memory: 512Mi
   # image: my-private-registry/signadot/controller-manager:latest
   # imagePullPolicy: Always
+  # nodeAffinity: {}
+  # tolerations: []
 
 agent:
   resources:
@@ -99,6 +106,8 @@ agent:
       memory: 128Mi
   # image: my-private-registry/signadot/agent:latest
   # imagePullPolicy: Always
+  # nodeAffinity: {}
+  # tolerations: []
 
 routeServer:
   resources:
@@ -108,6 +117,8 @@ routeServer:
       memory: 128Mi
   # image: my-private-registry/signadot/route-server:latest
   # imagePullPolicy: Always
+  # nodeAffinity: {}
+  # tolerations: []
 
 ioContextServer:
   replicas: 1
@@ -118,6 +129,8 @@ ioContextServer:
       memory: 128Mi
   # image: my-private-registry/signadot/io-context-server:latest
   # imagePullPolicy: Always
+  # nodeAffinity: {}
+  # tolerations: []
 
 tunnel:
   api:
@@ -129,6 +142,8 @@ tunnel:
         memory: 128Mi
     # image: my-private-registry/signadot/tunnel-api:latest
     # imagePullPolicy: Always
+    # nodeAffinity: {}
+    # tolerations: []
     # strategy:
     #   rollingUpdate:
     #     maxSurge: 25%
@@ -143,6 +158,8 @@ tunnel:
         memory: 128Mi
     # image: my-private-registry/signadot/tunnel-proxy:latest
     # imagePullPolicy: Always
+    # nodeAffinity: {}
+    # tolerations: []
     # strategy:
     #   rollingUpdate:
     #     maxSurge: 25%
@@ -170,6 +187,8 @@ trafficManager:
       memory: 128Mi
   # image: my-private-registry/signadot/traffic-manager:latest
   # imagePullPolicy: Always
+  # nodeAffinity: {}
+  # tolerations: []
 
 # Sidecar images (injected by controller-manager)
 # routeInit:
@@ -269,7 +288,6 @@ trafficManager:
 #   responseHeadersElide:
 #     - header1
 #     - header2
-#
 
 
 # Traffic manager settings
@@ -279,7 +297,7 @@ trafficManager:
 #   enabled: true
 
 
-# Control Plane settings
+# Internal/dev: Control Plane settings 
 # -----------------------------------------------------------------------------
 
 # controlPlane:
@@ -304,6 +322,7 @@ trafficManager:
 #   proxyURL: http://host.minikube.internal:8087
 #   artifactsAPI: http://host.minikube.internal:8180
 #   trafficmodelsAPI: http://host.minikube.internal:8280
+
 
 # Allow orphaned resources
 # -----------------------------------------------------------------------------

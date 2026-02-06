@@ -56,6 +56,11 @@ spec:
         {{- end }}
         app: signadot-agent
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "agent" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - image: |-
           {{ include "valuesDefault" (list .Values "signadot/agent:v1.3.0" "agent" "image") }}
@@ -92,6 +97,10 @@ spec:
         {{- end }}
         {{- else }} []{{- end }}
       serviceAccountName: agent
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "agent" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}
       volumes:
       - name: signadot-config
         projected:

@@ -436,6 +436,46 @@ requests:
 </table>
 
 
+### Scheduling parameters
+
+The parameters below allow you to control which nodes Signadot Operator components run on.
+
+| Name                            | Description                                               | Default |
+| ------------------------------- | --------------------------------------------------------- | ------- |
+| `agent.nodeAffinity`            | Node affinity rules for the Agent pod                     | `{}`    |
+| `agent.tolerations`             | Tolerations for the Agent pod                             | `[]`    |
+| `ioContextServer.nodeAffinity`  | Node affinity rules for the IO Context Server pod         | `{}`    |
+| `ioContextServer.tolerations`   | Tolerations for the IO Context Server pod                 | `[]`    |
+| `routeServer.nodeAffinity`      | Node affinity rules for the Route Server pod              | `{}`    |
+| `routeServer.tolerations`       | Tolerations for the Route Server pod                      | `[]`    |
+| `controllerManager.nodeAffinity`| Node affinity rules for the Controller Manager pod        | `{}`    |
+| `controllerManager.tolerations` | Tolerations for the Controller Manager pod                | `[]`    |
+| `trafficManager.nodeAffinity`   | Node affinity rules for the Traffic Manager pod           | `{}`    |
+| `trafficManager.tolerations`    | Tolerations for the Traffic Manager pod                   | `[]`    |
+| `tunnel.api.nodeAffinity`       | Node affinity rules for the Tunnel API pod                | `{}`    |
+| `tunnel.api.tolerations`        | Tolerations for the Tunnel API pod                        | `[]`    |
+| `tunnel.proxy.nodeAffinity`     | Node affinity rules for the Tunnel Proxy pod              | `{}`    |
+| `tunnel.proxy.tolerations`      | Tolerations for the Tunnel Proxy pod                      | `[]`    |
+
+Example:
+
+```yaml
+agent:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "signadot"
+    effect: "NoSchedule"
+```
+
+
 ### Controller Manager parameters
 
 | Name                     | Description                                                                                               | Default |
@@ -462,13 +502,13 @@ When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates
 
 Enabling Istio will activate the Istio proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
 
-| Name                                | Description                                                                                               | Default |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------- | ------- |
-| `istio.enabled`                     | Enable Istio integration                                                                                  | `false` |
-| `istio.gatewayAPI.enabled`          | Enable Gateway API with Istio           | `false` |
-| `istio.operator.podLabels`      | Pod Labels to add to signadot components which should use Istio | `{"sidecar.istio.io/inject": "true"}`  |
-| `istio.additionalAnnotations`       | Annotations to add to istio VirtualServices if not present                                                | `{}`    |
-| `istio.additionalLabels`            | Labels to add to istio VirtualServices if not present                                                     | `{}`    |
+| Name                          | Description                                                     | Default                               |
+| ----------------------------- | --------------------------------------------------------------- | ------------------------------------- |
+| `istio.enabled`               | Enable Istio integration                                        | `false`                               |
+| `istio.gatewayAPI.enabled`    | Enable Gateway API with Istio                                   | `false`                               |
+| `istio.operator.podLabels`    | Pod Labels to add to signadot components which should use Istio | `{"sidecar.istio.io/inject": "true"}` |
+| `istio.additionalAnnotations` | Annotations to add to istio VirtualServices if not present      | `{}`                                  |
+| `istio.additionalLabels`      | Labels to add to istio VirtualServices if not present           | `{}`                                  |
 
 
 ### Linkerd parameters
@@ -477,11 +517,11 @@ Enabling Linkerd will activate the Linkerd proxy in the following components: in
 
 Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CRDs, but by using the DevMesh sidecars in the relevant workloads.
 
-| Name              | Description              | Default |
-| ----------------- | ------------------------ | ------- |
-| `linkerd.enabled` | Enable Linkerd integration | `false` |
-| `linkerd.gatewayAPI.enabled` | Enable Gateway API with Linkerd | `false` |
-| `linkerd.operator.podAnnotations`      | Pod Annotations to add to signadot components which should use Linkerd |`{"linkerd.io/inject": "enabled"}`  |
+| Name                              | Description                                                            | Default                            |
+| --------------------------------- | ---------------------------------------------------------------------- | ---------------------------------- |
+| `linkerd.enabled`                 | Enable Linkerd integration                                             | `false`                            |
+| `linkerd.gatewayAPI.enabled`      | Enable Gateway API with Linkerd                                        | `false`                            |
+| `linkerd.operator.podAnnotations` | Pod Annotations to add to signadot components which should use Linkerd | `{"linkerd.io/inject": "enabled"}` |
 
 
 ### Routing parameters
