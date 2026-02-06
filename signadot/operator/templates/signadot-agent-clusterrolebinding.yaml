@@ -1,5 +1,4 @@
 # This file is generated. Do not edit.
-{{ if not .Values.disableAgent }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -20,4 +19,3 @@ subjects:
 - kind: ServiceAccount
   name: agent
   namespace: signadot
-{{ end }}

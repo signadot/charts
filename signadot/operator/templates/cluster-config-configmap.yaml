@@ -1,17 +1,17 @@
-{{- if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") .Values.istio.enabled
-           (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") .Values.linkerd.enabled
-}}
-{{ fail "istio and linkerd cannot be enabled at the same time" }}
-{{- end }}
-{{- if and (hasKey .Values "istio") (hasKey .Values.istio "enableDeprecatedHostRouting") }}
-{{ fail "istio host routing is no longer supported" }}
-{{- end }}
-
+# This file is generated. Do not edit.
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cluster-config
-  namespace: signadot
 data:
   cluster_config.yaml: |
     {{- include "compileClusterConfig" . | nindent 4 }}
+kind: ConfigMap
+metadata:
+  annotations:
+    {{- range $key, $val := .Values.commonAnnotations }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $val := .Values.commonLabels }}
+    {{ $key | quote }}: {{ $val | quote }}
+    {{- end }}
+  name: cluster-config
+  namespace: signadot

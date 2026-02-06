@@ -10,20 +10,20 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   labels:
-    control-plane: controller-manager
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
     {{- range $key, $val := .Values.serviceLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    control-plane: controller-manager
   name: signadot-controller-manager-metrics
   namespace: signadot
 spec:
+  selector:
+    control-plane: controller-manager
   ports:
   - name: metrics
     port: 9090
-    protocol: TCP
     targetPort: 8080
-  selector:
-    control-plane: controller-manager
+    protocol: TCP

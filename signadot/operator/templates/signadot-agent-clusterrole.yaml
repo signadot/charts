@@ -1,5 +1,4 @@
 # This file is generated. Do not edit.
-{{ if not .Values.disableAgent }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -26,6 +25,7 @@ rules:
   - signadotroutegroups
   - routingconfigs
   - istioroutes
+  - gatewayapiroutes
   - jobs
   - jobrunnergroups
   verbs:
@@ -43,4 +43,3 @@ rules:
   - get
   - list
   - watch
-{{ end }}

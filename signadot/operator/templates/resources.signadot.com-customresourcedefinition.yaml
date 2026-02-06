@@ -3,10 +3,10 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.3
     {{- range $key, $val := .Values.commonAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
@@ -47,10 +47,10 @@ spec:
           spec:
             properties:
               name:
-                description: Name of the resource within the sandbox.
+                description: "Name of the resource within the sandbox."
                 type: string
               olm:
-                description: Definition of the OLM to be executed
+                description: "Definition of the OLM to be executed"
                 properties:
                   postStop:
                     description: |-
@@ -59,7 +59,7 @@ spec:
                     items:
                       properties:
                         execUnitTemplate:
-                          description: Definition of the pod to be executed
+                          description: "Definition of the pod to be executed"
                           properties:
                             inputInjects:
                               description: |-
@@ -68,8 +68,7 @@ spec:
                               items:
                                 properties:
                                   dst:
-                                    description: Destination of the input inside the
-                                      exec unit pod
+                                    description: "Destination of the input inside the exec unit pod"
                                     properties:
                                       env:
                                         description: |-
@@ -77,13 +76,11 @@ spec:
                                           main container
                                         type: string
                                       localPath:
-                                        description: Expose the input as a file at
-                                          LocalPath inside the main container
+                                        description: "Expose the input as a file at LocalPath inside the main container"
                                         type: string
                                     type: object
                                   inputName:
-                                    description: InputName is the name of the io input
-                                      to inject into the exec unit.
+                                    description: "InputName is the name of the io input to inject into the exec unit."
                                     type: string
                                 required:
                                 - dst
@@ -91,8 +88,7 @@ spec:
                                 type: object
                               type: array
                             outputExports:
-                              description: OutputExports provides a mapping from local
-                                files to io outputs.
+                              description: "OutputExports provides a mapping from local files to io outputs."
                               items:
                                 properties:
                                   fromPath:
@@ -101,8 +97,7 @@ spec:
                                       output with name OutputName.
                                     type: string
                                   outputName:
-                                    description: OutputName is the name of the io
-                                      output.
+                                    description: "OutputName is the name of the io output."
                                     type: string
                                 required:
                                 - fromPath
@@ -110,18 +105,6 @@ spec:
                                 type: object
                               type: array
                             podTemplate:
-                              description: |-
-                                PodTemplate gives the starting values for the Pod fields (defined as a
-                                corev1.PodTemplateSpec object).
-
-                                The following requirements are enforced for this Pod template:
-
-                                - The Pod Name must be left empty, since it will be filled in by this package.
-                                - The RestartPolicy must be left empty or set to Never.
-                                - There must not be any Pod Volume named signadot-execunit-io
-                                - There must not be any Init Container named signadot-execunit-input-manager.
-                                - There must not be any Pod Container named signadot-execunit-output-manager.
-                                - There must be at least one Pod Container defined.
                               properties:
                                 metadata:
                                   properties:
@@ -129,6 +112,10 @@ spec:
                                       additionalProperties:
                                         type: string
                                       type: object
+                                    creationTimestamp:
+                                      format: date-time
+                                      nullable: true
+                                      type: string
                                     finalizers:
                                       items:
                                         type: string
@@ -641,7 +628,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -1047,7 +1034,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -1055,7 +1042,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -1353,7 +1340,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -1759,7 +1746,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -1767,7 +1754,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -2079,7 +2066,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -2485,7 +2472,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -2493,7 +2480,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -2730,7 +2717,7 @@ spec:
                                         anyOf:
                                         - type: integer
                                         - type: string
-                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                         x-kubernetes-int-or-string: true
                                       type: object
                                     preemptionPolicy:
@@ -2787,7 +2774,7 @@ spec:
                                             anyOf:
                                             - type: integer
                                             - type: string
-                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                             x-kubernetes-int-or-string: true
                                           type: object
                                         requests:
@@ -2795,7 +2782,7 @@ spec:
                                             anyOf:
                                             - type: integer
                                             - type: string
-                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                             x-kubernetes-int-or-string: true
                                           type: object
                                       type: object
@@ -3157,7 +3144,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -3179,7 +3166,7 @@ spec:
                                                 anyOf:
                                                 - type: integer
                                                 - type: string
-                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                 x-kubernetes-int-or-string: true
                                             type: object
                                           ephemeral:
@@ -3246,7 +3233,7 @@ spec:
                                                               anyOf:
                                                               - type: integer
                                                               - type: string
-                                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                              pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                               x-kubernetes-int-or-string: true
                                                             type: object
                                                           requests:
@@ -3254,7 +3241,7 @@ spec:
                                                               anyOf:
                                                               - type: integer
                                                               - type: string
-                                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                              pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                               x-kubernetes-int-or-string: true
                                                             type: object
                                                         type: object
@@ -3581,7 +3568,7 @@ spec:
                                                                     anyOf:
                                                                     - type: integer
                                                                     - type: string
-                                                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                    pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                     x-kubernetes-int-or-string: true
                                                                   resource:
                                                                     type: string
@@ -3798,7 +3785,7 @@ spec:
                           - podTemplate
                           type: object
                         inputs:
-                          description: Definition of the workflow unit inputs
+                          description: "Definition of the workflow unit inputs"
                           items:
                             properties:
                               iocontext:
@@ -3817,20 +3804,18 @@ spec:
                                       Name provides the name of a context, which may house several
                                       keys.
                                     maxLength: 60
-                                    pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                    pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                     type: string
                                 required:
                                 - key
                                 type: object
                               name:
-                                description: Name is the parameter name of an input
-                                  to an OLMWorkUnit.
+                                description: "Name is the parameter name of an input to an OLMWorkUnit."
                                 maxLength: 30
-                                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                 type: string
                               value:
-                                description: Value provides an optional constant value
-                                  for the parameter.
+                                description: "Value provides an optional constant value for the parameter."
                                 type: string
                             required:
                             - name
@@ -3839,30 +3824,28 @@ spec:
                         name:
                           description: |-
                             Name should be a unique inside the OLM
-
+                            
                             It can be up to 30 characters, consisting of alphanumeric
                             characters or '-', but it must both start and end with an alphanumeric
                             character.
                           maxLength: 30
-                          pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                          pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                           type: string
                         outputs:
-                          description: Definition of the workflow unit outputs
+                          description: "Definition of the workflow unit outputs"
                           items:
                             properties:
                               name:
-                                description: Name provides the name of the output
-                                  of an OLMWorkUnit.
+                                description: "Name provides the name of the output of an OLMWorkUnit."
                                 maxLength: 30
-                                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                 type: string
                             required:
                             - name
                             type: object
                           type: array
                         type:
-                          description: Type represents the type of the OLM workflow
-                            unit.
+                          description: "Type represents the type of the OLM workflow unit."
                           enum:
                           - ExecUnit
                           type: string
@@ -3878,7 +3861,7 @@ spec:
                     items:
                       properties:
                         execUnitTemplate:
-                          description: Definition of the pod to be executed
+                          description: "Definition of the pod to be executed"
                           properties:
                             inputInjects:
                               description: |-
@@ -3887,8 +3870,7 @@ spec:
                               items:
                                 properties:
                                   dst:
-                                    description: Destination of the input inside the
-                                      exec unit pod
+                                    description: "Destination of the input inside the exec unit pod"
                                     properties:
                                       env:
                                         description: |-
@@ -3896,13 +3878,11 @@ spec:
                                           main container
                                         type: string
                                       localPath:
-                                        description: Expose the input as a file at
-                                          LocalPath inside the main container
+                                        description: "Expose the input as a file at LocalPath inside the main container"
                                         type: string
                                     type: object
                                   inputName:
-                                    description: InputName is the name of the io input
-                                      to inject into the exec unit.
+                                    description: "InputName is the name of the io input to inject into the exec unit."
                                     type: string
                                 required:
                                 - dst
@@ -3910,8 +3890,7 @@ spec:
                                 type: object
                               type: array
                             outputExports:
-                              description: OutputExports provides a mapping from local
-                                files to io outputs.
+                              description: "OutputExports provides a mapping from local files to io outputs."
                               items:
                                 properties:
                                   fromPath:
@@ -3920,8 +3899,7 @@ spec:
                                       output with name OutputName.
                                     type: string
                                   outputName:
-                                    description: OutputName is the name of the io
-                                      output.
+                                    description: "OutputName is the name of the io output."
                                     type: string
                                 required:
                                 - fromPath
@@ -3936,6 +3914,10 @@ spec:
                                       additionalProperties:
                                         type: string
                                       type: object
+                                    creationTimestamp:
+                                      format: date-time
+                                      nullable: true
+                                      type: string
                                     finalizers:
                                       items:
                                         type: string
@@ -4448,7 +4430,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -4854,7 +4836,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -4862,7 +4844,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -5160,7 +5142,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -5566,7 +5548,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -5574,7 +5556,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -5886,7 +5868,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -6292,7 +6274,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                               requests:
@@ -6300,7 +6282,7 @@ spec:
                                                   anyOf:
                                                   - type: integer
                                                   - type: string
-                                                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                  pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                   x-kubernetes-int-or-string: true
                                                 type: object
                                             type: object
@@ -6537,7 +6519,7 @@ spec:
                                         anyOf:
                                         - type: integer
                                         - type: string
-                                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                        pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                         x-kubernetes-int-or-string: true
                                       type: object
                                     preemptionPolicy:
@@ -6594,7 +6576,7 @@ spec:
                                             anyOf:
                                             - type: integer
                                             - type: string
-                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                             x-kubernetes-int-or-string: true
                                           type: object
                                         requests:
@@ -6602,7 +6584,7 @@ spec:
                                             anyOf:
                                             - type: integer
                                             - type: string
-                                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                            pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                             x-kubernetes-int-or-string: true
                                           type: object
                                       type: object
@@ -6964,7 +6946,7 @@ spec:
                                                           anyOf:
                                                           - type: integer
                                                           - type: string
-                                                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                          pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                           x-kubernetes-int-or-string: true
                                                         resource:
                                                           type: string
@@ -6986,7 +6968,7 @@ spec:
                                                 anyOf:
                                                 - type: integer
                                                 - type: string
-                                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                 x-kubernetes-int-or-string: true
                                             type: object
                                           ephemeral:
@@ -7053,7 +7035,7 @@ spec:
                                                               anyOf:
                                                               - type: integer
                                                               - type: string
-                                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                              pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                               x-kubernetes-int-or-string: true
                                                             type: object
                                                           requests:
@@ -7061,7 +7043,7 @@ spec:
                                                               anyOf:
                                                               - type: integer
                                                               - type: string
-                                                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                              pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                               x-kubernetes-int-or-string: true
                                                             type: object
                                                         type: object
@@ -7388,7 +7370,7 @@ spec:
                                                                     anyOf:
                                                                     - type: integer
                                                                     - type: string
-                                                                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                                                    pattern: "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
                                                                     x-kubernetes-int-or-string: true
                                                                   resource:
                                                                     type: string
@@ -7605,7 +7587,7 @@ spec:
                           - podTemplate
                           type: object
                         inputs:
-                          description: Definition of the workflow unit inputs
+                          description: "Definition of the workflow unit inputs"
                           items:
                             properties:
                               iocontext:
@@ -7624,20 +7606,18 @@ spec:
                                       Name provides the name of a context, which may house several
                                       keys.
                                     maxLength: 60
-                                    pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                    pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                     type: string
                                 required:
                                 - key
                                 type: object
                               name:
-                                description: Name is the parameter name of an input
-                                  to an OLMWorkUnit.
+                                description: "Name is the parameter name of an input to an OLMWorkUnit."
                                 maxLength: 30
-                                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                 type: string
                               value:
-                                description: Value provides an optional constant value
-                                  for the parameter.
+                                description: "Value provides an optional constant value for the parameter."
                                 type: string
                             required:
                             - name
@@ -7646,30 +7626,28 @@ spec:
                         name:
                           description: |-
                             Name should be a unique inside the OLM
-
+                            
                             It can be up to 30 characters, consisting of alphanumeric
                             characters or '-', but it must both start and end with an alphanumeric
                             character.
                           maxLength: 30
-                          pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                          pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                           type: string
                         outputs:
-                          description: Definition of the workflow unit outputs
+                          description: "Definition of the workflow unit outputs"
                           items:
                             properties:
                               name:
-                                description: Name provides the name of the output
-                                  of an OLMWorkUnit.
+                                description: "Name provides the name of the output of an OLMWorkUnit."
                                 maxLength: 30
-                                pattern: ^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$
+                                pattern: "^$|^[a-zA-Z]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"
                                 type: string
                             required:
                             - name
                             type: object
                           type: array
                         type:
-                          description: Type represents the type of the OLM workflow
-                            unit.
+                          description: "Type represents the type of the OLM workflow unit."
                           enum:
                           - ExecUnit
                           type: string
@@ -7688,7 +7666,7 @@ spec:
                   type: string
                 type: array
               pluginName:
-                description: Name of the resource plugin which generated this template.
+                description: "Name of the resource plugin which generated this template."
                 type: string
             required:
             - name
@@ -7696,7 +7674,7 @@ spec:
             - pluginName
             type: object
           status:
-            description: ResourceStatus defines status of a Resource
+            description: "ResourceStatus defines status of a Resource"
             properties:
               conditions:
                 description: |-
@@ -7706,7 +7684,7 @@ spec:
                   description: |-
                     StatusCondition is a condition struct that matches the conventions expected
                     by kubectl, allowing our CRDs to work with: kubectl wait --for=condition=...
-
+                    
                     StatusConditions must follow the following discipline in reconciliation:
                     The operator MUST always populate all the condition types in a
                     SignadotSandboxStatus struct, irrespective of whether
@@ -7730,7 +7708,7 @@ spec:
                   type: object
                 type: array
               create:
-                description: Status of the create workflow
+                description: "Status of the create workflow"
                 items:
                   properties:
                     execUnit:
@@ -7748,7 +7726,7 @@ spec:
                       - namespace
                       type: object
                     name:
-                      description: Name of the workflow unit (as defined in the Spec)
+                      description: "Name of the workflow unit (as defined in the Spec)"
                       type: string
                     phase:
                       description: |-
@@ -7760,7 +7738,7 @@ spec:
                   type: object
                 type: array
               delete:
-                description: Status of the delete workflow
+                description: "Status of the delete workflow"
                 items:
                   properties:
                     execUnit:
@@ -7778,7 +7756,7 @@ spec:
                       - namespace
                       type: object
                     name:
-                      description: Name of the workflow unit (as defined in the Spec)
+                      description: "Name of the workflow unit (as defined in the Spec)"
                       type: string
                     phase:
                       description: |-
@@ -7790,7 +7768,7 @@ spec:
                   type: object
                 type: array
               ioContextName:
-                description: A reference to the IO Context linked to this resource
+                description: "A reference to the IO Context linked to this resource"
                 type: string
               observedGeneration:
                 description: |-
@@ -7799,11 +7777,10 @@ spec:
                 format: int64
                 type: integer
               olmName:
-                description: A reference to the underlying OLM object
+                description: "A reference to the underlying OLM object"
                 type: string
               phase:
-                description: Phase describes the last known position within the resource
-                  lifecycle.
+                description: "Phase describes the last known position within the resource lifecycle."
                 type: string
             type: object
         type: object

@@ -20,26 +20,32 @@ spec:
   template:
     metadata:
       annotations:
-        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml")
-          . | sha256sum }}'
         {{- range $key, $val := .Values.commonAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        cluster-config-checksum: '{{ include (print $.Template.BasePath "/cluster-config-configmap.yaml") . | sha256sum }}'
       labels:
-        app: routeserver
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        app: routeserver
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "routeServer" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
-      - image: {{ with .Values }}{{ with .routeServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/route-server:v1.2.0{{- end }}{{- else -}}signadot/route-server:v1.2.0{{- end }}{{- else -}}signadot/route-server:v1.2.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .routeServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+      - image: |-
+          {{ include "valuesDefault" (list .Values "signadot/route-server:v1.3.0" "routeServer" "image") }}
+        imagePullPolicy: |-
+          {{ include "valuesDefault" (list .Values "IfNotPresent" "routeServer" "imagePullPolicy") }}
         name: routeserver
         ports:
         - containerPort: 7777
@@ -50,21 +56,36 @@ spec:
           name: http-legacy
         - containerPort: 9090
           name: http-metrics
-{{- with .Values }}{{- with .routeServer }}{{- with .resources }}
         resources:
-{{ toYaml . | indent 10 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+          {{- $r := include "valuesDefault" (list .Values "" "routeServer" "resources") }}{{- if $r }}
+          {{- $r | nindent 10 }}
+          {{- else }}
+          limits:
+            memory: "2Gi"
+          requests:
+            memory: "128Mi"
+          {{- end }}
         volumeMounts:
-        - mountPath: /etc/signadot/
-          name: signadot-config
+        - name: signadot-config
+          mountPath: /etc/signadot/
           readOnly: true
+      imagePullSecrets:
+        {{- if .Values.imagePullSecrets }}
+        {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- else }} []{{- end }}
       serviceAccountName: routeserver
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "routeServer" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}
       volumes:
       - name: signadot-config
         projected:
           sources:
           - configMap:
+              name: cluster-config
               items:
               - key: cluster_config.yaml
                 path: cluster_config.yaml
-              name: cluster-config

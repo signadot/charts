@@ -13,9 +13,9 @@ metadata:
   name: io-context-server
   namespace: signadot
 spec:
-{{- with .Values }}{{- with .ioContextServer }}{{- with .replicas }}
-  replicas: {{ . }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+  replicas:
+    {{- with .Values.ioContextServer }}{{- with .replicas }} {{ . }}
+    {{- else }} 1{{- end }}{{- else }} 1{{- end }}
   selector:
     matchLabels:
       app: io-context-server
@@ -29,26 +29,48 @@ spec:
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
       labels:
-        app: io-context-server
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
+        app: io-context-server
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "ioContextServer" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - command:
         - /app/io-context-server
-        - -tls=secretns=signadot
-        - -port=8443
-        image: {{ with .Values }}{{ with .ioContextServer }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/io-context-server:v1.2.0{{- end }}{{- else -}}signadot/io-context-server:v1.2.0{{- end }}{{- else -}}signadot/io-context-server:v1.2.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .ioContextServer }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        - "-tls=secretns=signadot"
+        - "-port=8443"
+        image: |-
+          {{ include "valuesDefault" (list .Values "signadot/io-context-server:v1.3.0" "ioContextServer" "image") }}
+        imagePullPolicy: |-
+          {{ include "valuesDefault" (list .Values "IfNotPresent" "ioContextServer" "imagePullPolicy") }}
         name: io-context-server
         ports:
         - containerPort: 8443
-{{- with .Values }}{{- with .ioContextServer }}{{- with .resources }}
         resources:
-{{ toYaml . | indent 10 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+          {{- $r := include "valuesDefault" (list .Values "" "ioContextServer" "resources") }}{{- if $r }}
+          {{- $r | nindent 10 }}
+          {{- else }}
+          limits:
+            memory: "1Gi"
+          requests:
+            memory: "128Mi"
+          {{- end }}
+      imagePullSecrets:
+        {{- if .Values.imagePullSecrets }}
+        {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- else }} []{{- end }}
       serviceAccountName: io-context-server
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "ioContextServer" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}

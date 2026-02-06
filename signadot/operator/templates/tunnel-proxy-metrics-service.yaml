@@ -10,22 +10,22 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   labels:
-    app: tunnel-proxy
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
     {{- range $key, $val := .Values.serviceLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    app: tunnel-proxy
   name: tunnel-proxy-metrics
   namespace: signadot
 spec:
+  type: ClusterIP
   ports:
-  - appProtocol: http
-    name: metrics
+  - name: metrics
     port: 9090
     protocol: TCP
     targetPort: 8001
+    appProtocol: http
   selector:
     app: tunnel-proxy
-  type: ClusterIP

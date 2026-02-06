@@ -1,10 +1,4 @@
 # This file is generated. Do not edit.
-{{- $istioEnabled := false -}}
-{{- with .Values }}{{ with .istio }}{{- if hasKey . "enabled" }}{{ $istioEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
-{{- $linkerdEnabled := false -}}
-{{- with .Values }}{{ with .linkerd }}{{- if hasKey . "enabled" }}{{ $linkerdEnabled = .enabled }}{{- end }}{{- end }}{{- end }}
-{{- $auditorEnabled := true -}}
-{{- with .Values }}{{ with .tunnel }}{{ with .auditor }}{{- if hasKey . "enabled" }}{{ $auditorEnabled = .enabled }}{{- end }}{{- end }}{{- end }}{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,16 +13,16 @@ metadata:
   name: tunnel-proxy
   namespace: signadot
 spec:
-{{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .replicas }}
-  replicas: {{ . }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+  replicas:
+    {{- with .Values.tunnel }}{{- with .proxy }}{{- with .replicas }} {{ . }}
+    {{- else }} 1{{- end }}{{- else }} 1{{- end }}{{- else }} 1{{- end }}
   selector:
     matchLabels:
       app: tunnel-proxy
-{{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .strategy }}
   strategy:
-{{ toYaml . | indent 4 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
+    {{- with .Values.tunnel }}{{- with .proxy }}{{- with .strategy }}
+    {{ toYaml . | nindent 4 }}
+    {{- else }} {}{{- end }}{{- end }}{{- end }}
   template:
     metadata:
       annotations:
@@ -38,25 +32,24 @@ spec:
         {{- range $key, $val := .Values.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        {{- if $linkerdEnabled }}
-        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") (.Values.linkerd.operator.podAnnotations)}}
+        {{- if and (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") .Values.linkerd.enabled }}
+        {{- if and (hasKey .Values.linkerd "operator") (hasKey .Values.linkerd.operator "podAnnotations") .Values.linkerd.operator.podAnnotations }}
         {{- range $key, $val := .Values.linkerd.operator.podAnnotations }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- else }}
-        linkerd.io/inject: enabled
+        linkerd.io/inject: "enabled"
         {{- end }}
         {{- end }}
       labels:
-        app: tunnel-proxy
         {{- range $key, $val := .Values.commonLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
         {{- range $key, $val := .Values.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
-        {{- if $istioEnabled }}
-        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") (.Values.istio.operator.podLabels) }}
+        {{- if and (hasKey .Values "istio") (hasKey .Values.istio "enabled") .Values.istio.enabled }}
+        {{- if and (hasKey .Values.istio "operator") (hasKey .Values.istio.operator "podLabels") .Values.istio.operator.podLabels }}
         {{- range $key, $val := .Values.istio.operator.podLabels }}
         {{ $key | quote }}: {{ $val | quote }}
         {{- end }}
@@ -64,13 +57,15 @@ spec:
         sidecar.istio.io/inject: "true"
         {{- end }}
         {{- end }}
+        app: tunnel-proxy
     spec:
+      affinity:
+        nodeAffinity:
+          {{- $na := include "valuesDefault" (list .Values "" "tunnel" "proxy" "nodeAffinity") }}{{- if $na }}
+          {{- $na | nindent 10 }}
+          {{- else }} {}{{- end }}
       containers:
       - env:
-        - name: DISABLE_SSH_TUNNEL
-          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableSSH }}{{ . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
-        - name: DISABLE_XAP_TUNNEL
-          value: {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableXAP }}{{ . | quote}}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
         - name: POD_IP
           valueFrom:
             fieldRef:
@@ -79,95 +74,45 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-proxy:v1.2.0{{- end }}{{- else -}}signadot/tunnel-proxy:v1.2.0{{- end }}{{- else -}}signadot/tunnel-proxy:v1.2.0{{- end }}{{- else -}}signadot/tunnel-proxy:v1.2.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .proxy }}{{ with .imagePullPolicy }}{{ . | quote}}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}{{- else -}}IfNotPresent{{- end }}
+        - name: DISABLE_SSH_TUNNEL
+          value: |
+            {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableSSH -}}
+            {{ . | quote }}
+            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+        - name: DISABLE_XAP_TUNNEL
+          value: |
+            {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableXAP -}}
+            {{ . | quote }}
+            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+        image: |-
+          {{ include "valuesDefault" (list .Values "signadot/tunnel-proxy:v1.3.0" "tunnel" "proxy" "image") }}
+        imagePullPolicy: |-
+          {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "proxy" "imagePullPolicy") }}
         name: tunnel-proxy
         ports:
         - containerPort: 1080
-        - containerPort: 5000
         - containerPort: 2222
         - containerPort: 7777
         - containerPort: 8001
-{{- with .Values }}{{- with .tunnel }}{{- with .proxy }}{{- with .resources }}
         resources:
-{{ toYaml . | indent 10 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
-      - args:
-        - -c
-        - /etc/config.yaml
-        command:
-        - envoy
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .image }}{{ . | quote}}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}{{- else -}}envoyproxy/envoy:v1.32.1{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
-        name: auditor
-{{- with .Values }}{{- with .tunnel }}{{- with .auditor }}{{- with .resources }}
-        resources:
-{{ toYaml . | indent 10 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsUser: 1011
-        volumeMounts:
-        - mountPath: /etc/config.yaml
-          name: tunnel-auditor-config
-          subPath: config.yaml
-        - mountPath: /etc/lua/inbound-rules.lua
-          name: tunnel-auditor-config
-          subPath: inbound-rules.lua
-        - mountPath: /etc/lua/outbound-rules.lua
-          name: tunnel-auditor-config
-          subPath: outbound-rules.lua
-        - mountPath: /var/log
-          name: varlog
-        - mountPath: /usr/local/share/lua
-          name: luarocks
-      {{- end }}
-      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
-      initContainers:
-      - env:
-        - name: SIGNADOT_IPTABLES_MODE
-          value: {{ with .Values }}{{ with .routing }}{{ with .iptablesMode }}{{ . }}{{- else -}}"legacy"{{- end }}{{- else -}}"legacy"{{- end }}{{- else -}}"legacy"{{- end }}
-        - name: LUA_ROCKS
-          value: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .luaRocks }}{{ . }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}{{- else -}}""{{- end }}
-        - name: INBOUND_AUDITOR_PORT
-          value: "10000"
-        - name: OUTBOUND_AUDITOR_PORT
-          value: "10001"
-        image: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .image }}{{ . | quote}}{{- else -}}signadot/tunnel-auditor-init:v1.2.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v1.2.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v1.2.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v1.2.0{{- end }}{{- else -}}signadot/tunnel-auditor-init:v1.2.0{{- end }}
-        imagePullPolicy: {{ with .Values }}{{ with .tunnel }}{{ with .auditor }}{{ with .init }}{{ with .imagePullPolicy }}{{ . }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}{{- else -}}"IfNotPresent"{{- end }}
-        name: auditor-init
-{{- with .Values }}{{- with .tunnel }}{{- with .auditor }}{{- with .init }}{{- with .resources }}
-        resources:
-{{ toYaml . | indent 10 }}
-{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}{{- else -}}{{- end }}
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            add:
-            - NET_ADMIN
-            - NET_RAW
-            drop:
-            - ALL
-          privileged: false
-          readOnlyRootFilesystem: false
-          runAsGroup: 0
-          runAsNonRoot: false
-          runAsUser: 0
-        volumeMounts:
-        - mountPath: /var/log
-          name: varlog
-        - mountPath: /usr/local/share/lua
-          name: luarocks
-      {{- end }}
+          {{- $r := include "valuesDefault" (list .Values "" "tunnel" "proxy" "resources") }}{{- if $r }}
+          {{- $r | nindent 10 }}
+          {{- else }}
+          limits:
+            memory: "2Gi"
+          requests:
+            memory: "128Mi"
+          {{- end }}
+      imagePullSecrets:
+        {{- if .Values.imagePullSecrets }}
+        {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+        {{- else }} []{{- end }}
       serviceAccountName: tunnel-proxy
-      volumes:
-      {{- if and (not $istioEnabled) (not $linkerdEnabled) $auditorEnabled }}
-      - configMap:
-          name: tunnel-auditor-config
-        name: tunnel-auditor-config
-      {{- end }}
-      - emptyDir: {}
-        name: varlog
-      - emptyDir: {}
-        name: luarocks
+      tolerations:
+        {{- $t := include "valuesDefault" (list .Values "" "tunnel" "proxy" "tolerations") }}{{- if $t }}
+        {{- $t | nindent 8 }}
+        {{- else }} []{{- end }}
