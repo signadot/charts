@@ -2,6 +2,14 @@
 # All values are optional - defaults are embedded in templates
 
 
+# Namespace where the operator is deployed.
+# Defaults to "signadot". Override this if your organization's namespace
+# naming policy requires a different namespace name.
+# Example:
+#   namespace: signadot-custom-ns
+namespace: signadot
+
+
 # Common settings
 # -----------------------------------------------------------------------------
 

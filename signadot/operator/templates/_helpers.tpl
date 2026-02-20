@@ -1,4 +1,13 @@
 {{/*
+operator.namespace - get the operator deployment namespace
+Defaults to "signadot" for backward compatibility.
+Override via .Values.namespace to install into a custom namespace.
+*/}}
+{{- define "operator.namespace" -}}
+{{- .Values.namespace | default "signadot" -}}
+{{- end -}}
+
+{{/*
 valuesDefault - dig into .Values with a default fallback
 Usage: {{ include "valuesDefault" (list .Values "defaultValue" "path" "to" "value") }}
 */}}
@@ -29,13 +38,14 @@ false
 {{- end }}
 
 {{/*
-getAllowedNamespaces - get allowed namespaces, always including signadot
+getAllowedNamespaces - get allowed namespaces, always including the operator namespace
 */}}
 {{- define "getAllowedNamespaces" -}}
+{{- $operatorNs := include "operator.namespace" . -}}
 {{- if .Values.allowedNamespaces }}
   {{- $userNamespaces := .Values.allowedNamespaces -}}
-  {{- if not (has "signadot" $userNamespaces) }}
-    {{- $userNamespaces = append $userNamespaces "signadot" -}}
+  {{- if not (has $operatorNs $userNamespaces) }}
+    {{- $userNamespaces = append $userNamespaces $operatorNs -}}
   {{- end }}
 {{- $userNamespaces | toJson -}}
 {{- else -}}
@@ -75,7 +85,7 @@ Checks .Values.controlPlane.tokenSecret, then looks up existing "cluster-agent" 
 then falls back to "cluster-token"
 */}}
 {{- define "tokenSecretName" -}}
-{{- $oldSecret := (lookup "v1" "Secret" "signadot" "cluster-agent") -}}
+{{- $oldSecret := (lookup "v1" "Secret" (include "operator.namespace" .) "cluster-agent") -}}
 {{- if and .Values.controlPlane .Values.controlPlane.tokenSecret -}}
 {{- .Values.controlPlane.tokenSecret -}}
 {{- else if $oldSecret.metadata -}}

@@ -11,7 +11,7 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: signadot-io-context-server
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -19,4 +19,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: io-context-server
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}

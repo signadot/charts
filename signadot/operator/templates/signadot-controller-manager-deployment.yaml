@@ -12,7 +12,7 @@ metadata:
     {{- end }}
     control-plane: controller-manager
   name: signadot-controller-manager
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   replicas:
     {{- with .Values.controllerManager }}{{- with .replicas }} {{ . }}

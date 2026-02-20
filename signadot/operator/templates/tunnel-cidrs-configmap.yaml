@@ -17,4 +17,4 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: tunnel-cidrs
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}

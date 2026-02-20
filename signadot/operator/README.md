@@ -22,6 +22,20 @@ kubectl create ns signadot
 helm repo add signadot https://charts.signadot.com
 helm install signadot-operator signadot/operator --set controlPlane.clusterToken=$CLUSTER_TOKEN
 ```
+
+To install into a custom namespace (e.g. when your organization enforces a
+namespace naming policy):
+
+```sh
+# Create the custom namespace
+kubectl create ns <CUSTOM_NAMESPACE>
+
+# Install with custom namespace
+helm install signadot-operator signadot/operator \
+  --set controlPlane.clusterToken=$CLUSTER_TOKEN \
+  --set namespace=<CUSTOM_NAMESPACE>
+```
+
 The command deploys Signadot Operator on the Kubernetes cluster with default
 configuration. The [Parameters](#parameters) section lists the parameters that
 can be configured during installation.
@@ -33,15 +47,17 @@ If you installed the chart without a cluster token or would like to rotate the c
 token, you can create the associated secret with
 
 ```sh
-kubectl -n signadot create secret generic cluster-token --from-literal=token=$CLUSTER_TOKEN
+kubectl -n <NAMESPACE> create secret generic cluster-token --from-literal=token=$CLUSTER_TOKEN
 ```
+
+where `<NAMESPACE>` is the namespace where the operator is deployed (default: `signadot`).
 
 To rotate the secret, update the existing secret with the new value. Running
 services will automatically detect the change and begin using the updated
 secret. E.g.:
 
 ```sh
-kubectl -n signadot patch secret cluster-token \
+kubectl -n <NAMESPACE> patch secret cluster-token \
   --type=merge -p '{"stringData":{"token":"'"$CLUSTER_TOKEN"'"}}'
 ```
 
@@ -67,7 +83,7 @@ To uninstall/delete the `signadot-operator` deployment:
 # Uninstall
 helm uninstall signadot-operator
 
-# Remove signadot namespace
+# Remove the namespace (replace signadot with your custom namespace if applicable)
 kubectl delete ns signadot
 ```
 
@@ -75,15 +91,16 @@ kubectl delete ns signadot
 
 ### Common parameters
 
-| Name                 | Description                                               | Default  |
-| -------------------- | --------------------------------------------------------- | -------- |
-| `commonLabels`       | Labels to add to all deployed objects                     | `{}`     |
-| `commonAnnotations`  | Annotations to add to all deployed objects                | `{}`     |
-| `podLabels`          | Labels to add to all deployed `Pod` objects               | `{}`     |
-| `podAnnotations`     | Annotations to add to all deployed `Pod` objects          | `{}`     |
-| `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`     |
-| `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`     |
-| `imagePullSecrets`   | List of image pull secret names for all deployments       | `[]`     |
+| Name                 | Description                                               | Default     |
+| -------------------- | --------------------------------------------------------- | ----------- |
+| `namespace`          | Namespace where the operator is deployed                  | `signadot`  |
+| `commonLabels`       | Labels to add to all deployed objects                     | `{}`        |
+| `commonAnnotations`  | Annotations to add to all deployed objects                | `{}`        |
+| `podLabels`          | Labels to add to all deployed `Pod` objects               | `{}`        |
+| `podAnnotations`     | Annotations to add to all deployed `Pod` objects          | `{}`        |
+| `serviceLabels`      | Labels to add to all deployed `Service` objects           | `{}`        |
+| `serviceAnnotations` | Annotations to add to all deployed `Service` objects      | `{}`        |
+| `imagePullSecrets`   | List of image pull secret names for all deployments       | `[]`        |
 
 
 ### Image and replicas customization parameters

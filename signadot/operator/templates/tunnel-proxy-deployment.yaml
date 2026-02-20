@@ -11,7 +11,7 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: tunnel-proxy
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   replicas:
     {{- with .Values.tunnel }}{{- with .proxy }}{{- with .replicas }} {{ . }}

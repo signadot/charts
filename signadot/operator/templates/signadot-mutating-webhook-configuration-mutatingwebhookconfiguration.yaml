@@ -17,7 +17,7 @@ webhooks:
   clientConfig:
     service:
       name: signadot-webhook-service
-      namespace: signadot
+      namespace: {{ include "operator.namespace" . }}
       path: /mutate-v1-pod
   failurePolicy: Ignore
   name: sidecar-injector.signadot.com

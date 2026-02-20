@@ -11,7 +11,7 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: tunnel-api-config
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 rules:
 - apiGroups:
   - ""

@@ -11,7 +11,7 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: routeserver
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   replicas: 1
   selector:

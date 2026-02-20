@@ -14,4 +14,4 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: cluster-config
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}

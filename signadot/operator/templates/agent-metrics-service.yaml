@@ -18,7 +18,7 @@ metadata:
     {{- end }}
     app: signadot-agent
   name: agent-metrics
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   type: ClusterIP
   ports:

@@ -24,4 +24,4 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: signadot-manager-config
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}

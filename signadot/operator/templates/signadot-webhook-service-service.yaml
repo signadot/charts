@@ -17,7 +17,7 @@ metadata:
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
   name: signadot-webhook-service
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   ports:
   - port: 443

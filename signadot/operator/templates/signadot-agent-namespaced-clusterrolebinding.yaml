@@ -18,6 +18,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: agent
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 {{ end }}
 # This file is generated. Do not edit.

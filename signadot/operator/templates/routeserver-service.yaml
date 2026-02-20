@@ -19,7 +19,7 @@ metadata:
     {{- end }}
     app: routeserver
   name: routeserver
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   type: ClusterIP
   selector:

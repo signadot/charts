@@ -15,7 +15,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: signadot-controller-manager
-  namespace: signadot
+  namespace: {{ include "operator.namespace" $ }}
 {{ end }}
 # Bind the ClusterRole containing agent permissions to the agent's
 # ServiceAccount only in the specified namespaces.
@@ -33,5 +33,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: agent
-  namespace: signadot
+  namespace: {{ include "operator.namespace" $ }}
 {{ end }}

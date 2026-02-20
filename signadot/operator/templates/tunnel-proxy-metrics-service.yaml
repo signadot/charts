@@ -18,7 +18,7 @@ metadata:
     {{- end }}
     app: tunnel-proxy
   name: tunnel-proxy-metrics
-  namespace: signadot
+  namespace: {{ include "operator.namespace" . }}
 spec:
   type: ClusterIP
   ports:
