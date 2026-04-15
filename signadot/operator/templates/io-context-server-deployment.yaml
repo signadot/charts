@@ -48,7 +48,7 @@ spec:
         - "-tls=secretns=signadot"
         - "-port=8443"
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/io-context-server:v1.3.0" "ioContextServer" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/io-context-server:v1.3.1" "ioContextServer" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "ioContextServer" "imagePullPolicy") }}
         name: io-context-server

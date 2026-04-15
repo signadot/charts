@@ -87,7 +87,7 @@ spec:
             {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
             {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/tunnel-proxy:v1.3.0" "tunnel" "proxy" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/tunnel-proxy:v1.3.1" "tunnel" "proxy" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "proxy" "imagePullPolicy") }}
         name: tunnel-proxy

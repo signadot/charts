@@ -502,13 +502,15 @@ When Istio is enabled (`istio.enabled: true`), the Signadot Operator manipulates
 
 Enabling Istio will activate the Istio proxy in the following components: in Signadot `agent` (for control-plane access to the cluster), in `tunnel-proxy` (to allow workstation access to the cluster via `signadot local connect`), and in the managed job runner group (for executing in-cluster smart tests).
 
-| Name                          | Description                                                     | Default                               |
-| ----------------------------- | --------------------------------------------------------------- | ------------------------------------- |
-| `istio.enabled`               | Enable Istio integration                                        | `false`                               |
-| `istio.gatewayAPI.enabled`    | Enable Gateway API with Istio                                   | `false`                               |
-| `istio.operator.podLabels`    | Pod Labels to add to signadot components which should use Istio | `{"sidecar.istio.io/inject": "true"}` |
-| `istio.additionalAnnotations` | Annotations to add to istio VirtualServices if not present      | `{}`                                  |
-| `istio.additionalLabels`      | Labels to add to istio VirtualServices if not present           | `{}`                                  |
+| Name                                          | Description                                                        | Default                               |
+| --------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------- |
+| `istio.enabled`                               | Enable Istio integration                                           | `false`                               |
+| `istio.gatewayAPI.enabled`                    | Enable Gateway API with Istio                                      | `false`                               |
+| `istio.gatewayAPI.preservedAnnotations`       | Glob patterns for baseline annotations to preserve on derived routes | `[]`                                |
+| `istio.gatewayAPI.preservedLabels`            | Glob patterns for baseline labels to preserve on derived routes    | `[]`                                  |
+| `istio.operator.podLabels`                    | Pod Labels to add to signadot components which should use Istio    | `{"sidecar.istio.io/inject": "true"}` |
+| `istio.additionalAnnotations`                 | Annotations to add to istio VirtualServices if not present         | `{}`                                  |
+| `istio.additionalLabels`                      | Labels to add to istio VirtualServices if not present              | `{}`                                  |
 
 
 ### Linkerd parameters
@@ -517,11 +519,13 @@ Enabling Linkerd will activate the Linkerd proxy in the following components: in
 
 Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CRDs, but by using the DevMesh sidecars in the relevant workloads.
 
-| Name                              | Description                                                            | Default                            |
-| --------------------------------- | ---------------------------------------------------------------------- | ---------------------------------- |
-| `linkerd.enabled`                 | Enable Linkerd integration                                             | `false`                            |
-| `linkerd.gatewayAPI.enabled`      | Enable Gateway API with Linkerd                                        | `false`                            |
-| `linkerd.operator.podAnnotations` | Pod Annotations to add to signadot components which should use Linkerd | `{"linkerd.io/inject": "enabled"}` |
+| Name                                           | Description                                                            | Default                            |
+| ---------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------- |
+| `linkerd.enabled`                              | Enable Linkerd integration                                             | `false`                            |
+| `linkerd.gatewayAPI.enabled`                   | Enable Gateway API with Linkerd                                        | `false`                            |
+| `linkerd.gatewayAPI.preservedAnnotations`      | Glob patterns for baseline annotations to preserve on derived routes   | `[]`                               |
+| `linkerd.gatewayAPI.preservedLabels`           | Glob patterns for baseline labels to preserve on derived routes        | `[]`                               |
+| `linkerd.operator.podAnnotations`              | Pod Annotations to add to signadot components which should use Linkerd | `{"linkerd.io/inject": "enabled"}` |
 
 
 ### Routing parameters

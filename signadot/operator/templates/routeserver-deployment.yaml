@@ -43,7 +43,7 @@ spec:
           {{- else }} {}{{- end }}
       containers:
       - image: |-
-          {{ include "valuesDefault" (list .Values "signadot/route-server:v1.3.0" "routeServer" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/route-server:v1.3.1" "routeServer" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "routeServer" "imagePullPolicy") }}
         name: routeserver
