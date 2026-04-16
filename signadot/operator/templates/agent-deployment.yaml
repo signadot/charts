@@ -63,7 +63,7 @@ spec:
           {{- else }} {}{{- end }}
       containers:
       - image: |-
-          {{ include "valuesDefault" (list .Values "signadot/agent:v1.3.0" "agent" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/agent:v1.3.1" "agent" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "agent" "imagePullPolicy") }}
         livenessProbe:

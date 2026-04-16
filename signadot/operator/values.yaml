@@ -49,6 +49,12 @@
 #   enabled: true
 #   gatewayAPI:
 #     enabled: false
+#     # Glob patterns for baseline annotations to preserve on derived routes.
+#     # Examples: "konghq.com/*", "custom.example.com/team"
+#     # preservedAnnotations:
+#     #   - "konghq.com/*"
+#     # Glob patterns for baseline labels to preserve on derived routes.
+#     # preservedLabels: []
 #   operator:
 #     # Pod labels for operator workloads on the Istio mesh
 #     # Defaults to: sidecar.istio.io/inject: "true"
@@ -73,6 +79,12 @@
 #   enabled: true
 #   gatewayAPI:
 #     enabled: false
+#     # Glob patterns for baseline annotations to preserve on derived routes.
+#     # Examples: "linkerd.io/*", "custom.example.com/team"
+#     # preservedAnnotations:
+#     #   - "linkerd.io/*"
+#     # Glob patterns for baseline labels to preserve on derived routes.
+#     # preservedLabels: []
 #   operator:
 #     # Pod annotations for operator workloads on the Linkerd mesh
 #     # Defaults to: linkerd.io/inject: "enabled"

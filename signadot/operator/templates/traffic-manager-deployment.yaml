@@ -63,7 +63,7 @@ spec:
           {{- else }} {}{{- end }}
       containers:
       - image: |-
-          {{ include "valuesDefault" (list .Values "signadot/traffic-manager:v1.3.0" "trafficManager" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/traffic-manager:v1.3.1" "trafficManager" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "trafficManager" "imagePullPolicy") }}
         name: traffic-manager

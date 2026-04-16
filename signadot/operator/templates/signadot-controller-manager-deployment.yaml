@@ -52,37 +52,37 @@ spec:
         env:
         - name: IO_INIT_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/io-init:v1.3.0" "ioInit" "image") }}
+            {{ include "valuesDefault" (list .Values "signadot/io-init:v1.3.1" "ioInit" "image") }}
         - name: IO_INIT_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "ioInit" "imagePullPolicy") }}
         - name: IO_SIDECAR_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/io-sidecar:v1.3.0" "ioSidecar" "image") }}
+            {{ include "valuesDefault" (list .Values "signadot/io-sidecar:v1.3.1" "ioSidecar" "image") }}
         - name: IO_SIDECAR_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "ioSidecar" "imagePullPolicy") }}
         - name: JOB_EXECUTOR_INIT_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/job-executor-init:v1.3.0" "jobExecutorInit" "image") }}
+            {{ include "valuesDefault" (list .Values "signadot/job-executor-init:v1.3.1" "jobExecutorInit" "image") }}
         - name: JOB_EXECUTOR_INIT_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "jobExecutorInit" "imagePullPolicy") }}
         - name: JOB_EXECUTOR_PROXY_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/job-executor-proxy:v1.3.0" "jobExecutorProxy" "image") }}
+            {{ include "valuesDefault" (list .Values "signadot/job-executor-proxy:v1.3.1" "jobExecutorProxy" "image") }}
         - name: JOB_EXECUTOR_PROXY_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "jobExecutorProxy" "imagePullPolicy") }}
         - name: ROUTE_SIDECAR_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/route-sidecar:v1.3.0" "routeSidecar" "image") }}
+            {{ include "valuesDefault" (list .Values "signadot/route-sidecar:v1.3.1" "routeSidecar" "image") }}
         - name: ROUTE_SIDECAR_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "routeSidecar" "imagePullPolicy") }}
         - name: SIDECAR_INIT_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/route-sidecar-init:v1.3.0" "routeInit" "image") }}
+            {{ include "valuesDefault" (list .Values "signadot/route-sidecar-init:v1.3.1" "routeInit" "image") }}
         - name: SIDECAR_INIT_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "routeInit" "imagePullPolicy") }}
@@ -129,7 +129,7 @@ spec:
           value: |-
             {{ include "valuesDefaultJson" (list .Values "jobExecutorProxy" "resources") }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/controller-manager:v1.3.0" "controllerManager" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/controller-manager:v1.3.1" "controllerManager" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "controllerManager" "imagePullPolicy") }}
         livenessProbe:

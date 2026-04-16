@@ -61,7 +61,7 @@ spec:
             {{- else -}}""{{- end }}{{- else -}}""{{- end }}
             {{- else -}}""{{- end }}{{- else -}}""{{- end }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/tunnel-api:v1.3.0" "tunnel" "api" "image") }}
+          {{ include "valuesDefault" (list .Values "signadot/tunnel-api:v1.3.1" "tunnel" "api" "image") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "api" "imagePullPolicy") }}
         name: tunnel-api

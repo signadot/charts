@@ -10,34 +10,13 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-agent
+  name: signadot-plan-runner
 rules:
 - apiGroups:
   - signadot.com
   resources:
   - signadotsandboxes
-  - signadotexternalworkloads
-  - forkedworkloads
-  - resources
-  - signadotobjectlifecyclemethods
   - signadotroutegroups
-  - routingconfigs
-  - istioroutes
-  - gatewayapiroutes
-  - jobs
-  - jobrunnergroups
-  - virtualworkloads
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
   verbs:
   - get
   - list

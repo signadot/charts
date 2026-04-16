@@ -29,6 +29,40 @@ false
 {{- end }}
 
 {{/*
+gatewayAPIPreservedAnnotations - get preservedAnnotations from the mesh that has gatewayAPI enabled
+Returns "[]" or a newline followed by the indented YAML list (indent 6).
+Usage: {{ include "gatewayAPIPreservedAnnotations" .Values }}
+*/}}
+{{- define "gatewayAPIPreservedAnnotations" -}}
+{{- $istioGW := and (hasKey . "istio") (hasKey .istio "enabled") .istio.enabled (hasKey .istio "gatewayAPI") (hasKey .istio.gatewayAPI "enabled") .istio.gatewayAPI.enabled -}}
+{{- $linkerdGW := and (hasKey . "linkerd") (hasKey .linkerd "enabled") .linkerd.enabled (hasKey .linkerd "gatewayAPI") (hasKey .linkerd.gatewayAPI "enabled") .linkerd.gatewayAPI.enabled -}}
+{{- if and $istioGW (hasKey .istio.gatewayAPI "preservedAnnotations") .istio.gatewayAPI.preservedAnnotations -}}
+{{ printf "\n" }}{{ toYaml .istio.gatewayAPI.preservedAnnotations | indent 6}}
+{{- else if and $linkerdGW (hasKey .linkerd.gatewayAPI "preservedAnnotations") .linkerd.gatewayAPI.preservedAnnotations -}}
+{{ printf "\n" }}{{ toYaml .linkerd.gatewayAPI.preservedAnnotations | indent 6}}
+{{- else -}}
+[]
+{{- end -}}
+{{- end }}
+
+{{/*
+gatewayAPIPreservedLabels - get preservedLabels from the mesh that has gatewayAPI enabled
+Returns "[]" or a newline followed by the indented YAML list (indent 6).
+Usage: {{ include "gatewayAPIPreservedLabels" .Values }}
+*/}}
+{{- define "gatewayAPIPreservedLabels" -}}
+{{- $istioGW := and (hasKey . "istio") (hasKey .istio "enabled") .istio.enabled (hasKey .istio "gatewayAPI") (hasKey .istio.gatewayAPI "enabled") .istio.gatewayAPI.enabled -}}
+{{- $linkerdGW := and (hasKey . "linkerd") (hasKey .linkerd "enabled") .linkerd.enabled (hasKey .linkerd "gatewayAPI") (hasKey .linkerd.gatewayAPI "enabled") .linkerd.gatewayAPI.enabled -}}
+{{- if and $istioGW (hasKey .istio.gatewayAPI "preservedLabels") .istio.gatewayAPI.preservedLabels -}}
+{{ printf "\n" }}{{ toYaml .istio.gatewayAPI.preservedLabels | indent 6}}
+{{- else if and $linkerdGW (hasKey .linkerd.gatewayAPI "preservedLabels") .linkerd.gatewayAPI.preservedLabels -}}
+{{ printf "\n" }}{{ toYaml .linkerd.gatewayAPI.preservedLabels | indent 6}}
+{{- else -}}
+[]
+{{- end -}}
+{{- end }}
+
+{{/*
 getAllowedNamespaces - get allowed namespaces, always including signadot
 */}}
 {{- define "getAllowedNamespaces" -}}
@@ -140,6 +174,8 @@ routing:
     {{- end}}
   gatewayAPI:
     enabled: {{ include "gatewayAPIEnabled" .Values }}
+    preservedAnnotations: {{ include "gatewayAPIPreservedAnnotations" .Values }}
+    preservedLabels: {{ include "gatewayAPIPreservedLabels" .Values }}
   iptablesMode: {{ if and (hasKey .Values "routing") (hasKey .Values.routing "iptablesMode") -}}{{ .Values.routing.iptablesMode }}{{- else -}}legacy{{- end }}
   customHeaders: {{ with .Values }}{{ with .routing }}{{ with .customHeaders }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
 trafficManager:
