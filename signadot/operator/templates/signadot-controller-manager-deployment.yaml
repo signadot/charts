@@ -15,8 +15,7 @@ metadata:
   namespace: signadot
 spec:
   replicas:
-    {{- with .Values.controllerManager }}{{- with .replicas }} {{ . }}
-    {{- else }} 2{{- end }}{{- else }} 2{{- end }}
+    {{- include "valuesDefault" (list .Values 2 "controllerManager" "replicas") | trim | printf " %s" }}
   selector:
     matchLabels:
       control-plane: controller-manager
@@ -52,37 +51,37 @@ spec:
         env:
         - name: IO_INIT_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/io-init:v1.3.1" "ioInit" "image") }}
+            {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "io-init" "ioInit") }}
         - name: IO_INIT_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "ioInit" "imagePullPolicy") }}
         - name: IO_SIDECAR_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/io-sidecar:v1.3.1" "ioSidecar" "image") }}
+            {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "io-sidecar" "ioSidecar") }}
         - name: IO_SIDECAR_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "ioSidecar" "imagePullPolicy") }}
         - name: JOB_EXECUTOR_INIT_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/job-executor-init:v1.3.1" "jobExecutorInit" "image") }}
+            {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "job-executor-init" "jobExecutorInit") }}
         - name: JOB_EXECUTOR_INIT_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "jobExecutorInit" "imagePullPolicy") }}
         - name: JOB_EXECUTOR_PROXY_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/job-executor-proxy:v1.3.1" "jobExecutorProxy" "image") }}
+            {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "job-executor-proxy" "jobExecutorProxy") }}
         - name: JOB_EXECUTOR_PROXY_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "jobExecutorProxy" "imagePullPolicy") }}
         - name: ROUTE_SIDECAR_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/route-sidecar:v1.3.1" "routeSidecar" "image") }}
+            {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "route-sidecar" "routeSidecar") }}
         - name: ROUTE_SIDECAR_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "routeSidecar" "imagePullPolicy") }}
         - name: SIDECAR_INIT_IMAGE
           value: |-
-            {{ include "valuesDefault" (list .Values "signadot/route-sidecar-init:v1.3.1" "routeInit" "image") }}
+            {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "route-sidecar-init" "routeInit") }}
         - name: SIDECAR_INIT_IMAGE_PULL_POLICY
           value: |-
             {{ include "valuesDefault" (list .Values "IfNotPresent" "routeInit" "imagePullPolicy") }}
@@ -116,6 +115,9 @@ spec:
         - name: IO_SIDECAR_CONTAINER_RESOURCES
           value: |-
             {{ include "valuesDefaultJson" (list .Values "ioSidecar" "resources") }}
+        - name: IO_SIDECAR_LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "ioSidecar" "logLevel") }}
         - name: ISTIO_ADDITIONAL_ANNOTATIONS
           value: |-
             {{ with .Values }}{{ with .istio }}{{ with .additionalAnnotations }}{{ mustToJson . }}{{- end }}{{- end }}{{- end }}
@@ -125,11 +127,23 @@ spec:
         - name: JOB_EXECUTOR_INIT_CONTAINER_RESOURCES
           value: |-
             {{ include "valuesDefaultJson" (list .Values "jobExecutorInit" "resources") }}
+        - name: JOB_EXECUTOR_LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "jobExecutor" "logLevel") }}
         - name: JOB_EXECUTOR_PROXY_CONTAINER_RESOURCES
           value: |-
             {{ include "valuesDefaultJson" (list .Values "jobExecutorProxy" "resources") }}
+        - name: JOB_EXECUTOR_PROXY_LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "jobExecutorProxy" "logLevel") }}
+        - name: LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "controllerManager" "logLevel") }}
+        - name: ROUTE_SIDECAR_LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "routeSidecar" "logLevel") }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/controller-manager:v1.3.1" "controllerManager" "image") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "controller-manager" "controllerManager") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "controllerManager" "imagePullPolicy") }}
         livenessProbe:

@@ -29,5 +29,8 @@ spec:
     name: grpc
   - port: 7778
     name: http-api
+  - port: 7779
+    name: blackhole
+    targetPort: blackhole
   - port: 8080
     name: http-legacy

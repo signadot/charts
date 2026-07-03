@@ -42,8 +42,12 @@ spec:
           {{- $na | nindent 10 }}
           {{- else }} {}{{- end }}
       containers:
-      - image: |-
-          {{ include "valuesDefault" (list .Values "signadot/route-server:v1.3.1" "routeServer" "image") }}
+      - env:
+        - name: LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "routeServer" "logLevel") }}
+        image: |-
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "route-server" "routeServer") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "routeServer" "imagePullPolicy") }}
         name: routeserver
@@ -52,6 +56,8 @@ spec:
           name: grpc
         - containerPort: 7778
           name: http-api
+        - containerPort: 7779
+          name: blackhole
         - containerPort: 8080
           name: http-legacy
         - containerPort: 9090

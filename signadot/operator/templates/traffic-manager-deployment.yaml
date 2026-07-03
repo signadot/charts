@@ -14,8 +14,7 @@ metadata:
   namespace: signadot
 spec:
   replicas:
-    {{- with .Values.trafficManager }}{{- with .replicas }} {{ . }}
-    {{- else }} 2{{- end }}{{- else }} 2{{- end }}
+    {{- include "valuesDefault" (list .Values 2 "trafficManager" "replicas") | trim | printf " %s" }}
   selector:
     matchLabels:
       app: traffic-manager
@@ -62,8 +61,12 @@ spec:
           {{- $na | nindent 10 }}
           {{- else }} {}{{- end }}
       containers:
-      - image: |-
-          {{ include "valuesDefault" (list .Values "signadot/traffic-manager:v1.3.1" "trafficManager" "image") }}
+      - env:
+        - name: LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "trafficManager" "logLevel") }}
+        image: |-
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "traffic-manager" "trafficManager") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "trafficManager" "imagePullPolicy") }}
         name: traffic-manager

@@ -59,6 +59,18 @@ helm repo update
 helm upgrade signadot-operator signadot/operator
 ```
 
+### Behavior changes in this release
+
+- The chart's value-traversal helper now treats user-supplied `null` values
+  as intentional opt-outs rather than silently falling back to defaults.
+  The practical effect is on `<component>.resources` overrides: if your
+  overlay sets `resources.limits: null` and/or `resources.requests: null`,
+  the rendered deployment now runs with no limits/requests instead of the
+  chart's built-in defaults. Most overlays are unaffected — `resources: {}`
+  and an omitted `resources` key both still produce the chart defaults. To
+  explicitly opt out of resource limits/requests for a component, set both
+  `resources.limits: null` and `resources.requests: null`.
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `signadot-operator` deployment:
@@ -93,6 +105,26 @@ images used in our operator.  For each image, the image label `vX.Y.Z` refers to
 the [operator version](https://www.signadot.com/docs/operator-version-policy).
 Some images may be slated for deprecation, in particular those with the suffix
 `-legacy` in their name.
+
+#### Image source
+
+Every operator and injected-sidecar image is composed as
+`[registry/]repository/<name>:<tag>`, where `<name>` is fixed per component
+(e.g. `agent`, `controller-manager`). The segments are set globally:
+
+| Name         | Description                                                                 | Default     |
+| ------------ | --------------------------------------------------------------------------- | ----------- |
+| `registry`   | Registry host for all images; empty implies `docker.io`. e.g. `ghcr.io`     | `""`        |
+| `repository` | Org/namespace for all images; may be multi-segment, e.g. `ghcr.io/acme`     | `signadot`  |
+| `imageTag`   | Tag for all images                                                          | chart appVersion |
+
+For example, `--set registry=ghcr.io --set repository=acme/signadot` yields
+`ghcr.io/acme/signadot/agent:vX.Y.Z` for the agent, and likewise for every other
+component.
+
+Per-component overrides take precedence over the global segments, most specific
+first: a component's `image` (a full ref) replaces all of the above for that
+component, and a component's `imageTag` overrides just the tag.
 
 | Name                                  | Description                                              | Default                                |
 | ------------------------------------- | -------------------------------------------------------- | -------------------------------------- |
@@ -436,6 +468,49 @@ requests:
 </table>
 
 
+### Log level parameters
+
+The parameters below set the log level for each Signadot Operator component.
+Valid values are `debug`, `info`, `warn`, and `error`. Unset means `info`.
+
+For the injected containers (`routeSidecar`, `ioSidecar`, `jobExecutor`,
+`jobExecutorProxy`), the Helm value is the operator-wide default applied
+to every injected pod. Individual pods can override it without
+redeploying by setting the annotation `signadot.com/log-level` on the
+workload's pod template. Value syntax:
+
+    signadot.com/log-level: <default-level>[,<container>=<level>]*
+
+A bare value applies the level to every signadot-managed container in
+the pod. The annotation has no effect on containers signadot does not
+manage — most importantly, the main container of a regular workload
+pod (your application) is not signadot-managed, so a bare `warn` on
+such a pod only affects the injected `sd-sidecar`.
+
+Per-container overrides may follow as comma-separated
+`<container>=<level>` pairs, where `<container>` is the actual
+Kubernetes container name as it appears in the pod's PodSpec. The
+override is mainly useful in pods with more than one signadot-managed
+container (job or execunit pods). For example, on a job pod, to quiet
+the job-executor proxy but keep the main container at debug:
+
+    signadot.com/log-level: warn,my-main-container=debug
+
+| Name                          | Description                                                                              | Default |
+| ----------------------------- | ---------------------------------------------------------------------------------------- | ------- |
+| `controllerManager.logLevel`  | Controller Manager log level. Maps to controller-runtime's zap level.                    | `info`  |
+| `agent.logLevel`              | Agent log level.                                                                         | `info`  |
+| `routeServer.logLevel`        | Route Server log level.                                                                  | `info`  |
+| `trafficManager.logLevel`     | Traffic Manager log level.                                                               | `info`  |
+| `ioContextServer.logLevel`    | IO Context Server log level.                                                             | `info`  |
+| `tunnel.api.logLevel`         | Tunnel API log level.                                                                    | `info`  |
+| `tunnel.proxy.logLevel`       | Tunnel Proxy log level.                                                                  | `info`  |
+| `routeSidecar.logLevel`       | Default log level for the injected `sd-sidecar` (devmesh) container in workload pods.    | `info`  |
+| `ioSidecar.logLevel`          | Default log level for the injected `io-sidecar` container in execunit pods.              | `info`  |
+| `jobExecutor.logLevel`        | Default log level for the `job-executor` main container in job pods.                     | `info`  |
+| `jobExecutorProxy.logLevel`   | Default log level for the injected `job-executor-proxy` container in job pods.           | `info`  |
+
+
 ### Scheduling parameters
 
 The parameters below allow you to control which nodes Signadot Operator components run on.
@@ -491,8 +566,6 @@ agent:
 | `tunnel.api.strategy`                    | Strategy to be used for the Tunnel API deployment                                                                                                                                                                                                                            | `{}`    |
 | `tunnel.proxy.strategy`                  | Strategy to be used for the Tunnel Proxy deployment                                                                                                                                                                                                                          | `{}`    |
 | `tunnel.config.cidrs`                    | Default CIDRs configuration to be used for connected clients                                                                                                                                                                                                                 | `""`    |
-| `tunnel.config.externalDNS.server`       | If configured, the Tunnel API will pull this server to fetch domains which will be added to the `/etc/hosts` of the connected clients                                                                                                                                        | `""`    |
-| `tunnel.config.externalDNS.syncInterval` | Time interval, in seconds, for pulling the configured `externalDNS.server`                                                                                                                                                                                                   | `30`    |
 | `tunnel.config.disableSSH`               | Disable the SSH reverse tunnel endpoint in Tunnel Proxy                                                                                                                                                                                                                      | `false` |
 | `tunnel.config.disableXAP`               | Disable the XAP reverse tunnel endpoint in Tunnel Proxy                                                                                                                                                                                                                      | `false` |
 
@@ -532,7 +605,7 @@ Note that, unlike with Istio, routing in Linkerd is not expressed via Linkerd CR
 
 | Name                    | Description                                                                           | Default  |
 | ----------------------- | ------------------------------------------------------------------------------------- | -------- |
-| `routing.iptablesMode`  | `iptables` variant to use when configuring rules (possible values: `legacy` or `nft`) | `legacy` |
+| `routing.iptablesMode`  | `iptables` variant to use when configuring rules (possible values: `legacy` or `nft`). Set `legacy` on legacy-iptables hosts (e.g. Amazon Linux 2). | `nft` |
 | `routing.customHeaders` | List of custom headers used for sandbox routing                                       | `[]`     |
 
 

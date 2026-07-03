@@ -14,8 +14,7 @@ metadata:
   namespace: signadot
 spec:
   replicas:
-    {{- with .Values.tunnel }}{{- with .api }}{{- with .replicas }} {{ . }}
-    {{- else }} 1{{- end }}{{- else }} 1{{- end }}{{- else }} 1{{- end }}
+    {{- include "valuesDefault" (list .Values 1 "tunnel" "api" "replicas") | trim | printf " %s" }}
   selector:
     matchLabels:
       app: tunnel-api
@@ -48,20 +47,11 @@ spec:
           {{- else }} {}{{- end }}
       containers:
       - env:
-        - name: EXTERNAL_DNS_SERVER
-          value: |
-            {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS -}}
-            {{ with .server }}{{ . | quote }}{{- else -}}""{{- end }}
-            {{- else -}}""{{- end }}{{- else -}}""{{- end }}
-            {{- else -}}""{{- end }}{{- else -}}""{{- end }}
-        - name: EXTERNAL_DNS_SYNC_INTERVAL
-          value: |
-            {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .externalDNS -}}
-            {{ with .syncInterval }}{{ . | quote }}{{- else -}}""{{- end }}
-            {{- else -}}""{{- end }}{{- else -}}""{{- end }}
-            {{- else -}}""{{- end }}{{- else -}}""{{- end }}
+        - name: LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "tunnel" "api" "logLevel") }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/tunnel-api:v1.3.1" "tunnel" "api" "image") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "tunnel-api" "tunnel" "api") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "api" "imagePullPolicy") }}
         name: tunnel-api
