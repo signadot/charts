@@ -14,8 +14,7 @@ metadata:
   namespace: signadot
 spec:
   replicas:
-    {{- with .Values.tunnel }}{{- with .proxy }}{{- with .replicas }} {{ . }}
-    {{- else }} 1{{- end }}{{- else }} 1{{- end }}{{- else }} 1{{- end }}
+    {{- include "valuesDefault" (list .Values 1 "tunnel" "proxy" "replicas") | trim | printf " %s" }}
   selector:
     matchLabels:
       app: tunnel-proxy
@@ -74,20 +73,17 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "tunnel" "proxy" "logLevel") }}
         - name: DISABLE_SSH_TUNNEL
-          value: |
-            {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableSSH -}}
-            {{ . | quote }}
-            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
-            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "tunnel" "config" "disableSSH") }}
         - name: DISABLE_XAP_TUNNEL
-          value: |
-            {{ with .Values }}{{ with .tunnel }}{{ with .config }}{{ with .disableXAP -}}
-            {{ . | quote }}
-            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
-            {{- else -}}"false"{{- end }}{{- else -}}"false"{{- end }}
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "tunnel" "config" "disableXAP") }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/tunnel-proxy:v1.3.1" "tunnel" "proxy" "image") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "tunnel-proxy" "tunnel" "proxy") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "proxy" "imagePullPolicy") }}
         name: tunnel-proxy

@@ -14,8 +14,7 @@ metadata:
   namespace: signadot
 spec:
   replicas:
-    {{- with .Values.ioContextServer }}{{- with .replicas }} {{ . }}
-    {{- else }} 1{{- end }}{{- else }} 1{{- end }}
+    {{- include "valuesDefault" (list .Values 1 "ioContextServer" "replicas") | trim | printf " %s" }}
   selector:
     matchLabels:
       app: io-context-server
@@ -47,8 +46,12 @@ spec:
         - /app/io-context-server
         - "-tls=secretns=signadot"
         - "-port=8443"
+        env:
+        - name: LOG_LEVEL
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "ioContextServer" "logLevel") }}
         image: |-
-          {{ include "valuesDefault" (list .Values "signadot/io-context-server:v1.3.1" "ioContextServer" "image") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "io-context-server" "ioContextServer") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "ioContextServer" "imagePullPolicy") }}
         name: io-context-server

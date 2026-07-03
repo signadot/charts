@@ -33,6 +33,18 @@
 # imagePullSecrets:
 #   - my-registry-secret
 
+# Image source for all operator and injected-sidecar images. Each component's
+# default ref is composed as:  [registry/]repository/<name>:<tag>
+#   registry   - host segment; empty implies docker.io.
+#                e.g. "ghcr.io", "mirror.internal:5000"
+#   repository - org/namespace; may be multi-segment, e.g. "ghcr.io/acme/signadot"
+#   imageTag   - tag for all images; defaults to the chart appVersion.
+# A per-component `<component>.image` (a full ref) overrides all three for that
+# component; a per-component `<component>.imageTag` overrides just the tag.
+# registry: ""
+# repository: signadot
+# imageTag: ""
+
 # By default, this chart will install the operator in
 # cluster-wide mode, where it watches all namespaces.
 # Uncomment the following to configure the operator to
@@ -107,6 +119,9 @@ controllerManager:
       memory: 512Mi
   # image: my-private-registry/signadot/controller-manager:latest
   # imagePullPolicy: Always
+  # logLevel: info    # debug | info | warn | error
+  #                   # Sets the controller-runtime zap logger's level.
+  #                   # An explicit --zap-log-level flag still overrides.
   # nodeAffinity: {}
   # tolerations: []
 
@@ -118,6 +133,7 @@ agent:
       memory: 128Mi
   # image: my-private-registry/signadot/agent:latest
   # imagePullPolicy: Always
+  # logLevel: info    # debug | info | warn | error
   # nodeAffinity: {}
   # tolerations: []
 
@@ -129,6 +145,7 @@ routeServer:
       memory: 128Mi
   # image: my-private-registry/signadot/route-server:latest
   # imagePullPolicy: Always
+  # logLevel: info    # debug | info | warn | error
   # nodeAffinity: {}
   # tolerations: []
 
@@ -141,6 +158,7 @@ ioContextServer:
       memory: 128Mi
   # image: my-private-registry/signadot/io-context-server:latest
   # imagePullPolicy: Always
+  # logLevel: info    # debug | info | warn | error
   # nodeAffinity: {}
   # tolerations: []
 
@@ -154,6 +172,7 @@ tunnel:
         memory: 128Mi
     # image: my-private-registry/signadot/tunnel-api:latest
     # imagePullPolicy: Always
+    # logLevel: info    # debug | info | warn | error
     # nodeAffinity: {}
     # tolerations: []
     # strategy:
@@ -170,6 +189,7 @@ tunnel:
         memory: 128Mi
     # image: my-private-registry/signadot/tunnel-proxy:latest
     # imagePullPolicy: Always
+    # logLevel: info    # debug | info | warn | error
     # nodeAffinity: {}
     # tolerations: []
     # strategy:
@@ -184,9 +204,6 @@ tunnel:
   #       cidr: 10.80.0.0/12
   #       exclude: true
   #     version: 1
-  #   externalDNS:
-  #     server: http://10.20.10.2:8083
-  #     syncInterval: 60
   #   disableSSH: false
   #   disableXAP: false
 
@@ -199,6 +216,7 @@ trafficManager:
       memory: 128Mi
   # image: my-private-registry/signadot/traffic-manager:latest
   # imagePullPolicy: Always
+  # logLevel: info    # debug | info | warn | error
   # nodeAffinity: {}
   # tolerations: []
 
@@ -226,6 +244,11 @@ trafficManager:
 #   image: my-private-registry/signadot/route-sidecar:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-routeSidecar
+#   logLevel: info    # debug | info | warn | error.
+#                     # Per-pod annotation signadot.com/log-level
+#                     # overrides this. At "warn" the per-request access log
+#                     # is suppressed for 2xx/3xx; 4xx surface at Warn, 5xx
+#                     # at Error.
 
 # ioInit:
 #   resources:
@@ -250,6 +273,7 @@ trafficManager:
 #   image: my-private-registry/signadot/io-sidecar:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-ioSidecar
+#   logLevel: info    # debug | info | warn | error
 
 # jobExecutorInit:
 #   resources:
@@ -274,6 +298,11 @@ trafficManager:
 #   image: my-private-registry/signadot/job-executor-proxy:latest
 #   imagePullPolicy: Always
 #   imagePullSecret: secret-jobExecutorProxy
+#   logLevel: info    # debug | info | warn | error
+
+# jobExecutor:
+#   logLevel: info    # debug | info | warn | error.
+#                     # Applies to the job-executor main container of each job pod.
 
 
 # Routing settings
@@ -285,6 +314,16 @@ trafficManager:
 #   customHeaders:
 #     - header1
 #     - header2
+#   # Built-in routing-propagation channels Signadot encodes into Istio
+#   # VirtualServices and Gateway API HTTPRoutes / GRPCRoutes. Omit to use
+#   # the built-in default ([baggage, tracestate]); set to a subset (e.g.
+#   # [baggage]) to restrict, or to [] to disable them entirely. Restricting
+#   # this set shrinks per-routing-key mesh config, useful when complex
+#   # VirtualServices approach etcd's 1.5MB limit. customHeaders are
+#   # propagated independently of this setting.
+#   defaultHeaders:
+#     - baggage
+#     - tracestate
 
 
 # Traffic capture settings
