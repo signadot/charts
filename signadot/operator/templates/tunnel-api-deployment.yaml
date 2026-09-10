@@ -51,7 +51,7 @@ spec:
           value: |-
             {{ include "valuesDefaultStr" (list .Values "tunnel" "api" "logLevel") }}
         image: |-
-          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "tunnel-api" "tunnel" "api") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "tunnel-api" "tunnel" "api") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "api" "imagePullPolicy") }}
         name: tunnel-api
@@ -62,9 +62,9 @@ spec:
           {{- $r | nindent 10 }}
           {{- else }}
           limits:
-            memory: "1Gi"
+            memory: 1Gi
           requests:
-            memory: "128Mi"
+            memory: 128Mi
           {{- end }}
       imagePullSecrets:
         {{- if .Values.imagePullSecrets }}

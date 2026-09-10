@@ -1,4 +1,4 @@
-# This file is generated. Do not edit.
+{{ if ne (include "valuesDefaultStr" (list .Values "devMesh" "enabled") | trim) "false" }}
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -42,3 +42,5 @@ webhooks:
     resources:
     - pods
   sideEffects: None
+{{ end }}
+# This file is generated. Do not edit.

@@ -46,8 +46,11 @@ spec:
         - name: LOG_LEVEL
           value: |-
             {{ include "valuesDefaultStr" (list .Values "routeServer" "logLevel") }}
+        - name: LEGACY_ROUTES_API
+          value: |-
+            {{ include "valuesDefaultStr" (list .Values "routeServer" "legacyRoutesAPI" "enabled") }}
         image: |-
-          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "route-server" "routeServer") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "route-server" "routeServer") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "routeServer" "imagePullPolicy") }}
         name: routeserver
@@ -67,9 +70,9 @@ spec:
           {{- $r | nindent 10 }}
           {{- else }}
           limits:
-            memory: "2Gi"
+            memory: 2Gi
           requests:
-            memory: "128Mi"
+            memory: 128Mi
           {{- end }}
         volumeMounts:
         - name: signadot-config

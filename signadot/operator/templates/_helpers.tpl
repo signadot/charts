@@ -194,12 +194,47 @@ compileClusterConfig - generate cluster_config.yaml content
 {{- if and (hasKey .Values "istio") (hasKey .Values.istio "enableDeprecatedHostRouting") }}
 {{- fail "istio.enableDeprecatedHostRouting is no longer supported" }}
 {{- end }}
+{{- /*
+Linkerd without Gateway API routes through the DevMesh sidecar -- unlike Istio,
+which routes through VirtualServices whether or not Gateway API is on. So
+turning DevMesh off on such a cluster leaves nothing to enforce sandbox routing,
+and the install would come up healthy and fail at the first sandbox.
+
+This is stricter than the cluster can actually verify: routing for every baseline
+Service could be owned by an external gateway (routing.signadot.com/external), in
+which case the combination is fine. Helm cannot see those annotations. When
+cluster-level external routing lands as a config field, relax this to fire only
+when that is also unset.
+*/ -}}
+{{- $devMeshOff := eq (include "valuesDefaultStr" (list .Values "devMesh" "enabled") | trim) "false" }}
+{{- $linkerdOn := and (hasKey .Values "linkerd") (hasKey .Values.linkerd "enabled") .Values.linkerd.enabled }}
+{{- $linkerdGW := and $linkerdOn (hasKey .Values.linkerd "gatewayAPI") (hasKey .Values.linkerd.gatewayAPI "enabled") .Values.linkerd.gatewayAPI.enabled }}
+{{- if and $devMeshOff $linkerdOn (not $linkerdGW) }}
+{{- fail "devMesh.enabled: false with linkerd.enabled and without linkerd.gatewayAPI.enabled leaves nothing to route sandboxes: Linkerd routing goes through the DevMesh sidecar unless Gateway API is enabled. Set linkerd.gatewayAPI.enabled: true, or keep devMesh.enabled: true. If routing for every baseline Service is owned by an external gateway (the routing.signadot.com/external annotation), this check is too strict for your install -- please let us know." }}
+{{- end }}
+{{- $previewEnabled := ne (include "valuesDefaultStr" (list .Values "previewServer" "enabled") | trim) "false" }}
+{{- $previewCustomDomain := include "valuesGetStr" (list .Values "" "previewServer" "customDomain") | trim }}
+{{- if and $previewCustomDomain (not $previewEnabled) }}
+{{- fail "previewServer.customDomain requires previewServer.enabled: true -- with the preview server not installed there is nothing behind the domain to serve it" }}
+{{- end }}
+{{- if $previewCustomDomain }}
+{{- if gt (len $previewCustomDomain) 255 }}
+{{- fail (printf "previewServer.customDomain %q exceeds 255 characters" $previewCustomDomain) }}
+{{- end }}
+{{- if not (regexMatch "^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$" $previewCustomDomain) }}
+{{- fail (printf "previewServer.customDomain %q is not a bare domain like preview.example.com -- no scheme, port, path, wildcard, or trailing dot (the wildcard is implied: previews are served on subdomains of it)" $previewCustomDomain) }}
+{{- end }}
+{{- end }}
 {{- $allowedNamespaces := (include "getAllowedNamespaces" . | fromJsonArray) -}}
 allowedNamespaces: {{ if gt (len $allowedNamespaces) 0 }}{{ printf "\n" }}{{ toYaml $allowedNamespaces | indent 2}}{{- else -}}[]{{- end }}
 {{- if (hasKey .Values "controlPlane") }}
 controlPlane:
 {{- if (hasKey .Values.controlPlane "proxy") }}
   proxy: {{ .Values.controlPlane.proxy }}
+{{- end }}
+{{- if (hasKey .Values.controlPlane "podLogAccess") }}
+  podLogAccess:
+    enabled: {{ ne (include "valuesDefaultStr" (list .Values "controlPlane" "podLogAccess" "enabled") | trim) "false" }}
 {{- end }}
 {{- if (hasKey .Values.controlPlane "controlAPI") }}
   controlAPI: {{ .Values.controlPlane.controlAPI }}
@@ -240,6 +275,8 @@ routing:
     enabled: {{ include "gatewayAPIEnabled" .Values }}
     preservedAnnotations: {{ include "gatewayAPIPreservedAnnotations" .Values }}
     preservedLabels: {{ include "gatewayAPIPreservedLabels" .Values }}
+  devMesh:
+    enabled: {{ if and (hasKey .Values "devMesh") (hasKey .Values.devMesh "enabled") -}}{{ toString .Values.devMesh.enabled }}{{- else -}}true{{- end }}
   iptablesMode: {{ if and (hasKey .Values "routing") (hasKey .Values.routing "iptablesMode") -}}{{ .Values.routing.iptablesMode }}{{- else -}}nft{{- end }}
   customHeaders: {{ with .Values }}{{ with .routing }}{{ with .customHeaders }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
 {{- $defaultHeaders := include "valuesDefaultJson" (list .Values "routing" "defaultHeaders") }}
@@ -252,4 +289,9 @@ trafficCapture:
   enabled: {{ if and (hasKey .Values "trafficCapture") (hasKey .Values.trafficCapture "enabled") -}}{{ toString .Values.trafficCapture.enabled }}{{- else -}}true{{- end }}
   requestHeadersElide: {{ with .Values }}{{ with .trafficCapture }}{{ with .requestHeadersElide }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
   responseHeadersElide: {{ with .Values }}{{ with .trafficCapture }}{{ with .responseHeadersElide }}{{ printf "\n" }}{{ toYaml . | indent 4}}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}{{- else -}}[]{{- end }}
+previewServer:
+  enabled: {{ $previewEnabled }}
+{{- if $previewCustomDomain }}
+  customDomain: {{ $previewCustomDomain | quote }}
+{{- end }}
 {{- end -}}

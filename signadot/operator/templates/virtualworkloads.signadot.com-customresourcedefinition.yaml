@@ -148,6 +148,13 @@ spec:
                     description: "Services provides the list of matching services for the baseline"
                     items:
                       properties:
+                        externalRouting:
+                          description: |-
+                            ExternalRouting indicates that the baseline service declared that its
+                            sandbox routing is owned externally (see ExternalRoutingAnnotation). Such
+                            a service still gets route-server routes, but no mesh routes are created
+                            for it and it does not require a DevMesh sidecar to be routing-ready.
+                          type: boolean
                         from:
                           description: "Name of the baseline service"
                           type: string
