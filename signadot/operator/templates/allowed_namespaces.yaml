@@ -35,3 +35,25 @@ subjects:
   name: agent
   namespace: signadot
 {{ end }}
+# Bind the pod-log ClusterRole to the agent's ServiceAccount in the specified
+# namespaces. controlPlane.podLogAccess.enabled: false omits these bindings
+# along with the ClusterRole itself; absent means enabled, so only an explicit
+# false turns it off.
+{{- if ne (include "valuesDefaultStr" (list .Values "controlPlane" "podLogAccess" "enabled") | trim) "false" }}
+{{ range $namespace := $allowedNamespaces }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: signadot-agent-podlog
+  namespace: {{ $namespace | quote }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: signadot-agent-podlog
+subjects:
+- kind: ServiceAccount
+  name: agent
+  namespace: signadot
+{{ end }}
+{{- end }}

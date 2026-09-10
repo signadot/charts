@@ -1,4 +1,4 @@
-# This file is generated. Do not edit.
+{{ if ne (include "valuesDefaultStr" (list .Values "previewServer" "enabled") | trim) "false" }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -10,14 +10,15 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: traffic-manager
+  name: previewserver
 rules:
 - apiGroups:
   - signadot.com
   resources:
   - routingconfigs
-  - requestmiddlewares
   verbs:
   - get
   - list
   - watch
+{{ end }}
+# This file is generated. Do not edit.

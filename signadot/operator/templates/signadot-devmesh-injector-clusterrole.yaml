@@ -1,4 +1,4 @@
-# This file is generated. Do not edit.
+{{ if ne (include "valuesDefaultStr" (list .Values "devMesh" "enabled") | trim) "false" }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -10,14 +10,25 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: traffic-manager
+  name: signadot-devmesh-injector
 rules:
 - apiGroups:
-  - signadot.com
+  - ""
   resources:
-  - routingconfigs
-  - requestmiddlewares
+  - namespaces
   verbs:
   - get
   - list
   - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resourceNames:
+  - signadot-mutating-webhook-configuration
+  resources:
+  - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - patch
+  - update
+{{ end }}
+# This file is generated. Do not edit.

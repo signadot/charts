@@ -1,4 +1,4 @@
-{{ if ne (include "valuesDefaultStr" (list .Values "devMesh" "enabled") | trim) "false" }}
+{{ if ne (include "valuesDefaultStr" (list .Values "previewServer" "enabled") | trim) "false" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -9,6 +9,7 @@ metadata:
     {{- range $key, $val := .Values.serviceAnnotations }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
+    routing.signadot.com/ignore: "true"
   labels:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
@@ -16,13 +17,13 @@ metadata:
     {{- range $key, $val := .Values.serviceLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: signadot-webhook-service
+  name: previewserver
   namespace: signadot
 spec:
-  ports:
-  - port: 443
-    targetPort: 9443
   selector:
-    control-plane: controller-manager
+    app: previewserver
+  ports:
+  - name: preview
+    port: 8080
 {{ end }}
 # This file is generated. Do not edit.

@@ -1,4 +1,4 @@
-# This file is generated. Do not edit.
+{{ if ne (include "valuesDefaultStr" (list .Values "previewServer" "enabled") | trim) "false" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,14 +10,14 @@ metadata:
     {{- range $key, $val := .Values.commonLabels }}
     {{ $key | quote }}: {{ $val | quote }}
     {{- end }}
-  name: traffic-manager
+  name: previewserver
   namespace: signadot
 spec:
   replicas:
-    {{- include "valuesDefault" (list .Values 2 "trafficManager" "replicas") | trim | printf " %s" }}
+    {{- include "valuesDefault" (list .Values 1 "previewServer" "replicas") | trim | printf " %s" }}
   selector:
     matchLabels:
-      app: traffic-manager
+      app: previewserver
   template:
     metadata:
       annotations:
@@ -53,26 +53,26 @@ spec:
         sidecar.istio.io/inject: "true"
         {{- end }}
         {{- end }}
-        app: traffic-manager
+        app: previewserver
     spec:
       affinity:
         nodeAffinity:
-          {{- $na := include "valuesDefault" (list .Values "" "trafficManager" "nodeAffinity") }}{{- if $na }}
+          {{- $na := include "valuesDefault" (list .Values "" "previewServer" "nodeAffinity") }}{{- if $na }}
           {{- $na | nindent 10 }}
           {{- else }} {}{{- end }}
       containers:
       - env:
         - name: LOG_LEVEL
           value: |-
-            {{ include "valuesDefaultStr" (list .Values "trafficManager" "logLevel") }}
+            {{ include "valuesDefaultStr" (list .Values "previewServer" "logLevel") }}
         image: |-
-          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "traffic-manager" "trafficManager") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "previewserver" "previewServer") }}
         imagePullPolicy: |-
-          {{ include "valuesDefault" (list .Values "IfNotPresent" "trafficManager" "imagePullPolicy") }}
-        name: traffic-manager
+          {{ include "valuesDefault" (list .Values "IfNotPresent" "previewServer" "imagePullPolicy") }}
+        name: previewserver
         ports:
         - containerPort: 8080
-          name: proxy
+          name: preview
         - containerPort: 16001
           name: healthz
         readinessProbe:
@@ -80,11 +80,11 @@ spec:
             path: /healthz
             port: 16001
         resources:
-          {{- $r := include "valuesDefault" (list .Values "" "trafficManager" "resources") }}{{- if $r }}
+          {{- $r := include "valuesDefault" (list .Values "" "previewServer" "resources") }}{{- if $r }}
           {{- $r | nindent 10 }}
           {{- else }}
           limits:
-            memory: 2Gi
+            memory: 1Gi
           requests:
             memory: 128Mi
           {{- end }}
@@ -98,23 +98,19 @@ spec:
         - name: {{ . }}
         {{- end }}
         {{- else }} []{{- end }}
-      serviceAccountName: traffic-manager
+      serviceAccountName: previewserver
       tolerations:
-        {{- $t := include "valuesDefault" (list .Values "" "trafficManager" "tolerations") }}{{- if $t }}
+        {{- $t := include "valuesDefault" (list .Values "" "previewServer" "tolerations") }}{{- if $t }}
         {{- $t | nindent 8 }}
         {{- else }} []{{- end }}
       volumes:
       - name: signadot-config
         projected:
           sources:
-          - secret:
-              items:
-              - key: token
-                path: token
-              name: |-
-                {{ include "tokenSecretName" . }}
           - configMap:
+              name: cluster-config
               items:
               - key: cluster_config.yaml
                 path: cluster_config.yaml
-              name: cluster-config
+{{ end }}
+# This file is generated. Do not edit.

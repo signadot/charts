@@ -48,6 +48,124 @@ spec:
           spec:
             description: "RouteGroupSpec defines the desired state of a RouteGroup."
             properties:
+              endpoints:
+                description: |-
+                  Endpoints are the preview endpoints declared for this route group, as
+                  named (not resolved) targets. They are carried onto the derived
+                  RoutingConfig, whose controller resolves them.
+                items:
+                  description: |-
+                    PreviewEndpoint is a preview endpoint declared by the Signadot control plane
+                    on a SignadotSandbox or RouteGroup spec.
+                    
+                    It *names* a target; it does not resolve one. The control plane has no
+                    cluster state, so it cannot know which Service fronts a given workload or
+                    which Service port maps to a container port. The sandbox and routegroup
+                    controllers carry it through to the derived RoutingConfig unchanged, and the
+                    RoutingConfig controller reports what it made of it as a
+                    PreviewEndpointStatus on that object's status.
+                  properties:
+                    id:
+                      description: |-
+                        ID is an opaque, stable, unguessable identifier for this endpoint,
+                        minted by the Signadot control plane.
+                        
+                        It is the leading label of the preview hostname
+                        (https://<id>.<base-domain>) and therefore must be a valid DNS label.
+                      maxLength: 63
+                      minLength: 1
+                      pattern: "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
+                      type: string
+                    name:
+                      description: |-
+                        Name is the endpoint name as the user declared it, unique within the
+                        parent sandbox or route group. It is not used for routing — it exists
+                        so logs, metrics and errors can name an endpoint the way a user does.
+                      minLength: 1
+                      type: string
+                    protocol:
+                      description: |-
+                        Protocol is the protocol used to reach the target.
+                        
+                        The set here must match what the API accepts when an endpoint is
+                        declared. A value the API takes and this rejects is not a validation
+                        error on one endpoint -- the whole parent object fails to apply, so the
+                        sandbox or route group never reaches the cluster at all.
+                      enum:
+                      - http
+                      - https
+                      - grpc
+                      type: string
+                    target:
+                      description: "Target says what this endpoint points at."
+                      properties:
+                        static:
+                          description: "Static is set when Type is Static."
+                          properties:
+                            host:
+                              description: "Host is the host to connect to (no port)."
+                              minLength: 1
+                              type: string
+                            port:
+                              description: "Port is the port to connect to."
+                              format: int32
+                              maximum: 65535
+                              minimum: 1
+                              type: integer
+                          required:
+                          - host
+                          - port
+                          type: object
+                        type:
+                          description: "PreviewTargetType discriminates the members of PreviewEndpointTarget."
+                          enum:
+                          - Static
+                          - Workload
+                          type: string
+                        workload:
+                          description: "Workload is set when Type is Workload."
+                          properties:
+                            baseline:
+                              description: "Baseline identifies the workload being previewed."
+                              properties:
+                                apiVersion:
+                                  description: "APIVersion specifies the API Version (e.g. \"apps/v1\") of the object to patch."
+                                  type: string
+                                kind:
+                                  description: "Kind specifies the Kind (e.g. \"Deployment\") of the object to patch."
+                                  type: string
+                                name:
+                                  description: "Name specifies the name of the object to patch."
+                                  type: string
+                                namespace:
+                                  description: "Namespace optionally specifies which namespace will be searched."
+                                  type: string
+                              required:
+                              - apiVersion
+                              - kind
+                              - name
+                              type: object
+                            port:
+                              description: |-
+                                Port is the container port to preview. Zero means "infer", which
+                                succeeds only when the resolved Service exposes exactly one port.
+                              format: int32
+                              maximum: 65535
+                              minimum: 0
+                              type: integer
+                          required:
+                          - baseline
+                          type: object
+                      required:
+                      - type
+                      type: object
+                  required:
+                  - id
+                  - name
+                  - protocol
+                  - target
+                  type: object
+                type: array
               routingKey:
                 description: |-
                   RoutingKey is a unique short key that can be provided
@@ -173,6 +291,84 @@ spec:
                   required:
                   - status
                   - type
+                  type: object
+                type: array
+              endpoints:
+                description: |-
+                  Endpoints reports what became of Spec.Endpoints, as resolved on the
+                  derived RoutingConfig's status: the address for those that could be
+                  placed in the cluster, the reason for those that couldn't.
+                  
+                  The control plane reads sandbox status for its own preview endpoints,
+                  not RoutingConfig status directly, so this is the same seam for route
+                  groups: without it, a route-group preview endpoint that isn't working
+                  has no explanation outside operator logs.
+                items:
+                  description: |-
+                    PreviewEndpointStatus is what the RoutingConfig controller made of a
+                    PreviewEndpoint: where it landed in the cluster, or why it couldn't.
+                    
+                    Every declared endpoint gets one, resolved or not. An endpoint that can't be
+                    placed is a state to report, not an absence: "the target isn't there yet" and
+                    "we haven't looked" are very different things to whoever is waiting on a
+                    preview URL, and only this tells them apart.
+                    
+                    It rides the RoutingConfig status, and the RoutingConfig's name is the routing
+                    key, so the preview server gets the routing context and the target from a
+                    single object it already has reason to watch.
+                  properties:
+                    host:
+                      description: |-
+                        Host is the in-cluster address to forward to — for a workload target,
+                        the DNS name of the baseline Service (e.g. "frontend.default.svc").
+                        
+                        Empty unless Resolution.Resolved.
+                      type: string
+                    id:
+                      description: |-
+                        ID, Name and Protocol are carried through from the PreviewEndpoint
+                        this describes.
+                      type: string
+                    name:
+                      type: string
+                    port:
+                      description: |-
+                        Port is the port on Host — for a workload target, the Service port,
+                        not the container port.
+                        
+                        Zero unless Resolution.Resolved.
+                      format: int32
+                      type: integer
+                    protocol:
+                      type: string
+                    resolution:
+                      description: |-
+                        Resolution says whether Host and Port below are usable.
+                        
+                        Optional in the schema, though this controller always sets it: a
+                        required field here would mean a controller older than it can't write
+                        status at all, rejected by the apiserver rather than degrading. Absent
+                        only in status written by such a controller.
+                      properties:
+                        reason:
+                          description: |-
+                            Reason says why the endpoint couldn't be placed, and is empty when it
+                            could. It is meant to be read by a person: a target that hasn't been
+                            created yet, a port that matches several Services, and a target naming a
+                            kind we don't fork all land here.
+                          type: string
+                        resolved:
+                          description: |-
+                            Resolved is true when the endpoint was placed and Host and Port on the
+                            enclosing PreviewEndpointStatus are usable.
+                          type: boolean
+                      required:
+                      - resolved
+                      type: object
+                  required:
+                  - id
+                  - name
+                  - protocol
                   type: object
                 type: array
               observedGeneration:

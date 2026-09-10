@@ -105,6 +105,30 @@
 #       config.linkerd.io/proxy-await: enabled
 
 
+# DevMesh settings
+# -----------------------------------------------------------------------------
+
+devMesh:
+  # Install the DevMesh injection webhook.
+  #
+  # Set to false to install none of it: no MutatingWebhookConfiguration, no
+  # webhook Service, and no ClusterRole granting the operator cluster-wide
+  # `namespaces` read. The apiserver then makes no admission call when a Pod is
+  # created anywhere in the cluster, and the operator stops serving the admission
+  # endpoint entirely. Workloads that ask for injection (the
+  # sidecar.signadot.com/inject annotation on a Pod template, or the same key as
+  # a namespace label) come up without the DevMesh sidecar, and so do sandbox
+  # forks of them.
+  #
+  # Set this to false only where routing comes from somewhere else: Istio,
+  # Linkerd, Gateway API, or an external component declared per Service with the
+  # routing.signadot.com/external annotation. A baseline Service with neither a
+  # mesh route nor that annotation leaves its sandbox not ready.
+  #
+  # Absent means enabled, so only an explicit false turns it off.
+  enabled: true
+
+
 # Component settings
 # -----------------------------------------------------------------------------
 
@@ -148,6 +172,12 @@ routeServer:
   # logLevel: info    # debug | info | warn | error
   # nodeAffinity: {}
   # tolerations: []
+  #
+  # The legacy routes API on port 8080, for clients predating the sandboxes
+  # routeserver. Off by default and scheduled for removal in the next release;
+  # while off, those routes answer 410 Gone. See the chart README.
+  # legacyRoutesAPI:
+  #   enabled: false
 
 ioContextServer:
   replicas: 1
@@ -215,6 +245,35 @@ trafficManager:
     requests:
       memory: 128Mi
   # image: my-private-registry/signadot/traffic-manager:latest
+  # imagePullPolicy: Always
+  # logLevel: info    # debug | info | warn | error
+  # nodeAffinity: {}
+  # tolerations: []
+
+previewServer:
+  # Previews for this cluster, in one place: this decides both what is
+  # installed and whether previews are served.
+  #
+  # false installs none of the in-cluster preview server -- no Deployment,
+  # Service, ServiceAccount or RBAC -- and the control plane, which reads this
+  # value from the cluster-config ConfigMap, refuses preview requests for this
+  # cluster rather than forwarding them to a Service that isn't there.
+  enabled: true
+  # Base domain this cluster's preview URLs are reported on, e.g.
+  # "preview.example.com". Unset means Signadot's own domain.
+  #
+  # Setting one says the customer's own ingress fronts the preview server on
+  # that domain; the ingress and its wildcard certificate are yours to provide.
+  # Requires enabled: true -- a domain with nothing installed behind it has
+  # nothing to serve it, so the combination is rejected at render time.
+  # customDomain: preview.example.com
+  replicas: 1
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 128Mi
+  # image: my-private-registry/signadot/previewserver:latest
   # imagePullPolicy: Always
   # logLevel: info    # debug | info | warn | error
   # nodeAffinity: {}
@@ -355,6 +414,14 @@ trafficManager:
 #   tokenSecret: my-cluster-token
 #   clusterToken: myorg@xxx
 #   proxy: "enabled"  # can also be "disabled"
+#   #
+#   # Pod log access. Set enabled: false to withhold pods/log from the agent,
+#   # which stops the Signadot dashboard and CLI from reading pod logs out of
+#   # this cluster. Logs remain available through kubectl and your own logging
+#   # pipeline. Nothing else is affected: sandbox creation, routing and traffic
+#   # capture do not read pod logs.
+#   podLogAccess:
+#     enabled: true
 #   #
 #   # development settings:
 #   #

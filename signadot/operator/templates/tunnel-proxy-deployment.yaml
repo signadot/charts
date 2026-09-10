@@ -83,7 +83,7 @@ spec:
           value: |-
             {{ include "valuesDefaultStr" (list .Values "tunnel" "config" "disableXAP") }}
         image: |-
-          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "tunnel-proxy" "tunnel" "proxy") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "tunnel-proxy" "tunnel" "proxy") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "tunnel" "proxy" "imagePullPolicy") }}
         name: tunnel-proxy
@@ -97,9 +97,9 @@ spec:
           {{- $r | nindent 10 }}
           {{- else }}
           limits:
-            memory: "2Gi"
+            memory: 2Gi
           requests:
-            memory: "128Mi"
+            memory: 128Mi
           {{- end }}
       imagePullSecrets:
         {{- if .Values.imagePullSecrets }}

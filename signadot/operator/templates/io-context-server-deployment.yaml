@@ -51,7 +51,7 @@ spec:
           value: |-
             {{ include "valuesDefaultStr" (list .Values "ioContextServer" "logLevel") }}
         image: |-
-          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "io-context-server" "ioContextServer") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "io-context-server" "ioContextServer") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "ioContextServer" "imagePullPolicy") }}
         name: io-context-server
@@ -62,9 +62,9 @@ spec:
           {{- $r | nindent 10 }}
           {{- else }}
           limits:
-            memory: "1Gi"
+            memory: 1Gi
           requests:
-            memory: "128Mi"
+            memory: 128Mi
           {{- end }}
       imagePullSecrets:
         {{- if .Values.imagePullSecrets }}

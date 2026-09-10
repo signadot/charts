@@ -67,7 +67,7 @@ spec:
           value: |-
             {{ include "valuesDefaultStr" (list .Values "agent" "logLevel") }}
         image: |-
-          {{ include "operatorImage" (list .Values "" "signadot" "v1.3.2" "agent" "agent") }}
+          {{ include "operatorImage" (list .Values "" "signadot" "v1.4.0" "agent" "agent") }}
         imagePullPolicy: |-
           {{ include "valuesDefault" (list .Values "IfNotPresent" "agent" "imagePullPolicy") }}
         livenessProbe:
@@ -86,9 +86,9 @@ spec:
           {{- $r | nindent 10 }}
           {{- else }}
           limits:
-            memory: "2Gi"
+            memory: 2Gi
           requests:
-            memory: "128Mi"
+            memory: 128Mi
           {{- end }}
         volumeMounts:
         - name: signadot-config
